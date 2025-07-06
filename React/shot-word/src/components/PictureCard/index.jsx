@@ -26,7 +26,10 @@ const PictureCard = (props) => {
         reader.onerror = (error) => { reject(error); };
     })
   }
-
+  const playAudio = async () => { 
+    const audioEle = new Audio(audio);
+    audioEle.play();
+  }
   return (
     <div className='card'>
       <input type="file"
@@ -39,6 +42,11 @@ const PictureCard = (props) => {
        </label>
      
        <div className="word">{word}</div>
+       {audio && (
+        <div className="playAudio" onClick={playAudio}>
+            <img width="20px" src="https://res.bearbobo.com/resource/upload/Omq2HFs8/playA-3iob5qyckpa.png" alt="logo" />
+        </div>
+      )}
     </div>
   )
 }
