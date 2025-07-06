@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import PictureCard from './components/PictureCard';
-
+import {generateAudio} from './lib/generateAudio/audio.js';
 function App() {
   const userPrompt = `分析图片内容，找出最能描述图片的一个英文单词，尽量选择更简单的A1~A2的词汇。
 
@@ -60,7 +60,13 @@ function App() {
     setSentence(replyData.example_sentence);
     setExplainations(replyData.explaination.split('\n'))
     setExpReply(replyData.explaination_replys);
+    // base64 资源  比较小-->atob --> 二进制编码----> blob--->URL.createObjectURL(blob) --->临时地址--->audio展示
+
+    const audioUrl = await generateAudio(replyData.example_sentence);
+    console.log(audioUrl, '|||audioUrl||');
+    setAudio(audioUrl);
   }
+ 
 
   return (
     <div className="container">
@@ -72,7 +78,7 @@ function App() {
       <div className="output">
         <div>{sentence}</div>
         <div className="details">
-          <button onClick={() => setDetailExpand(!detailExpand)}>Talk about it</button>
+          {!detailExpand&&<button onClick={() => setDetailExpand(!detailExpand)}>Talk about it</button>}
           {
             detailExpand ? (
               <div className="expand">
@@ -91,6 +97,7 @@ function App() {
                     </div>
                   ))
                 }
+                 {detailExpand&&<button onClick={() => setDetailExpand(!detailExpand)}>Back to upload</button>}
               </div>
             ): (
               <div className="fold" />
