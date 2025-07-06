@@ -93,8 +93,12 @@ button:focus-visible {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  font-size: .85rem;
-  background: linear-gradient(180deg, rgb(235, 189, 161) 0%, rgb(71, 49, 32) 100%);
+  font-size: 0.85rem;
+  background: linear-gradient(
+    180deg,
+    rgb(235, 189, 161) 0%,
+    rgb(71, 49, 32) 100%
+  );
 }
 
 #selecteImage {
@@ -134,7 +138,7 @@ button {
   color: white;
   width: 160px;
   height: 32px;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 8px 8px;
   border: none;
   font-size: 12px;
   font-weight: bold;
@@ -193,8 +197,8 @@ button {
   padding: 20px;
   margin-top: 40px;
   height: 280px;
-  box-shadow: rgb(63,38,21) 0 3px 0px 0;
-  background-color: rgb(105,78,62);
+  box-shadow: rgb(63, 38, 21) 0 3px 0px 0;
+  background-color: rgb(105, 78, 62);
   box-sizing: border-box;
 }
 .upload {
@@ -214,7 +218,7 @@ button {
 .word {
   margin-top: 20px;
   font-size: 16px;
-  color: rgb(255,255,255);
+  color: rgb(255, 255, 255);
 }
 .playAudio {
   margin-top: 16px;
@@ -222,4 +226,9 @@ button {
 
 .playAudio img {
   cursor: pointer;
+}
+
+.expand button {
+  margin: 0 auto;
+  border-radius: 8px 8px 8px 8px;
 }
