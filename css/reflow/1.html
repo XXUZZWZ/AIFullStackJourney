@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  .box {
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+    margin: 10px;
+  }
+
+  .vis_hid {
+    visibility: hidden;
+  }
+
+  .dis_none {
+    display: none;
+  }
+</style>
+
+<body>
+  <div class="container">
+    <div class="box">123</div>
+    vis_hid
+    <div class="box vis_hid">456</div>
+    <div class="box">123</div>
+    display: none;是会让浏览器内核忽略renerTree，不会渲染这个节点，也不会计算这个节点的尺寸，也不会计算这个节点的布局。
+树中的这个节点。
+    <div class="box dis_none">789 class="box dis_none"</div>
+  </div>
+</body>
+
+</html>
