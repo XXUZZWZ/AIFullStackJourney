@@ -47,18 +47,54 @@
     //   a++;
     //   console.log(a);
     // }
-    function addObserver() {
-      console.log('///')
-      const eles =
-        document.querySelectorAll('img[data-original][lazyload]');
-      console.log(eles);
-      eles.forEach(ele => {
-        console.log(ele);
-      })
+    // function addObserver() {
+    //   console.log('///')
+    //   const eles =
+    //     document.querySelectorAll('img[data-original][lazyload]');
+    //   console.log(eles);
+    //   eles.forEach(ele => {
+    //     console.log(ele);
+    //   })
 
-      // Array.prototype.forEach.call(eles)
+    //   // Array.prototype.forEach.call(eles)
+    // }
+    // addObserver()
+    const viewHeight = document.documentElement.clientHeight;
+    // 视窗的高度
+    console.log(viewHeight);
+    // 选择出img图片img元素中有data-original属性的元素和lazyload属性的元素
+    const eles = document.querySelectorAll('img[data-original][lazyload]');
+    console.log(eles);
+    // eles 是nodelist 没有forEach方法
+    const lazyload = function () {
+      Array.prototype.forEach.call(eles, function (item, index) {
+        // data-original 是自定义属性，在eles中用dataset.original获取
+        // 判断没有值
+        if (item.dataset.original === "") return;
+        // img 标签对象在视口的位置
+        rect = item.getBoundingClientRect();
+        // console.log(rect);
+        // 有必要渲染
+        if (rect.bottom >= 0 && rect.top < viewHeight) {
+          (function () {
+            var img = new Image();
+            img.src = item.dataset.original; // 获取图片地址并下载
+            // 在内存中创建图片并加载自动生成缓存，防止白屏
+            // 以前图片大，网慢，页面会出现加载动画很难看，现在5g一般不会
+            img.onload = function () {
+              // 加载完成
+              item.src = img.src;
+              item.removeAttribute('data-original');// 性能优化，不用再迭代张图片
+              item.removeAttribute('lazyload')
+            }
+
+          })()
+        }
+      })
     }
-    addObserver()
+    window.addEventListener('scroll', lazyload)
+    lazyload()
+
   </script>
 </body>
 
