@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS DOM2 事件机制</title>
+  <style>
+    #parent {
+      width: 200px;
+      height: 200px;
+      background-color: blue;
+    }
+
+    #child {
+      height: 100px;
+      width: 100px;
+      margin: auto auto;
+      background-color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="parent">
+    <div id="child"></div>
+  </div>
+  <!-- // html css js 各司其职
+  // 行内样式少用
+  // 少用 js dom0 级事件,会导致js和html 耦合
+  // dom0和dom2混用，不好维护。
+  // addEventListener 统一用useCapture 能力 -->
+  <script style="display: block;">
+    const parent = document.getElementById('parent')
+    const child = document.getElementById('child')
+    parent.addEventListener('click', function (e) {
+      console.log('false parent clicked', "event_target: ", e.target)
+    }, false);
+
+    child.addEventListener('click', function (e) {
+      console.log(' false child clicked');
+    }, false)
+    parent.addEventListener('click', function () {
+      console.log(' true parent clicked')
+    }, true);
+
+    child.addEventListener('click', function (e) {
+      console.log(' true child clicked');
+    }, true)
+    child.dispatchEvent(new Event('click', { bubbles: false }));
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事件委托</title>
+</head>
+
+<body>
+  <ul id="list">
+    <li>lorem1</li>
+    <li>lorem2</li>
+    <li>lorem3</li>
+    <li>lorem4</li>
+    <li>lorem5</li>
+    <li>lorem6</li>
+  </ul>
+  <!-- // 点击li 打印item?
+  // 一次性给所有li。 -->
+  <script>
+    const lis = document.querySelectorAll('#list li');
+    // 不可以给nodelist 添加事件
+    console.log(lis);
+
+    // 计数循环 对cpu 友好 可读性差
+    // 不需要用下表的时候
+    for (item of lis) {
+      item.addEventListener('click', function (e) {
+        console.log(e.target.innerText);
+      }, false)
+    }
+    // 向浏览器even loop 注册了一堆事件 监听器？
+    // li 很多的话性能差
+
+    // lis.addEventListener('click', function (e) {
+    //   console.log(e.target);
+    // })
+    // event.target 目标阶段 事件发生的元素，而不是计算监听的元素。
+    // 委托给父元素
+    // react 把这种性能优化到极致，#root 直接在document 上监听所有事件
+    document.getElementById('list').addEventListener('click', function (e) {
+      console.log(e.target.innerText);
+    })
+  </script>
+</body>
+
+</html>
