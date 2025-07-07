@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript事件机制详解</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 30px;
+    }
+
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      color: #1a2a6c;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #555;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 400px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #b21f1f;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #fdbb2d;
+    }
+
+    .event-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px 0;
+      flex-grow: 1;
+    }
+
+    #parent {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #1a2a6c, #4a6fc7);
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #parent:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    #child {
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, #b21f1f, #e74c3c);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    #child:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .element-label {
+      position: absolute;
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .parent-label {
+      top: 20px;
+      left: 20px;
+    }
+
+    .child-label {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .event-flow {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .flow-step {
+      text-align: center;
+      width: 30%;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .flow-step:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .flow-step h3 {
+      color: #1a2a6c;
+      margin-bottom: 10px;
+    }
+
+    .flow-step.capture {
+      border-top: 4px solid #1a2a6c;
+    }
+
+    .flow-step.target {
+      border-top: 4px solid #b21f1f;
+    }
+
+    .flow-step.bubble {
+      border-top: 4px solid #fdbb2d;
+    }
+
+    .console {
+      background: #2c3e50;
+      color: #ecf0f1;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      height: 200px;
+      overflow-y: auto;
+      margin-top: 20px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #fdbb2d;
+      font-weight: bold;
+    }
+
+    .console-content {
+      line-height: 1.5;
+    }
+
+    .console-line {
+      margin: 5px 0;
+      padding-left: 10px;
+      border-left: 2px solid #3498db;
+    }
+
+    .event-delegation {
+      margin-top: 20px;
+    }
+
+    .list-container {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #list {
+      list-style: none;
+    }
+
+    #list li {
+      padding: 12px 15px;
+      margin: 8px 0;
+      background: #e9ecef;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #list li:hover {
+      background: #d0ebff;
+      transform: translateX(5px);
+    }
+
+    .explanation {
+      background: #e7f5ff;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      line-height: 1.7;
+    }
+
+    .explanation h3 {
+      color: #1a2a6c;
+      margin-bottom: 10px;
+    }
+
+    .code-block {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      margin: 15px 0;
+      overflow-x: auto;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #1a2a6c;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .btn:hover {
+      background: #0d1b4d;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-reset {
+      background: #b21f1f;
+    }
+
+    .btn-reset:hover {
+      background: #8a1919;
+    }
+
+    .btn-dispatch {
+      background: #fdbb2d;
+      color: #333;
+    }
+
+    .btn-dispatch:hover {
+      background: #e6a520;
+    }
+
+    .footer {
+      width: 100%;
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .card {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>JavaScript 事件机制详解</h1>
+      <p class="subtitle">深入理解事件传播模型：捕获阶段、目标阶段、冒泡阶段，以及高效的事件委托技术</p>
+    </header>
+
+    <div class="card">
+      <h2 class="card-title">事件传播可视化</h2>
+
+      <div class="event-flow">
+        <div class="flow-step capture">
+          <h3>捕获阶段</h3>
+          <p>事件从根元素向下传递到目标元素</p>
+          <p>父元素事件先触发</p>
+        </div>
+        <div class="flow-step target">
+          <h3>目标阶段</h3>
+          <p>事件到达目标元素</p>
+          <p>目标元素事件触发</p>
+        </div>
+        <div class="flow-step bubble">
+          <h3>冒泡阶段</h3>
+          <p>事件从目标元素向上传递</p>
+          <p>子元素事件先触发</p>
+        </div>
+      </div>
+
+      <div class="event-container">
+        <div id="parent">
+          <span class="element-label parent-label">父元素 (捕获: true/false)</span>
+          <div id="child">
+            <span class="element-label child-label">子元素 (捕获: true/false)</span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-reset" id="resetBtn">重置控制台</button>
+          <button class="btn btn-dispatch" id="dispatchBtn">dispatchEvent触发事件</button>
+        </div>
+      </div>
+
+      <div class="console">
+        <div class="console-header">
+          <span>事件控制台</span>
+          <span>执行顺序</span>
+        </div>
+        <div class="console-content" id="consoleOutput">
+          <!-- 控制台输出将在这里显示 -->
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">事件委托示例</h2>
+
+      <div class="explanation">
+        <h3>事件委托原理</h3>
+        <p>事件委托利用<span class="highlight">事件冒泡机制</span>，将事件监听器设置在父元素上，而不是每个子元素上。</p>
+        <p>当子元素触发事件时，事件会冒泡到父元素，父元素通过<span class="highlight">event.target</span>识别实际触发事件的子元素。</p>
+        <p>优势：</p>
+        <ul>
+          <li>减少事件监听器数量，提升性能</li>
+          <li>动态添加的元素无需重新绑定事件</li>
+          <li>减少内存占用</li>
+        </ul>
+      </div>
+
+      <div class="list-container">
+        <ul id="list">
+          <li>项目 1 - 点击我</li>
+          <li>项目 2 - 点击我</li>
+          <li>项目 3 - 点击我</li>
+          <li>项目 4 - 点击我</li>
+          <li>项目 5 - 点击我</li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+        // 事件委托实现代码<br>
+        document.getElementById('list').addEventListener('click', function(e) {<br>
+        &nbsp;&nbsp;if (e.target.tagName === 'LI') {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;console.log('点击的项目:', e.target.textContent);<br>
+        &nbsp;&nbsp;}<br>
+        });
+      </div>
+
+      <div class="explanation">
+        <h3>React事件机制</h3>
+        <p>React实现了<span class="highlight">合成事件系统</span>，将所有事件委托到document（v17之前）或root元素（v17+）上处理。</p>
+        <p>优势：</p>
+        <ul>
+          <li>跨浏览器一致性</li>
+          <li>自动回收事件处理器</li>
+          <li>优化性能，减少内存占用</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>JavaScript事件机制详解 | 事件捕获与冒泡 | 事件委托 | 合成事件</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const parent = document.getElementById('parent');
+      const child = document.getElementById('child');
+      const consoleOutput = document.getElementById('consoleOutput');
+      const resetBtn = document.getElementById('resetBtn');
+      const dispatchBtn = document.getElementById('dispatchBtn');
+      const list = document.getElementById('list');
+
+      // 清空控制台
+      function clearConsole() {
+        consoleOutput.innerHTML = '';
+      }
+
+      // 添加控制台日志
+      function logToConsole(message) {
+        const logEntry = document.createElement('div');
+        logEntry.className = 'console-line';
+        logEntry.textContent = message;
+        consoleOutput.appendChild(logEntry);
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+      }
+
+      // 事件监听器 - 捕获阶段 (true)
+      parent.addEventListener('click', function (e) {
+        logToConsole('父元素捕获阶段 (useCapture: true)');
+      }, true);
+
+      child.addEventListener('click', function (e) {
+        logToConsole('子元素捕获阶段 (useCapture: true)');
+      }, true);
+
+      // 事件监听器 - 冒泡阶段 (false)
+      child.addEventListener('click', function (e) {
+        logToConsole('子元素冒泡阶段 (useCapture: false)');
+      }, false);
+
+      parent.addEventListener('click', function (e) {
+        logToConsole('父元素冒泡阶段 (useCapture: false)');
+      }, false);
+
+      // 重置控制台
+      resetBtn.addEventListener('click', clearConsole);
+
+      // dispatchEvent触发事件
+      dispatchBtn.addEventListener('click', function () {
+        clearConsole();
+        logToConsole('使用 dispatchEvent 触发事件:');
+        child.dispatchEvent(new Event('click', { bubbles: true }));
+      });
+
+      // 事件委托示例
+      list.addEventListener('click', function (e) {
+        if (e.target.tagName === 'LI') {
+          const text = e.target.textContent;
+          logToConsole(`事件委托: 点击了 ${text}`);
+
+          // 添加视觉反馈
+          e.target.style.background = '#a5d8ff';
+          setTimeout(() => {
+            e.target.style.background = '';
+          }, 500);
+        }
+      });
+
+      // 初始控制台消息
+      logToConsole('点击蓝色父元素或红色子元素查看事件传播顺序');
+      logToConsole('--------------------------------------');
+    });
+  </script>
+</body>
+
+</html>
