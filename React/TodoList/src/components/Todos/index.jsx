@@ -19,9 +19,33 @@ const Todos = () =>{
       isCompleted:false
     }
   ]);
-  const addTodo = ()=>{
+  const addTodo = (title)=>{
     // setTodo 
-
+    // 数据状态是数组的时候 必须完全变化
+  setTodos([
+     ...todos,
+     {
+       id:Date.now(),
+       title,
+       isCompleted:false
+     }
+   ])
+  }
+  const onToggle = (id)=>{
+    // const newTodos = todos.map((todo)=>{
+    //   if(todo.id === id){
+    //     todo.isCompleted = !todo.isCompleted;
+    //   }
+    // })
+    // setTodos(newTodos)
+    
+    //state 是对象或数组的时候，setState 希望可以返回一个新的数组 
+    console.log(id);
+    setTodos(todos.map((todo)=>todo.id===id?{...todo,isCompleted:!todo.isCompleted}:todo))
+    // setTodos(todos.map(())
+  }
+  const onDelete = (id) =>{
+    setTodos(todos.filter((todo)=>todo.id!==id))
   }
   return (
     <div className="app">
@@ -31,6 +55,9 @@ const Todos = () =>{
       />
       <TodoList
       todos = {todos}
+      setTodos = {setTodos}
+      onToggle = {onToggle}
+      onDelete = {onDelete}
       />
     </div>
 

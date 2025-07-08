@@ -33,3 +33,37 @@
   - 移动端的重要单位 ，少用这种 px 绝对参数，
     - 移动端 宽高不定 多用 vw / vh (viewport) ,em 相对自身的 font-size 等比例 这种相对单位
     - 使用相对单位可以在所有设备上适配
+- props 组件通信
+
+  - 传递的状态
+  - 传递自定义事件
+  - 支持解构传值
+  - 编写风格
+  - 如果参数不多直接直接解构
+  - 参数多的话可以
+    const {
+    todos // todos 数据
+    ,onAddTodo // 添加 todos 数据
+    } = props;
+
+- 数据绑定
+  - 变量
+  - 数据状态
+    - data binding **数据绑定** jsx 是就是静态的
+    - {}数据绑定
+    - 数据和界面的统一
+    - 界面是有数据驱动的
+    - 重点是维护数据和界面状态的一致性
+    - 当数据发生 改变时，界面会自动更新,响应式的
+
+## vue 和 react 区别
+
+- vue 容易入门 api 文档好用
+  - 以 api 为主
+- react 框架 倾向于原生 js 入门难
+
+  - hooks? 提供好用的函数而不是 api 以 use 开头
+    vue:
+    <input v-model="name"> vue 是双向绑定的
+    react:
+    <input value={name} onChange={(e) => setName(e.target.value)} />单向绑定
