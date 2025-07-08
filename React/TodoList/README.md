@@ -1,12 +1,35 @@
-# React + Vite
+## hooks todos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- 安排一个 css 亮点
+  - stylus
+    - css 超集
+  - 拥有 vite 脚手架
+    stylus 预编译只要安装了 stylus vite 自动会自动直接编译
+    来自 vite vite 社区
+  - react 组件设计
+    - 开发任务单元
+    - 设计组件
+      - 状态
+      - 界面功能
+      - 行为
+      - 响应式
+  - 功能：
+    - 新建 todo 需要一个表单
+    - 修改 todo 列表
+    - 删除 todo
+    - 组件之间的关系
+  - 按功能划分 粒度
+    - from 表单
+    - list 列表
+      - Item 组件 便于维护 和性能
 
-Currently, two official plugins are available:
+## 样式
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 字体
+  - 设置多个，设备的支持的字体会被优先使用(对苹果设备做一个优化)
+    - 苹果字体：font-family -apple-system 前端负责用户体验，字体也是体验的一部分
+- rem
+  - 相对单位 rem 相对 根元素的 font-size
+  - 移动端的重要单位 ，少用这种 px 绝对参数，
+    - 移动端 宽高不定 多用 vw / vh (viewport) ,em 相对自身的 font-size 等比例 这种相对单位
+    - 使用相对单位可以在所有设备上适配
