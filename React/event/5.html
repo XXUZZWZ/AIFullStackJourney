@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #menu {
+      display: block;
+      position: absolute;
+      left: 50px;
+      padding: 20px;
+      top: 50px;
+      left: 50px;
+      background-color: #f2f3f2;
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="toggleBtn">toggleBtn</div>
+  <div id="menu">
+    <p>context</p>
+    <a href="http://baidu.com" id="closeInside">sfsfsfsfd</a>
+    <button id="closeInside">Don, closed</button>
+  </div>
+  <script>
+    // 我如何在页面任何处点击，都关闭这个某个元素，还不影响子元素的事件。
+    const toggleBtn = document.querySelector('#toggleBtn');
+    const menu = document.querySelector('#menu');
+    const closeInside = document.getElementById('closeInside');
+    toggleBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    })
+    document.addEventListener('click', function (event) {
+      menu.style.display = 'none';
+    })
+    closeInside.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      // 阻止冒泡 ,不让外界的点击事件生效影响
+      alert('closeInside');
+    })
+  </script>
+</body>
+
+</html>
