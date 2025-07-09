@@ -67,3 +67,64 @@
     <input v-model="name"> vue 是双向绑定的
     react:
     <input value={name} onChange={(e) => setName(e.target.value)} />单向绑定
+
+- localStorage 存储数据
+
+  - html5 储存
+    key:value
+    api
+  - localStorage.setItem('name',zff);
+  - localStorage.getItem('name');
+  - localStorage.removeItem('name');
+  - localStorage.clear();
+
+- BOM Browser Object Model 浏览器对象模型
+  - window.alert('hello world');
+  - DOM (Document Object Model) 文档对象模型
+- 本地储存
+  - localStorage 和 cookie 有什么异同
+  - http 无状态 head cookie
+  - cookie 太大 ,影响 http 性能 4kb
+  - cookie 在服务器端和服务端都可以设置
+    - 过期时间
+    - 路径 domain 隔离 某个域名下才访问
+  - localStorage 只在浏览器端
+    - todos
+    - 5~10MB
+  - IndexDB 数据库 GB
+
+## 自定义 hooks
+
+- 自定义的
+- use
+- 某一项功能
+
+  - 简单函数封装
+  - 响应式状态
+  - effect
+  - todos
+
+- 自定义 hooks
+
+  - 现代 react app 的架构的一部分
+  - hooks
+    - 自定义 hooks
+    - 框架只能能做 common 部分
+    - ahooks 业务定制
+  - 以 use 开头
+    state,effect 逻辑封装复用
+  - 可以 return 对象
+    {
+    todos,
+    addTodo,
+    removeTodo,
+    updateTodo,
+    clearCompleted,
+    }
+    函数式编程
+  - 组件更好的聚焦于模板渲染
+  - 全面 hooks 函数式编程
+
+- 两个遗憾
+  - ../../ 路径复杂 vite 配置一个短路径 vite.alias
+  - toggle 、 delete 跨越组件层级有点多，useContext 。
