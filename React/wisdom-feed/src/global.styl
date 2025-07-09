@@ -7,18 +7,17 @@
   align-items center
   justify-content center
   width 100vw
-  height 100%
+  height 100vh
   font-family serif
   font-size 28px
   background-color pink
   .text-container
       display flex
       flex-direction column
-      align-items center
-      justify-content center
       width 65%
-      height 100%
+      height 100vh
       background-color pink
+      overflow-y scroll
       scroll-snap-type y mandatory
       .text-item
         position relative
@@ -33,7 +32,7 @@
         background linear-gradient(180deg, rgb(235, 189, 161) 0%, rgb(71, 49, 32) 100%);
         border 1px solid #000
         transition all 0.5s ease-in-out
-        scroll-snap-align end
+        scroll-snap-align start
         scroll-snap-stop always
         .text
           height 60vh
