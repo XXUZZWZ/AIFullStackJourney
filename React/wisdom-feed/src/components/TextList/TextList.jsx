@@ -1,10 +1,22 @@
 const TextList = function(props){
-  const {textList} = props;
-
+  const {
+    textList,
+    onScroll,
+    currentIndex,
+  } = props;
+  
+ 
   return (
-    <div className="text-container">
+    <div 
+    className="text-container" 
+    onScroll={onScroll} 
+    >
       {textList.map((text, index) => (
-        <div key={index} className="text-item">
+        
+        <div 
+        key={index}
+        className="text-item"
+        >
           <div className="text">
             {text}
           </div>
