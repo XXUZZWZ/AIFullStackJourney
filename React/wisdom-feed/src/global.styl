@@ -2,6 +2,11 @@
   margin 0
   padding 0
 
+&::-webkit-scrollbar
+  width 0
+  scrollbar-width none
+  scrollbar-color transparent
+
 .App
   display flex
   align-items center
@@ -16,7 +21,7 @@
       flex-direction column
       width 65%
       height 100vh
-      background-color pink
+      
       overflow-y scroll
       scroll-snap-type y mandatory
       .text-item
@@ -35,7 +40,7 @@
         scroll-snap-align start
         scroll-snap-stop always
         .text
-          height 60vh
+          height 100vh
           font-size 2rem
           text-align center
           justify-content center
