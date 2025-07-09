@@ -78,8 +78,9 @@ useEffect(() => {
       let isMounted = true; // 或使用 AbortController
       const fetchData = async () => {
         try {
-          const response = await fetch(`/api/data/${id}`);
           if (!isMounted) return; // 防止在已卸载组件上设置状态
+          const response = await fetch(`/api/data/${id}`);
+          
           const data = await response.json();
           setData(data);
         } catch (error) {
