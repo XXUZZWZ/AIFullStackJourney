@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖节流</title>
+</head>
+
+<body>
+  <input type="text" id="inputA">
+  <br>
+  <br>
+  <input type="text" id="inputB">
+  <br>
+  <br>
+  <script>
+    const inputA = document.getElementById('inputA');
+    const inputB = document.getElementById('inputB');
+    // 耗时性的
+    // google suggest 搜索建议 触发太高 ，服务器直接宕机
+    // 图片懒加载 scroll + getBoundingClientRect 离视口的距离 触发频率太高
+    // 减少触发频率
+    // 没有必要那么多次触发，用户意图 单词为单位 而不是一个字母为单位，没必要监听每一个事件
+
+    // google suggest api 
+    function ajax(content) {
+      console.log('ajax request ', content);
+    }
+    // 函数都参数也是函数，我们把它叫做高阶函数
+    // 通用函数 抽象 ，fn  任何函数减少执行频率
+    function debounce(fn, delay) {
+      // let id = null;
+      return function (args) {
+        // fn 是自由变量
+        // 函数也是一等对象
+        // 给对象一个id 属性
+        // if (fn.id) {
+        //   clearTimeout(fn.id);
+        // }
+        clearTimeout(fn.id);
+        fn.id = setTimeout(() => {
+          fn(args);
+        }, delay)
+      }
+    }
+    // 利用高阶函数 将耗时函数 ->  闭包的自由变量 传入
+    // 返回一下新函数 频繁执行 
+    let debounceAjax = debounce(ajax, 200);
+    inputA.addEventListener('keyup', (e) => {
+      console.log('keyup');
+      ajax(e.target.value);
+    })
+
+    inputB.addEventListener('keyup', function (e) {
+      debounceAjax(e.target.value);
+    })
+  </script>
+</body>
+
+</html>
