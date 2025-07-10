@@ -1,58 +1,73 @@
-# React Context API 源码深度解析：从基础到精通
+# 🔥 React Context 面试必考！从源码到实战的完整攻略 | 99%的人都不知道的性能陷阱
 
-## 目录
-1. [Context API 基础概念](#context-api-基础概念)
-2. [项目实例分析](#项目实例分析)
-3. [Context 源码实现原理](#context-源码实现原理)
-4. [深度源码分析](#深度源码分析)
-5. [运行时模拟分析](#运行时模拟分析)
-6. [性能优化与最佳实践](#性能优化与最佳实践)
-7. [常见问题与解决方案](#常见问题与解决方案)
+## 📋 目录
+1. [💡 Context API 基础概念](#context-api-基础概念) - 面试官最爱问的基础知识
+2. [🛠 项目实例分析](#项目实例分析) - 手把手教你从0到1实现
+3. [🔍 Context 源码实现原理](#context-源码实现原理) - 深入React内核
+4. [⚡ 深度源码分析](#深度源码分析) - Fiber架构下的Context处理
+5. [🎯 运行时模拟分析](#运行时模拟分析) - 独家模拟器带你看透执行过程
+6. [🚀 性能优化与最佳实践](#性能优化与最佳实践) - 避开99%开发者踩过的坑
+7. [❓ 常见问题与解决方案](#常见问题与解决方案) - 面试真题实战
 
-## Context API 基础概念
+> **🎯 为什么要读这篇文章？**  
+> - **面试必备**: 腾讯、字节、阿里高频考点全覆盖  
+> - **源码级解析**: 带你看懂React内部实现机制  
+> - **性能优化**: 解决Context Hell、重渲染等常见问题  
+> - **实战导向**: 结合真实项目代码，不纸上谈兵
 
-### 什么是 Context API？
+## 💡 Context API 基础概念
+
+### 🤔 什么是 Context API？（面试官最爱问）
 
 Context API 是 React 提供的一种跨组件层级传递数据的机制，解决了"props drilling"（属性钻取）问题。
 
-**核心概念：**
-- **Context 对象**：存储共享数据的容器
+> **📝 面试题**: Context API 解决了什么问题？  
+> **标准答案**: 解决了props drilling问题，避免了通过多层组件逐级传递props，让深层嵌套的组件能够直接访问祖先组件的数据。
+
+**🔑 核心概念（必知必会）：**
+- **Context 对象**：存储共享数据的容器 
 - **Provider 组件**：提供数据的组件
 - **Consumer**：消费数据的方式（useContext Hook 或 Context.Consumer）
 
-### 基本使用模式
+> **⚠️ 面试陷阱**: 很多人分不清Provider和Consumer的区别，记住：Provider是"数据提供者"，Consumer是"数据消费者"
+
+### 📖 基本使用模式（三步走战略）
 
 ```javascript
-// 1. 创建 Context
+// 🔸 步骤1: 创建 Context
 const MyContext = createContext(defaultValue);
 
-// 2. 提供数据
+// 🔸 步骤2: 提供数据
 <MyContext.Provider value={data}>
   <ChildComponents />
 </MyContext.Provider>
 
-// 3. 消费数据
+// 🔸 步骤3: 消费数据
 const data = useContext(MyContext);
 ```
 
-## 项目实例分析
+> **💡 面试加分项**: 能说出Context的三个核心API：createContext、Provider、useContext，并解释每个的作用
 
-### 项目结构概览
+## 🛠 项目实例分析
+
+### 📁 项目结构概览（企业级项目结构）
 
 ```
 src/
-├── ThemeContext.js      # Context 创建
-├── App.jsx             # Provider 提供者
+├── ThemeContext.js      # 🎨 Context 创建（核心文件）
+├── App.jsx             # 🏠 Provider 提供者（根组件）
 ├── hooks/
-│   └── useTheme.js     # 自定义 Hook
+│   └── useTheme.js     # 🎣 自定义 Hook（封装逻辑）
 └── components/
-    ├── Page/           # 中间组件
-    └── Child/          # 消费者组件
+    ├── Page/           # 📄 中间组件（传递层）
+    └── Child/          # 👶 消费者组件（最终使用）
 ```
 
-### 代码逐步分析
+> **🎯 架构设计思路**: 这种结构体现了关注点分离原则，Context定义、Hook封装、组件使用各司其职
 
-#### 1. Context 创建（ThemeContext.js）
+### 🔍 代码逐步分析（从0到1手把手教学）
+
+#### 🎨 步骤1: Context 创建（ThemeContext.js）
 
 ```javascript
 import { createContext } from "react";
@@ -61,12 +76,15 @@ import { createContext } from "react";
 export const ThemeContext = createContext("light");
 ```
 
-**源码解析：**
+**🔬 源码解析（面试重点）：**
 `createContext` 在 React 内部会创建一个 Context 对象，包含：
 - `_currentValue`：当前值
-- `_defaultValue`：默认值
+- `_defaultValue`：默认值  
 - `Provider`：提供者组件
 - `Consumer`：消费者组件
+
+> **📝 面试题**: createContext 的默认值什么时候会被使用？  
+> **答案**: 当组件树中没有找到对应的 Provider 时，会使用默认值
 
 #### 2. Provider 提供者（App.jsx）
 
