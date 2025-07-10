@@ -30,18 +30,19 @@
         if (last && now < last + delay) {
           clearTimeout(deferTimer);
           deferTimer = setTimeout(() => {
-            last = now;
             fn.apply(that, args);
+            last = now;
           }, delay)
+
         } else {
           last = now;
           fn.apply(that, args);
         }
       }
     }
-    let throttleAjax = throttle(ajax, 8000);
+    let throttleAjax = throttle(ajax, 1000);
     inputC.addEventListener('input', function (e) {
-      console.log(e.target.value);
+
       throttleAjax(e.target.value);
       // 防止任务超载。
     })
