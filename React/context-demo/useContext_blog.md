@@ -1,363 +1,923 @@
----
-theme: hydrogen
----
-# React 状态管理 源码深度解析
+# React Context API 源码深度解析：从基础到精通
 
 ## 目录
-1. [useState Hook 基础](#useState-hook-基础)
-2. [setState 内部工作原理](#setState-内部工作原理)
-3. [源码分析](#源码分析)
-4. [最佳工程实践](#最佳工程实践)
-5. [面试常见问题](#面试常见问题)
+1. [Context API 基础概念](#context-api-基础概念)
+2. [项目实例分析](#项目实例分析)
+3. [Context 源码实现原理](#context-源码实现原理)
+4. [深度源码分析](#深度源码分析)
+5. [运行时模拟分析](#运行时模拟分析)
+6. [性能优化与最佳实践](#性能优化与最佳实践)
+7. [常见问题与解决方案](#常见问题与解决方案)
 
-## useState Hook 基础
+## Context API 基础概念
 
-### 什么是 useState？
-`useState` 是 React 提供的内置 Hook，用于在函数组件中添加状态管理功能。
+### 什么是 Context API？
+
+Context API 是 React 提供的一种跨组件层级传递数据的机制，解决了"props drilling"（属性钻取）问题。
+
+**核心概念：**
+- **Context 对象**：存储共享数据的容器
+- **Provider 组件**：提供数据的组件
+- **Consumer**：消费数据的方式（useContext Hook 或 Context.Consumer）
+
+### 基本使用模式
 
 ```javascript
-const [state, setState] = useState(initialValue);
+// 1. 创建 Context
+const MyContext = createContext(defaultValue);
+
+// 2. 提供数据
+<MyContext.Provider value={data}>
+  <ChildComponents />
+</MyContext.Provider>
+
+// 3. 消费数据
+const data = useContext(MyContext);
 ```
 
-- **参数**：`initialValue` - 状态的初始值
-- **返回值**：数组，包含当前状态值和更新状态的函数
+## 项目实例分析
 
-### 基本用法示例
+### 项目结构概览
+
+```
+src/
+├── ThemeContext.js      # Context 创建
+├── App.jsx             # Provider 提供者
+├── hooks/
+│   └── useTheme.js     # 自定义 Hook
+└── components/
+    ├── Page/           # 中间组件
+    └── Child/          # 消费者组件
+```
+
+### 代码逐步分析
+
+#### 1. Context 创建（ThemeContext.js）
 
 ```javascript
-import { useState } from 'react';
+import { createContext } from "react";
 
-function Counter() {
-  const [count, setCount] = useState(0);
+// 创建主题上下文，默认值为 "light"
+export const ThemeContext = createContext("light");
+```
+
+**源码解析：**
+`createContext` 在 React 内部会创建一个 Context 对象，包含：
+- `_currentValue`：当前值
+- `_defaultValue`：默认值
+- `Provider`：提供者组件
+- `Consumer`：消费者组件
+
+#### 2. Provider 提供者（App.jsx）
+
+```javascript
+import { useState } from 'react'
+import Page from './components/Page'
+import { ThemeContext } from './ThemeContext'
+
+function App() {
+  const [theme, setTheme] = useState("light");
+  
+  return (
+    <ThemeContext.Provider value={theme}>
+      <Page/> 
+      <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+        切换主题
+      </button>
+    </ThemeContext.Provider>
+  )
+}
+```
+
+**运行机制：**
+1. `useState` 创建响应式主题状态
+2. `Provider` 将 `theme` 值传递给所有子组件
+3. 状态更新时，所有消费者组件重新渲染
+
+#### 3. 自定义 Hook（useTheme.js）
+
+```javascript
+import { useContext } from "react";
+import { ThemeContext } from "../ThemeContext";
+
+export function useTheme() {
+  return useContext(ThemeContext);
+}
+```
+
+**设计模式分析：**
+- **封装性**：隐藏 Context 实现细节
+- **复用性**：多个组件可以复用同一逻辑
+- **类型安全**：可以添加 TypeScript 类型检查
+
+#### 4. 消费者组件
+
+**Page 组件（中间层）：**
+```javascript
+import Child from '../Child';
+import {useTheme} from '../../hooks/useTheme';
+
+const Page = () => {
+  const theme = useTheme();
+  console.log(theme);
+  
+  return (
+    <>
+      <h1 className={theme}>Page</h1>
+      <h1>{theme}</h1>
+      <Child/>
+    </>
+  )
+}
+```
+
+**Child 组件（最终消费者）：**
+```javascript
+import {useContext} from 'react';
+import { ThemeContext } from '../../ThemeContext';
+
+const Child = () => {
+  const theme = useContext(ThemeContext);
+  
+  return (
+    <div className='theme'>
+      <h1>Child {theme}</h1>
+    </div>
+  )
+}
+```
+
+## Context 源码实现原理
+
+### createContext 源码分析
+
+```javascript
+// React 源码简化版
+function createContext(defaultValue) {
+  const context = {
+    // 当前值（在没有 Provider 时使用默认值）
+    _currentValue: defaultValue,
+    _defaultValue: defaultValue,
+    
+    // Provider 和 Consumer 组件
+    Provider: null,
+    Consumer: null,
+    
+    // 调试用的显示名称
+    displayName: null,
+  };
+
+  // 创建 Provider 组件
+  context.Provider = {
+    $$typeof: REACT_PROVIDER_TYPE,
+    _context: context,
+  };
+
+  // 创建 Consumer 组件
+  context.Consumer = context;
+
+  return context;
+}
+```
+
+### Provider 组件内部实现
+
+```javascript
+// Provider 组件的简化实现
+function ContextProvider(props) {
+  const { value, children, ...otherProps } = props;
+  const context = this._context;
+  
+  // 核心：将新值推入 Context 栈
+  pushProvider(context, value);
+  
+  try {
+    // 渲染子组件
+    return children;
+  } finally {
+    // 渲染完成后恢复之前的值
+    popProvider(context);
+  }
+}
+```
+
+### useContext Hook 实现
+
+```javascript
+// useContext 的简化实现
+function useContext(context) {
+  // 获取当前 Fiber 节点
+  const dispatcher = resolveDispatcher();
+  
+  // 从 Context 栈中读取当前值
+  return dispatcher.useContext(context);
+}
+
+function useContextImpl(context) {
+  // 获取当前组件的 Fiber 节点
+  const currentFiber = getCurrentFiber();
+  
+  // 查找最近的 Provider
+  const value = readContext(context, currentFiber);
+  
+  return value;
+}
+```
+
+## 深度源码分析
+
+### 1. Context 值的传递机制
+
+React 使用 **栈结构** 来管理 Context 值的传递：
+
+```javascript
+// Context 栈管理（简化）
+const valueStack = [];
+let index = -1;
+
+function pushProvider(context, nextValue) {
+  index++;
+  valueStack[index] = context._currentValue;
+  context._currentValue = nextValue;
+}
+
+function popProvider(context) {
+  const currentValue = valueStack[index];
+  index--;
+  context._currentValue = currentValue;
+}
+```
+
+**运行过程模拟：**
+
+```javascript
+// 初始状态
+ThemeContext._currentValue = "light" // 默认值
+
+// App 组件渲染时
+pushProvider(ThemeContext, "dark");
+// 现在 ThemeContext._currentValue = "dark"
+
+// Page 组件调用 useContext(ThemeContext)
+// 返回 "dark"
+
+// Child 组件调用 useContext(ThemeContext)  
+// 返回 "dark"
+
+// App 组件渲染完成
+popProvider(ThemeContext);
+// 恢复 ThemeContext._currentValue = "light"
+```
+
+### 2. Fiber 架构中的 Context 处理
+
+在 React Fiber 架构中，Context 的处理更加复杂：
+
+```javascript
+// Fiber 节点中的 Context 相关字段
+const FiberNode = {
+  // ...其他字段
+  
+  // Context 相关
+  dependencies: null,     // 依赖的 Context 列表
+  contextDependencies: null, // Context 依赖链表
+  
+  // 更新相关
+  lanes: 0,              // 优先级车道
+  childLanes: 0,         // 子树优先级
+};
+```
+
+### 3. Context 变化检测机制
+
+```javascript
+// Context 变化检测（简化版）
+function propagateContextChange(workInProgress, context, changedBits) {
+  let fiber = workInProgress.child;
+  
+  while (fiber !== null) {
+    // 检查当前 fiber 是否依赖了变化的 context
+    if (fiber.dependencies !== null) {
+      const dependency = fiber.dependencies.firstContext;
+      
+      while (dependency !== null) {
+        if (dependency.context === context) {
+          // 标记需要更新
+          scheduleWorkOnFiber(fiber, currentTime, Sync);
+          break;
+        }
+        dependency = dependency.next;
+      }
+    }
+    
+    // 继续遍历子树
+    fiber = fiber.sibling;
+  }
+}
+```
+
+## 运行时模拟分析
+
+### 完整的渲染流程模拟
+
+让我们通过一个完整的例子来模拟 Context 的运行过程：
+
+```javascript
+// 模拟器 - Context 运行时状态
+class ContextSimulator {
+  constructor() {
+    this.contextStack = [];
+    this.fiberTree = null;
+    this.currentFiber = null;
+  }
+  
+  // 模拟 createContext
+  createContext(defaultValue) {
+    return {
+      _currentValue: defaultValue,
+      _defaultValue: defaultValue,
+      _subscribers: new Set(),
+    };
+  }
+  
+  // 模拟 Provider 渲染
+  renderProvider(context, value, renderChildren) {
+    console.log(`📦 Provider 开始: 推入值 "${value}"`);
+    
+    // 保存旧值
+    const oldValue = context._currentValue;
+    this.contextStack.push({ context, oldValue });
+    
+    // 设置新值
+    context._currentValue = value;
+    
+    // 渲染子组件
+    const result = renderChildren();
+    
+    // 恢复旧值
+    context._currentValue = oldValue;
+    this.contextStack.pop();
+    
+    console.log(`📦 Provider 结束: 恢复值 "${oldValue}"`);
+    return result;
+  }
+  
+  // 模拟 useContext
+  useContext(context) {
+    const value = context._currentValue;
+    console.log(`🔍 useContext 调用: 获取值 "${value}"`);
+    
+    // 记录依赖关系
+    if (this.currentFiber) {
+      this.currentFiber.contextDependencies.add(context);
+    }
+    
+    return value;
+  }
+}
+
+// 使用模拟器
+const simulator = new ContextSimulator();
+const ThemeContext = simulator.createContext("light");
+
+console.log("=== 开始渲染应用 ===");
+
+// 模拟 App 组件渲染
+function App() {
+  const theme = "dark"; // 假设状态是 dark
+  
+  return simulator.renderProvider(ThemeContext, theme, () => {
+    // 模拟 Page 组件
+    function Page() {
+      const theme = simulator.useContext(ThemeContext);
+      console.log(`📄 Page 组件渲染，主题: ${theme}`);
+      
+      // 模拟 Child 组件
+      function Child() {
+        const theme = simulator.useContext(ThemeContext);
+        console.log(`👶 Child 组件渲染，主题: ${theme}`);
+        return `Child with ${theme} theme`;
+      }
+      
+      return Child();
+    }
+    
+    return Page();
+  });
+}
+
+App();
+```
+
+**输出结果：**
+```
+=== 开始渲染应用 ===
+📦 Provider 开始: 推入值 "dark"
+🔍 useContext 调用: 获取值 "dark"
+📄 Page 组件渲染，主题: dark
+🔍 useContext 调用: 获取值 "dark"
+👶 Child 组件渲染，主题: dark
+📦 Provider 结束: 恢复值 "light"
+```
+
+### 状态更新时的重渲染模拟
+
+```javascript
+// 模拟状态更新导致的重渲染
+class ReactScheduler {
+  constructor() {
+    this.updateQueue = [];
+    this.isScheduled = false;
+  }
+  
+  scheduleUpdate(component, newState) {
+    console.log(`⏰ 调度更新: ${component.name} -> ${JSON.stringify(newState)}`);
+    
+    this.updateQueue.push({ component, newState });
+    
+    if (!this.isScheduled) {
+      this.isScheduled = true;
+      // 模拟异步调度
+      Promise.resolve().then(() => this.flushUpdates());
+    }
+  }
+  
+  flushUpdates() {
+    console.log(`🚀 执行批量更新，队列长度: ${this.updateQueue.length}`);
+    
+    while (this.updateQueue.length > 0) {
+      const { component, newState } = this.updateQueue.shift();
+      component.state = { ...component.state, ...newState };
+      
+      // 触发重渲染
+      this.rerenderComponent(component);
+    }
+    
+    this.isScheduled = false;
+  }
+  
+  rerenderComponent(component) {
+    console.log(`🔄 重新渲染组件: ${component.name}`);
+    
+    // 检查 Context 消费者是否需要更新
+    if (component.contextDependencies) {
+      component.contextDependencies.forEach(context => {
+        console.log(`📡 检测到 Context 变化，通知消费者`);
+      });
+    }
+  }
+}
+```
+
+### 性能优化机制模拟
+
+```javascript
+// 模拟 Context 的优化机制
+class ContextOptimizer {
+  
+  // 模拟浅比较优化
+  shouldContextUpdate(oldValue, newValue) {
+    const shouldUpdate = !Object.is(oldValue, newValue);
+    
+    console.log(`🔍 Context 值比较:`, {
+      oldValue,
+      newValue, 
+      shouldUpdate
+    });
+    
+    return shouldUpdate;
+  }
+  
+  // 模拟 bail out 优化
+  canBailOut(fiber, context) {
+    // 如果组件没有使用这个 Context，可以跳过更新
+    const hasContextDependency = fiber.contextDependencies?.has(context);
+    
+    console.log(`⚡ Bail out 检查:`, {
+      componentName: fiber.type.name,
+      hasContextDependency,
+      canSkip: !hasContextDependency
+    });
+    
+    return !hasContextDependency;
+  }
+  
+  // 模拟 memo 组件的优化
+  shouldMemoComponentUpdate(props, context) {
+    // memo 组件会阻止因 Context 变化导致的更新
+    // 除非显式依赖了 Context
+    
+    console.log(`🧠 Memo 组件更新检查:`, {
+      propsChanged: false, // 假设 props 没变
+      contextChanged: true, // Context 变了
+      willUpdate: false    // memo 阻止了更新
+    });
+    
+    return false;
+  }
+}
+```
+
+## 性能优化与最佳实践
+
+### 1. Context 拆分策略
+
+```javascript
+// ❌ 不好的做法：单一巨大的 Context
+const AppContext = createContext({
+  user: null,
+  theme: 'light',
+  language: 'en',
+  settings: {},
+  notifications: []
+});
+
+// ✅ 好的做法：按功能拆分 Context
+const UserContext = createContext(null);
+const ThemeContext = createContext('light');
+const LanguageContext = createContext('en');
+const SettingsContext = createContext({});
+```
+
+**原因分析：**
+- 单一 Context 的任何变化都会导致所有消费者重渲染
+- 拆分后只有相关消费者会重渲染
+
+### 2. 使用 useMemo 优化 Provider 值
+
+```javascript
+// ❌ 问题代码：每次渲染都创建新对象
+function App() {
+  const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState('light');
+  
+  return (
+    <AppContext.Provider value={{ user, theme, setUser, setTheme }}>
+      <Components />
+    </AppContext.Provider>
+  );
+}
+
+// ✅ 优化后：使用 useMemo 缓存 value
+function App() {
+  const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState('light');
+  
+  const contextValue = useMemo(() => ({
+    user,
+    theme,
+    setUser,
+    setTheme
+  }), [user, theme]);
+  
+  return (
+    <AppContext.Provider value={contextValue}>
+      <Components />
+    </AppContext.Provider>
+  );
+}
+```
+
+### 3. 自定义 Hook 封装最佳实践
+
+```javascript
+// 完整的自定义 Hook 实现
+function useTheme() {
+  const context = useContext(ThemeContext);
+  
+  // 错误边界检查
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  
+  return context;
+}
+
+// 带选择器的优化版本
+function useThemeSelector(selector) {
+  const theme = useTheme();
+  
+  // 使用 useMemo 避免不必要的计算
+  return useMemo(() => selector(theme), [theme, selector]);
+}
+
+// 使用示例
+function Component() {
+  // 只关心主题颜色，不关心其他属性
+  const primaryColor = useThemeSelector(theme => theme.colors.primary);
+  
+  return <div style={{ color: primaryColor }}>Hello</div>;
+}
+```
+
+### 4. Provider 组件的最佳实践
+
+```javascript
+// 完整的 Provider 实现
+function ThemeProvider({ children, initialTheme = 'light' }) {
+  const [theme, setTheme] = useState(initialTheme);
+  const [isDarkMode, setIsDarkMode] = useState(initialTheme === 'dark');
+  
+  // 复杂逻辑的 reducer 管理
+  const [state, dispatch] = useReducer(themeReducer, {
+    theme,
+    isDarkMode,
+    colors: getThemeColors(theme),
+    fonts: getThemeFonts(theme)
+  });
+  
+  // 派生状态计算
+  const derivedValues = useMemo(() => ({
+    isLightMode: !state.isDarkMode,
+    contrastRatio: calculateContrastRatio(state.colors),
+    accessibility: getAccessibilitySettings(state)
+  }), [state.isDarkMode, state.colors]);
+  
+  // 动作函数
+  const actions = useMemo(() => ({
+    toggleTheme: () => dispatch({ type: 'TOGGLE_THEME' }),
+    setTheme: (newTheme) => dispatch({ type: 'SET_THEME', payload: newTheme }),
+    setCustomColors: (colors) => dispatch({ type: 'SET_COLORS', payload: colors })
+  }), []);
+  
+  // Context 值
+  const value = useMemo(() => ({
+    ...state,
+    ...derivedValues,
+    ...actions
+  }), [state, derivedValues, actions]);
+  
+  // 副作用：主题变化时更新 CSS 变量
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    Object.entries(state.colors).forEach(([key, value]) => {
+      root.style.setProperty(`--color-${key}`, value);
+    });
+  }, [state.colors]);
+  
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+```
+
+## 常见问题与解决方案
+
+### 1. Context Hell 问题
+
+**问题：**
+```javascript
+// Context Hell - 过多的 Provider 嵌套
+<UserProvider>
+  <ThemeProvider>
+    <LanguageProvider>
+      <SettingsProvider>
+        <NotificationProvider>
+          <App />
+        </NotificationProvider>
+      </SettingsProvider>
+    </LanguageProvider>
+  </ThemeProvider>
+</UserProvider>
+```
+
+**解决方案：**
+```javascript
+// 创建复合 Provider
+function AppProviders({ children }) {
+  return (
+    <UserProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <SettingsProvider>
+            <NotificationProvider>
+              {children}
+            </NotificationProvider>
+          </SettingsProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </UserProvider>
+  );
+}
+
+// 或者使用 Provider 组合器
+function composeProviders(...providers) {
+  return ({ children }) => {
+    return providers.reduceRight(
+      (acc, Provider) => <Provider>{acc}</Provider>,
+      children
+    );
+  };
+}
+
+const CombinedProvider = composeProviders(
+  UserProvider,
+  ThemeProvider,
+  LanguageProvider
+);
+```
+
+### 2. Context 更新导致的性能问题
+
+**问题诊断工具：**
+```javascript
+// Context 性能监控 Hook
+function useContextPerformance(contextName, value) {
+  const renderCount = useRef(0);
+  const lastValue = useRef(value);
+  
+  useEffect(() => {
+    renderCount.current++;
+    
+    if (!Object.is(lastValue.current, value)) {
+      console.log(`🔄 Context "${contextName}" 更新:`, {
+        渲染次数: renderCount.current,
+        旧值: lastValue.current,
+        新值: value,
+        变化原因: getChangeReason(lastValue.current, value)
+      });
+      
+      lastValue.current = value;
+    }
+  });
+  
+  useEffect(() => {
+    return () => {
+      console.log(`📊 Context "${contextName}" 性能统计:`, {
+        总渲染次数: renderCount.current,
+        平均渲染时间: getAverageRenderTime()
+      });
+    };
+  }, []);
+}
+
+function getChangeReason(oldValue, newValue) {
+  if (typeof oldValue === 'object' && typeof newValue === 'object') {
+    const changedKeys = Object.keys(newValue).filter(
+      key => !Object.is(oldValue[key], newValue[key])
+    );
+    return `对象属性变化: ${changedKeys.join(', ')}`;
+  }
+  return '值类型变化';
+}
+```
+
+### 3. 条件渲染中的 Context 问题
+
+**问题：**
+```javascript
+// 问题：Context Provider 被条件渲染
+function App() {
+  const [showTheme, setShowTheme] = useState(false);
   
   return (
     <div>
-      <p>当前计数: {count}</p>
-      <button onClick={() => setCount(count + 1)}>
-        增加
-      </button>
+      {showTheme && (
+        <ThemeProvider>
+          <Component />
+        </ThemeProvider>
+      )}
     </div>
   );
 }
 ```
 
-## setState 内部工作原理
-
-### 1. 批处理机制（Batching）
-
-React 会将多个 setState 调用合并为一次更新，以提高性能：
-
+**解决方案：**
 ```javascript
-// 这些调用会被合并为一次更新
-setCount(count + 1);
-setCount(count + 1);
-setCount(count + 1);
-// 结果：count 只会增加 1，不是 3
-```
+// 解决方案：始终保持 Provider，通过 disabled 状态控制
+function App() {
+  const [showTheme, setShowTheme] = useState(false);
+  
+  return (
+    <ThemeProvider disabled={!showTheme}>
+      <Component />
+    </ThemeProvider>
+  );
+}
 
-### 2. 函数式更新
-
-为了确保每次更新都基于最新的状态值，使用函数式更新：
-
-```javascript
-// 推荐：函数式更新
-setCount(prevCount => prevCount + 1);
-setCount(prevCount => prevCount + 1);
-setCount(prevCount => prevCount + 1);
-// 结果：count 会增加 3
-```
-
-### 3. 异步特性
-
-setState 是异步的，不会立即更新状态：
-
-```javascript
-const handleClick = () => {
-  setCount(count + 1);
-  console.log(count); // 输出旧值，不是更新后的值
-};
-```
-
-## 源码分析
-
-### 1. useState 的实现原理
-
-在 React 源码中，`useState` 实际上是 `useReducer` 的特殊情况：
-
-```javascript
-// 简化版源码逻辑
-function useState(initialState) {
-  return useReducer(
-    (state, action) => {
-      return typeof action === 'function' ? action(state) : action;
-    },
-    initialState
+function ThemeProvider({ children, disabled = false }) {
+  const defaultValue = useMemo(() => ({ disabled }), [disabled]);
+  
+  return (
+    <ThemeContext.Provider value={disabled ? defaultValue : realValue}>
+      {children}
+    </ThemeContext.Provider>
   );
 }
 ```
 
-### 2. 更新队列机制
-
-React 使用更新队列来管理状态更新：
+### 4. Context 在服务端渲染中的问题
 
 ```javascript
-// 更新队列的处理逻辑（简化版）
-let update = pendingQueue;
-while (update !== null) {
-  const action = update.action;
-  newState = typeof action === 'function' 
-    ? action(newState) 
-    : action;
-  update = update.next;
-}
-```
-
-### 3. Fiber 架构中的状态更新
-
-- **调度阶段**：React 决定何时执行更新
-- **协调阶段**：计算组件树的变化
-- **提交阶段**：将变化应用到 DOM
-
-### 4. 优先级机制
-
-React 为不同类型的更新分配不同的优先级：
-
-```javascript
-// 用户交互（点击、输入）- 高优先级
-// 数据获取 - 中优先级  
-// 定时器 - 低优先级
-```
-
-## 最佳工程实践
-
-### 1. 合理使用函数式更新
-
-```javascript
-// ✅ 好的做法
-const increment = () => {
-  setCount(prevCount => prevCount + 1);
-};
-
-// ❌ 避免的做法
-const increment = () => {
-  setCount(count + 1);
-};
-```
-
-### 2. 避免在渲染过程中调用 setState
-
-```javascript
-// ❌ 错误：会导致无限循环
-function Component() {
-  const [count, setCount] = useState(0);
+// SSR 兼容的 Context Provider
+function SSRCompatibleProvider({ children }) {
+  const [isClient, setIsClient] = useState(false);
   
-  setCount(count + 1); // 不要在渲染中直接调用
-  
-  return <div>{count}</div>;
-}
-
-// ✅ 正确：在事件处理或副作用中调用
-function Component() {
-  const [count, setCount] = useState(0);
-  
+  // 确保客户端和服务端渲染一致
   useEffect(() => {
-    // 在副作用中调用
-    setCount(1);
+    setIsClient(true);
   }, []);
   
-  return <div>{count}</div>;
+  const value = useMemo(() => ({
+    isClient,
+    // 只在客户端可用的功能
+    localStorage: isClient ? window.localStorage : null,
+    sessionStorage: isClient ? window.sessionStorage : null
+  }), [isClient]);
+  
+  return (
+    <SSRContext.Provider value={value}>
+      {children}
+    </SSRContext.Provider>
+  );
 }
 ```
 
-### 3. 状态结构设计
+## 高级模式与扩展
+
+### 1. Context 与 Suspense 结合
 
 ```javascript
-// ✅ 好的做法：扁平化状态结构
-const [user, setUser] = useState({ name: '', age: 0 });
-const [posts, setPosts] = useState([]);
+// 异步 Context 模式
+function AsyncDataProvider({ children }) {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  
+  // 使用 Suspense 处理异步数据
+  const suspenseData = useMemo(() => {
+    if (error) throw error;
+    if (!data) throw fetchData().then(setData).catch(setError);
+    return data;
+  }, [data, error]);
+  
+  return (
+    <DataContext.Provider value={suspenseData}>
+      <Suspense fallback={<Loading />}>
+        {children}
+      </Suspense>
+    </DataContext.Provider>
+  );
+}
+```
 
-// ❌ 避免：过度嵌套
-const [data, setData] = useState({
-  user: { profile: { name: '', age: 0 } },
-  posts: []
+### 2. Context 状态机模式
+
+```javascript
+// 使用状态机管理复杂 Context 状态
+import { createMachine, interpret } from 'xstate';
+
+const themeMachine = createMachine({
+  id: 'theme',
+  initial: 'light',
+  states: {
+    light: {
+      on: { TOGGLE: 'dark', SET_AUTO: 'auto' }
+    },
+    dark: {
+      on: { TOGGLE: 'light', SET_AUTO: 'auto' }
+    },
+    auto: {
+      on: { TOGGLE: 'light', SET_MANUAL: 'light' }
+    }
+  }
 });
-```
 
-### 4. 使用 useCallback 优化性能
-
-```javascript
-const memoizedCallback = useCallback(() => {
-  setCount(prevCount => prevCount + 1);
-}, []); // 空依赖数组，回调不会重新创建
-```
-
-### 5. 大型状态管理
-
-对于复杂状态，考虑使用 useReducer：
-
-```javascript
-const initialState = { count: 0, name: '' };
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return { ...state, count: state.count + 1 };
-    case 'setName':
-      return { ...state, name: action.payload };
-    default:
-      return state;
-  }
-}
-
-const [state, dispatch] = useReducer(reducer, initialState);
-```
-
-## 面试常见问题
-
-### Q1: setState 是同步还是异步的？
-
-**答案**：setState 本质上是异步的，但在不同情况下表现不同：
-
-- **React 18 之前**：在事件处理函数中是异步的，在 setTimeout、Promise 等原生事件中是同步的
-- **React 18 之后**：通过 Automatic Batching，所有更新都是异步批处理的
-
-```javascript
-// React 18
-function handleClick() {
-  setCount(count + 1);
-  console.log(count); // 输出旧值
+function ThemeStateMachineProvider({ children }) {
+  const [state, send] = useReducer(themeMachine.transition, themeMachine.initialState);
   
-  setTimeout(() => {
-    setCount(count + 1);
-    console.log(count); // 仍然输出旧值（React 18 的改进）React18 前 setTimeout 是同步的输出
-  }, 0);
-}
-```
-
-### Q2: 为什么多次调用 setState 只更新一次？
-
-**答案**：React 的批处理机制会合并多个 setState 调用：
-
-```javascript
-// 这些调用会被合并
-setCount(count + 1); // count: 0 -> 1
-setCount(count + 1); // count: 0 -> 1 (基于旧值)
-setCount(count + 1); // count: 0 -> 1 (基于旧值)
-// 最终结果：count = 1
-
-// 解决方案：使用函数式更新
-setCount(prev => prev + 1); // 0 -> 1
-setCount(prev => prev + 1); // 1 -> 2  
-setCount(prev => prev + 1); // 2 -> 3
-// 最终结果：count = 3
-```
-
-### Q3: React 如何检测状态变化？
-
-**答案**：React 使用 `Object.is()` 比较新旧状态：
-
-```javascript
-// 浅比较
-const [user, setUser] = useState({ name: 'John' });
-
-// ❌ 不会触发更新（相同引用）
-user.name = 'Jane';
-setUser(user);
-
-// ✅ 会触发更新（新对象）
-setUser({ ...user, name: 'Jane' });
-```
-
-### Q4: 如何在 setState 后获取最新状态？
-
-**答案**：使用 useEffect 监听状态变化：
-
-```javascript
-const [count, setCount] = useState(0);
-
-useEffect(() => {
-  console.log('最新的 count:', count);
-}, [count]);
-
-const handleClick = () => {
-  setCount(count + 1);
-  // 这里的 count 还是旧值
-};
-```
-
-### Q5: useState 的初始值什么时候计算？
-
-**答案**：只在组件首次渲染时计算一次：
-
-```javascript
-// ❌ 每次渲染都会执行 expensive calculation
-const [data, setData] = useState(expensiveCalculation());
-
-// ✅ 只在首次渲染时执行
-const [data, setData] = useState(() => expensiveCalculation());
-```
-
-### Q6: 如何正确更新对象和数组状态？
-
-**答案**：始终创建新的对象/数组：
-
-```javascript
-// 更新对象
-const [user, setUser] = useState({ name: 'John', age: 30 });
-setUser(prevUser => ({ ...prevUser, age: 31 }));
-
-// 更新数组
-const [items, setItems] = useState([1, 2, 3]);
-setItems(prevItems => [...prevItems, 4]); // 添加
-setItems(prevItems => prevItems.filter(item => item !== 2)); // 删除
-```
-
-### Q7: React 18 的并发特性如何影响 setState？
-
-**答案**：React 18 引入了并发渲染和自动批处理：
-
-- **并发渲染**：React 可以暂停、恢复或放弃渲染工作
-- **自动批处理**：所有状态更新都会被批处理，无论在哪里调用
-- **Suspense 边界**：可以在数据加载时显示 fallback UI
-
-```javascript
-// React 18 中，这些都会被批处理
-function handleClick() {
-  setCount(count + 1);
-  setName('new name');
+  const value = useMemo(() => ({
+    theme: state.value,
+    toggleTheme: () => send('TOGGLE'),
+    setAutoTheme: () => send('SET_AUTO'),
+    isAuto: state.matches('auto')
+  }), [state]);
   
-  fetch('/api').then(() => {
-    setData(newData); // 也会被批处理
-  });
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
-```
-
-### Q8: 如何避免无限循环？
-
-**答案**：正确使用依赖数组和条件判断：
-
-```javascript
-// ❌ 会导致无限循环
-useEffect(() => {
-  setCount(count + 1);
-}); // 缺少依赖数组
-
-// ✅ 正确的做法
-useEffect(() => {
-  if (someCondition) {
-    setCount(count + 1);
-  }
-}, [someCondition]); // 正确的依赖
 ```
 
 ## 总结
 
-理解 React setState 的工作原理对于编写高效的 React 应用至关重要。关键要点：
+React Context API 是一个强大但需要谨慎使用的特性。通过深入理解其源码实现和运行机制，我们可以：
 
-1. **异步批处理**：React 会合并多个更新以提高性能
-2. **函数式更新**：确保基于最新状态值进行更新
-3. **浅比较**：React 使用 Object.is() 检测状态变化
-4. **性能优化**：合理使用 useCallback、useMemo 等优化手段
-5. **最佳实践**：保持状态结构简单、避免副作用、正确处理异步更新
+1. **正确使用**：避免常见的性能陷阱和反模式
+2. **合理设计**：构建可维护、高性能的状态管理方案
+3. **调试优化**：快速定位和解决 Context 相关问题
+4. **扩展应用**：结合其他 React 特性构建复杂应用
 
-通过深入理解这些概念，你可以更好地构建可维护、高性能的 React 应用。
+**关键要点回顾：**
+
+- **理解机制**：Context 通过栈结构管理值的传递
+- **性能优化**：合理拆分 Context，使用 useMemo 缓存值
+- **最佳实践**：封装自定义 Hook，提供错误边界
+- **避免陷阱**：防止 Context Hell，注意条件渲染问题
+- **高级模式**：结合 Suspense、状态机等构建复杂应用
+
+通过本文的深入分析，相信你已经掌握了 React Context API 的精髓，能够在实际项目中灵活运用这一强大的特性。
