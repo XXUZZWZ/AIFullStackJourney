@@ -30,9 +30,9 @@
         if (last && now < last + delay) {
           clearTimeout(deferTimer);
           deferTimer = setTimeout(() => {
-            last = now;
             fn.apply(that, args);
           }, delay)
+          last = now;
         } else {
           last = now;
           fn.apply(that, args);
