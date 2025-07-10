@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖节流</title>
+</head>
+
+<body>
+  <input type="text" id="inputC">
+  <script>
+    let inputC = document.getElementById('inputC');
+
+    const ajax = (text) => {
+      console.log('ajax请求', text);
+      // 模拟 ajax 请求
+      // 实际上可以使用 fetch 或者 XMLHttpRequest 来发送请求
+    }
+    const throttle = function (fn, delay) {
+      let last = null;
+      //上一次的执行时间
+      let deferTimer = null;
+      // 定时器的id
+
+      return function () {
+        let args = arguments;
+        let that = this;// 闭包的运用场景。
+        let now = + new Date(); //类型转换
+        if (last && now < last + delay) {
+          clearTimeout(deferTimer);
+          deferTimer = setTimeout(() => {
+            last = now;
+            fn.apply(that, args);
+          }, delay)
+        } else {
+          last = now;
+          fn.apply(that, args);
+        }
+      }
+    }
+    let throttleAjax = throttle(ajax, 8000);
+    inputC.addEventListener('input', function (e) {
+      console.log(e.target.value);
+      throttleAjax(e.target.value);
+      // 防止任务超载。
+    })
+  </script>
+</body>
+
+</html>

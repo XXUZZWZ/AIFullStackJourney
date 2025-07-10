@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>私有属性和方法和封装</title>
+</head>
+
+<body>
+  <script>
+    function Book(title, author, year) {
+      // 对内的 私有属性
+      // 对外 的 公有属性
+      let _title = title;// 约定_varname 为私有属性 内部有利与可读性的编程风格。
+      let _author = author;
+      let _year = year;
+      this.getTitle = function () {
+        return _title;
+      }
+      // 私有的
+      function getFullTitle() {
+        return `${_title} by ${_author}`;
+      }
+      this.getFullInfo = function () {
+        return getFullTitle() + `, published in ${_year}`;
+      }
+      this.getAuthor = function () {
+        return _author;
+      }
+      this.getYear = function () {
+        return _year;
+      }
+      // 类的开发者和使用者，可能是两拨人。
+      // 大型项目防止后续的使用者错误使用。
+      this.updateYear = function (newYear) {
+        if (typeof newYear === 'number' && !isNaN(newYear) && newYear > 0) {
+          _year = newYear;
+        } else {
+          console.error('|||Invalid year|||');
+
+        }
+      }
+    }
+    const book = new Book('JavaScript高级程序设计', 'Ni', 1949);
+    const Info = book.getFullInfo();
+    console.log(Info);
+    book.updateYear(2018);
+    book.updateYear('invalid year'); // Invalid year
+    console.log(book.getFullInfo());
+
+  </script>
+</body>
+
+</html>

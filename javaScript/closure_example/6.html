@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      /* 新增：实现自动换行 */
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script " style="display: block;">
+    const person = {
+      name: "Allen",
+      sayHello: function () {
+        let that = this;
+        setTimeout(() => {
+          console.log(`Hello, my name is ${this.name}`);
+        }, 1000);
+        setTimeout(function () {
+          console.log(`Hello, my name is ${this.name}`);
+        }, 1000);
+        setTimeout(function () {
+          console.log(`Hello, my name is ${that.name}`);
+        }, 1000);
+        setTimeout(function () {
+          console.log(`Hello, my name is ${this.name}`);
+        }.bind(this), 1000);
+      }
+    }
+    person.sayHello();
+  </script>
+</body>
+
+</html>

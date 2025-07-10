@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闭包的事件监听</title>
+</head>
+
+<body>
+  <button id="myButton">myButton</button>
+  <script>
+    const obj = {
+      message: 'Hello, World!',
+      init: function () {
+        const button = document.getElementById('myButton');
+        const that = this;
+        button.addEventListener('click', (e) => {
+          console.log("this.message", this.message);
+          console.log("that.message", that.message);
+        })
+      }
+    }
+    obj.init();
+  </script>
+</body>
+
+</html>

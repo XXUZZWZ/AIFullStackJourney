@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IIFE</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      /* 新增：实现自动换行 */
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script" style="display: block;">
+    const Counter = (function () {
+      let count = 0;    // 自由变量  私有
+      function increment() {
+        count++;
+      }
+      function reset() {
+        count = 0;
+      }
+      return function () {
+        return {
+          getCount: function () {
+            return count;
+          },
+          increment,
+          reset,
+        }
+      }
+    })()
+    const firEx = Counter();
+    const secEx = Counter();
+
+    console.log(firEx.getCount()); // 0
+    firEx.increment();
+    firEx.increment();
+    firEx.increment();
+
+    console.log(secEx.getCount()); // 0
+  </script>
+</body>
+
+</html>
