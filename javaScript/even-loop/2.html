@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      /* 新增：实现自动换行 */
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    你好
+  </div>
+  <script class="script">
+    // even loop 是js的执行机制，也是代码的执行的开始。
+    // html 是第一个块级格式化上下文。
+    const target = document.createElement('div');
+    const observer = new MutationObserver(() => {
+      console.log('微任务  MutationObserver callback executed');
+    });
+    observer.observe(target, {
+      attributes: true,
+      childList: true,
+      subtree: true
+    })
+    target.setAttribute('data-set', '123');
+    target.setAttribute('style', 'background-color: red;')
+    target.appendChild(document.createElement('span'));
+    document.body.appendChild(target);
+  </script>
+</body>
+
+</html>

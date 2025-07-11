@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微任务</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script">
+    console.log("同步:script start");
+    // 在渲染前执行,批量更新dom ,cssom 的改变
+    // 然后把结果给渲染的下一个过程。
+    queueMicrotask(() => {
+      // dom 更新了但是不是渲染完了？？？？
+      // offetHeight 是获取渲染后的高度 getBoundingClientRect() ,scrollHeight 是获取内容的高度。
+      // 当我们获取dom的offsetHeight的时候，会立即触发浏览器的渲染流程的重新绘制，重新排列。
+      console.log("微任务:queueMicrotask");
+    })
+    console.log("同步:script end");
+
+  </script>
+</body>
+
+</html>
