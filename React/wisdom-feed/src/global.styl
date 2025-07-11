@@ -1,13 +1,21 @@
 *
   margin 0
   padding 0
+  box-sizing border-box
 
+html, body
+  touch-action: manipulation
+  -ms-touch-action: manipulation
 &::-webkit-scrollbar
   width 0
   scrollbar-width none
   scrollbar-color transparent
 
+
 .App
+  touch-action: none
+  -ms-touch-action: none
+  position fixed
   display flex
   align-items center
   justify-content center
@@ -17,6 +25,7 @@
   font-size 28px
   background-color pink
   .text-container
+      margin-top 19vh
       display flex
       flex-direction column
       width 65%
@@ -35,7 +44,7 @@
         justify-content center
         color #f6f3a3
         background linear-gradient(180deg, rgb(235, 189, 161) 0%, rgb(71, 49, 32) 100%);
-        border 1px solid #000
+        borer 1px solid #000
         transition all 0.5s ease-in-out
         scroll-snap-align start
         scroll-snap-stop always
@@ -44,4 +53,16 @@
           font-size 2rem
           text-align center
           justify-content center
-          
+
+
+.nav-list
+    position fixed
+    top: 0
+    left: 0
+    margin 0
+    margin-bottom 89vh
+    width 100vw
+    height 9.5vh
+    background-color #297183
+    display  flex
+    justify-content space-around
