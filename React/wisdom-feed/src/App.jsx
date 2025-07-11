@@ -1,10 +1,11 @@
 import { 
   useEffect,
    useState,
-   useRef, } from 'react'
+   useRef, 
+  } from 'react'
 import TextList from './components/TextList/TextList'
-
-
+import { UserIdContext} from    './Context/UserIdContext'
+import NavList from './components/NavList/NavList'
 function App() {
 
   const [textList, setTextList] = useState([
@@ -17,6 +18,7 @@ function App() {
 
   const [loading,setLoading] = useState(false)
   
+  const [userId, setUserId] = useState("12345"); // Example userId, replace with actual logic to fetch userId
 
   const [currentIndex, setCurrentIndex] = useState(0);
  
@@ -43,13 +45,17 @@ function App() {
   }, [loading])
 
   return (
-    <div className="App">
+   <UserIdContext.Provider value = {userId}>
+     <div className="App">
+     <NavList/>
      <TextList
      textList={textList}
      onScroll={handleScroll}
      currentIndex={currentIndex}
      />
+    
     </div>
+   </UserIdContext.Provider>
   )
 }
 
