@@ -1,10 +1,13 @@
+import useUserId from "../../hooks/useUserId";
+
 const TextList = function(props){
   const {
     textList,
     onScroll,
     currentIndex,
   } = props;
-  
+
+const userId = useUserId(); // Using the custom hook to get userId
  
   return (
     <div 
@@ -19,6 +22,7 @@ const TextList = function(props){
         >
           <div className="text">
             {text}
+            {userId}
           </div>
         </div>
 ))}
