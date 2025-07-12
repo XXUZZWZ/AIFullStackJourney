@@ -128,6 +128,18 @@
             border-radius: 6px;
             padding: 10px;
             border: 1px dashed #dee2e6;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .queue-items.receiving-task {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+        }
+
+        .queue-items.sending-task {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
         }
 
         .task-item {
@@ -137,9 +149,11 @@
             margin: 5px 0;
             border-radius: 6px;
             font-size: 0.9rem;
-            animation: slideIn 0.3s ease-out;
             position: relative;
             overflow: hidden;
+            transform: translateX(0);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform, opacity;
         }
 
         .task-item::before {
@@ -154,24 +168,75 @@
         }
 
         .task-item.executing {
-            animation: pulse 1s infinite;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+            animation: executeGlow 1.5s infinite;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.7);
+            transform: scale(1.02);
+        }
+
+        .task-item.moving {
+            animation: taskMove 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10;
+        }
+
+        .task-item.fade-out {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+
+        .task-item.slide-in {
+            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes slideIn {
             from {
-                transform: translateX(-20px);
+                transform: translateX(-30px) scale(0.8);
                 opacity: 0;
             }
             to {
-                transform: translateX(0);
+                transform: translateX(0) scale(1);
                 opacity: 1;
             }
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes executeGlow {
+            0%, 100% { 
+                transform: scale(1.02);
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.7);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(102, 126, 234, 0.9);
+            }
+        }
+
+        @keyframes taskMove {
+            0% {
+                transform: translateX(0) scale(1);
+            }
+            25% {
+                transform: translateX(20px) scale(1.1);
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+            }
+            75% {
+                transform: translateX(-10px) scale(1.05);
+            }
+            100% {
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
         }
 
         @keyframes shimmer {
@@ -257,6 +322,53 @@
             60% { transform: translateY(-5px); }
         }
 
+        .queue-container.highlight {
+            animation: queueHighlight 0.5s ease-in-out;
+        }
+
+        @keyframes queueHighlight {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(102, 126, 234, 0);
+            }
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+            }
+        }
+
+        .transfer-animation {
+            position: absolute;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .transfer-animation.active {
+            animation: transferTask 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes transferTask {
+            0% {
+                opacity: 1;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+
         .thread-transfer {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -271,17 +383,66 @@
             padding: 15px;
             text-align: center;
             min-height: 120px;
+            position: relative;
+            overflow: hidden;
         }
 
         .thread-box.active {
             border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-            animation: threadActive 1s infinite;
+            background: rgba(102, 126, 234, 0.15);
+            animation: threadActive 2s infinite;
+            transform: scale(1.02);
+        }
+
+        .thread-box.processing {
+            animation: threadProcessing 1s ease-in-out infinite;
+        }
+
+        .thread-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .thread-box.active::before {
+            opacity: 1;
+            animation: threadGlow 2s infinite;
+        }
+
+        @keyframes threadGlow {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.05) rotate(180deg);
+            }
         }
 
         @keyframes threadActive {
-            0%, 100% { box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+                border-color: #667eea;
+            }
+            50% { 
+                box-shadow: 0 0 25px rgba(102, 126, 234, 0.8);
+                border-color: #4c51bf;
+            }
+        }
+
+        @keyframes threadProcessing {
+            0%, 100% {
+                transform: scale(1.02);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .thread-box h4 {

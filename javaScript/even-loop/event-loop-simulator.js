@@ -64,43 +64,81 @@ class EventLoopSimulator {
     }
 
     updateDisplay() {
-        this.renderQueue('call-stack', this.callStack);
-        this.renderQueue('microtask-queue', this.microtaskQueue);
-        this.renderQueue('macrotask-queue', this.macrotaskQueue);
-        this.renderQueue('event-queue', this.eventQueue);
-        this.renderQueue('render-queue', this.renderQueue);
-        this.renderQueue('timer-tasks', this.timerTasks);
-        this.renderQueue('network-tasks', this.networkTasks);
-        this.renderQueue('event-tasks', this.eventTasks);
+        requestAnimationFrame(() => {
+            this.renderQueue('call-stack', this.callStack);
+            this.renderQueue('microtask-queue', this.microtaskQueue);
+            this.renderQueue('macrotask-queue', this.macrotaskQueue);
+            this.renderQueue('event-queue', this.eventQueue);
+            this.renderQueue('render-queue', this.renderQueue);
+            this.renderQueue('timer-tasks', this.timerTasks);
+            this.renderQueue('network-tasks', this.networkTasks);
+            this.renderQueue('event-tasks', this.eventTasks);
+        });
     }
 
     renderQueue(elementId, queue) {
         const element = this.elements[elementId.replace('-', '')];
         if (!element) return;
         
-        element.innerHTML = '';
+        const existingTasks = Array.from(element.querySelectorAll('.task-item'));
+        const newTaskIds = queue.map(task => task.id);
+        
+        existingTasks.forEach(taskElement => {
+            const taskId = parseInt(taskElement.getAttribute('data-task-id'));
+            if (!newTaskIds.includes(taskId)) {
+                taskElement.classList.add('fade-out');
+                setTimeout(() => {
+                    if (taskElement.parentNode) {
+                        taskElement.parentNode.removeChild(taskElement);
+                    }
+                }, 300);
+            }
+        });
+        
         queue.forEach((task, index) => {
-            const taskElement = document.createElement('div');
-            taskElement.className = 'task-item';
-            taskElement.textContent = task.name;
+            let taskElement = element.querySelector(`[data-task-id="${task.id}"]`);
+            
+            if (!taskElement) {
+                taskElement = document.createElement('div');
+                taskElement.className = 'task-item slide-in';
+                taskElement.textContent = task.name;
+                taskElement.setAttribute('data-task-id', task.id);
+                element.appendChild(taskElement);
+                
+                setTimeout(() => {
+                    taskElement.classList.remove('slide-in');
+                }, 500);
+            }
             
             if (index === queue.length - 1 && elementId === 'call-stack') {
                 taskElement.classList.add('executing');
+            } else {
+                taskElement.classList.remove('executing');
             }
-            
-            element.appendChild(taskElement);
         });
         
-        if (queue.length === 0) {
+        if (queue.length === 0 && !element.querySelector('.placeholder')) {
             const placeholder = document.createElement('div');
+            placeholder.className = 'placeholder';
             placeholder.style.cssText = 'text-align: center; color: #6c757d; font-style: italic; padding: 20px;';
             placeholder.textContent = '队列为空';
             element.appendChild(placeholder);
+        } else if (queue.length > 0) {
+            const placeholder = element.querySelector('.placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
         }
     }
 
     async addSyncTask() {
         const task = this.createTask('同步任务', 'sync', 'console.log("执行同步任务");');
+        
+        this.elements.callStack.classList.add('highlight');
+        setTimeout(() => {
+            this.elements.callStack.classList.remove('highlight');
+        }, 500);
+        
         this.callStack.push(task);
         this.log(`添加同步任务: ${task.name}`);
         this.updateCodeDisplay(task.code);
@@ -114,6 +152,12 @@ class EventLoopSimulator {
     async addPromise() {
         const task = this.createTask('Promise.then', 'sync', 
             'Promise.resolve().then(() => console.log("微任务执行"));');
+        
+        this.elements.callStack.classList.add('highlight');
+        setTimeout(() => {
+            this.elements.callStack.classList.remove('highlight');
+        }, 500);
+        
         this.callStack.push(task);
         this.log(`添加 Promise 任务: ${task.name}`);
         this.updateCodeDisplay(task.code);
@@ -121,6 +165,12 @@ class EventLoopSimulator {
         
         setTimeout(() => {
             const microtask = this.createTask('Promise回调', 'microtask');
+            
+            this.elements.microtaskQueue.classList.add('highlight');
+            setTimeout(() => {
+                this.elements.microtaskQueue.classList.remove('highlight');
+            }, 500);
+            
             this.microtaskQueue.push(microtask);
             this.log(`微任务进入队列: ${microtask.name}`);
             this.updateDisplay();
@@ -135,6 +185,12 @@ class EventLoopSimulator {
         const delay = Math.floor(Math.random() * 3 + 1) * 1000;
         const task = this.createTask('setTimeout', 'sync', 
             `setTimeout(() => console.log("定时器执行"), ${delay});`);
+        
+        this.elements.callStack.classList.add('highlight');
+        setTimeout(() => {
+            this.elements.callStack.classList.remove('highlight');
+        }, 500);
+        
         this.callStack.push(task);
         this.log(`添加 setTimeout 任务: ${task.name}`);
         this.updateCodeDisplay(task.code);
@@ -150,6 +206,12 @@ class EventLoopSimulator {
             setTimeout(() => {
                 this.timerTasks = this.timerTasks.filter(t => t.id !== timerTask.id);
                 const macrotask = this.createTask('Timer回调', 'macrotask');
+                
+                this.elements.macrotaskQueue.classList.add('highlight');
+                setTimeout(() => {
+                    this.elements.macrotaskQueue.classList.remove('highlight');
+                }, 500);
+                
                 this.macrotaskQueue.push(macrotask);
                 this.log(`定时器完成，宏任务进入队列: ${macrotask.name}`);
                 this.updateDisplay();
@@ -165,6 +227,12 @@ class EventLoopSimulator {
     async addFetch() {
         const task = this.createTask('fetch请求', 'sync', 
             'fetch("/api/data").then(response => console.log("网络请求完成"));');
+        
+        this.elements.callStack.classList.add('highlight');
+        setTimeout(() => {
+            this.elements.callStack.classList.remove('highlight');
+        }, 500);
+        
         this.callStack.push(task);
         this.log(`添加 Fetch 任务: ${task.name}`);
         this.updateCodeDisplay(task.code);
@@ -180,6 +248,12 @@ class EventLoopSimulator {
             setTimeout(() => {
                 this.networkTasks = this.networkTasks.filter(t => t.id !== networkTask.id);
                 const microtask = this.createTask('Fetch回调', 'microtask');
+                
+                this.elements.microtaskQueue.classList.add('highlight');
+                setTimeout(() => {
+                    this.elements.microtaskQueue.classList.remove('highlight');
+                }, 500);
+                
                 this.microtaskQueue.push(microtask);
                 this.log(`网络请求完成，微任务进入队列: ${microtask.name}`);
                 this.updateDisplay();
@@ -195,14 +269,58 @@ class EventLoopSimulator {
     highlightThread(threadType) {
         const threadElement = this.elements[`${threadType}Thread`];
         if (threadElement) {
-            threadElement.classList.add('active');
+            threadElement.classList.add('active', 'processing');
         }
     }
 
     removeThreadHighlight(threadType) {
         const threadElement = this.elements[`${threadType}Thread`];
         if (threadElement) {
-            threadElement.classList.remove('active');
+            threadElement.classList.remove('active', 'processing');
+        }
+    }
+
+    highlightQueueTransfer(sourceElement, targetElement) {
+        sourceElement.classList.add('sending-task');
+        targetElement.classList.add('receiving-task');
+        
+        setTimeout(() => {
+            sourceElement.classList.remove('sending-task');
+            targetElement.classList.remove('receiving-task');
+        }, 1000);
+    }
+
+    async animateTaskTransfer(sourceElement, targetElement, taskName) {
+        const sourceRect = sourceElement.getBoundingClientRect();
+        const targetRect = targetElement.getBoundingClientRect();
+        
+        const transferElement = document.createElement('div');
+        transferElement.className = 'transfer-animation';
+        transferElement.textContent = taskName;
+        transferElement.style.position = 'fixed';
+        transferElement.style.left = sourceRect.left + sourceRect.width/2 + 'px';
+        transferElement.style.top = sourceRect.top + sourceRect.height/2 + 'px';
+        transferElement.style.transform = 'translate(-50%, -50%)';
+        transferElement.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        
+        document.body.appendChild(transferElement);
+        
+        requestAnimationFrame(() => {
+            transferElement.classList.add('active');
+            transferElement.style.left = targetRect.left + targetRect.width/2 + 'px';
+            transferElement.style.top = targetRect.top + targetRect.height/2 + 'px';
+        });
+        
+        await this.sleep(800);
+        
+        if (transferElement.parentNode) {
+            transferElement.style.opacity = '0';
+            transferElement.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            setTimeout(() => {
+                if (transferElement.parentNode) {
+                    transferElement.parentNode.removeChild(transferElement);
+                }
+            }, 200);
         }
     }
 
@@ -249,12 +367,24 @@ class EventLoopSimulator {
     async executeNextTask() {
         if (this.callStack.length === 0) return;
         
-        const task = this.callStack.pop();
+        const task = this.callStack[this.callStack.length - 1];
+        const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
+        
+        if (taskElement) {
+            taskElement.classList.add('executing');
+        }
+        
         this.log(`执行: ${task.name}`);
         this.updateDisplay();
         
         await this.sleep(800);
         
+        if (taskElement) {
+            taskElement.classList.add('fade-out');
+            await this.sleep(500);
+        }
+        
+        this.callStack.pop();
         this.log(`完成: ${task.name}`);
         this.updateDisplay();
     }
@@ -262,7 +392,19 @@ class EventLoopSimulator {
     async executeMicrotask() {
         if (this.microtaskQueue.length === 0) return;
         
-        const task = this.microtaskQueue.shift();
+        const task = this.microtaskQueue[0];
+        const sourceElement = this.elements.microtaskQueue;
+        const targetElement = this.elements.callStack;
+        
+        this.highlightQueueTransfer(sourceElement, targetElement);
+        
+        await this.animateTaskTransfer(
+            sourceElement, 
+            targetElement, 
+            task.name
+        );
+        
+        this.microtaskQueue.shift();
         this.callStack.push(task);
         this.log(`微任务进入执行栈: ${task.name}`);
         this.updateDisplay();
@@ -273,14 +415,33 @@ class EventLoopSimulator {
 
     async executeMacrotask() {
         let task = null;
+        let sourceElement = null;
         
         if (this.macrotaskQueue.length > 0) {
-            task = this.macrotaskQueue.shift();
+            task = this.macrotaskQueue[0];
+            sourceElement = this.elements.macrotaskQueue;
         } else if (this.eventQueue.length > 0) {
-            task = this.eventQueue.shift();
+            task = this.eventQueue[0];
+            sourceElement = this.elements.eventQueue;
         }
         
-        if (task) {
+        if (task && sourceElement) {
+            const targetElement = this.elements.callStack;
+            
+            this.highlightQueueTransfer(sourceElement, targetElement);
+            
+            await this.animateTaskTransfer(
+                sourceElement, 
+                targetElement, 
+                task.name
+            );
+            
+            if (this.macrotaskQueue.length > 0) {
+                this.macrotaskQueue.shift();
+            } else {
+                this.eventQueue.shift();
+            }
+            
             this.callStack.push(task);
             this.log(`宏任务进入执行栈: ${task.name}`);
             this.updateDisplay();
@@ -293,12 +454,26 @@ class EventLoopSimulator {
     async executeRenderTask() {
         if (this.renderQueue.length === 0) return;
         
-        const task = this.renderQueue.shift();
+        const task = this.renderQueue[0];
+        const taskElement = document.querySelector(`[data-task-id="${task.id}"]`);
+        
+        if (taskElement) {
+            taskElement.classList.add('executing');
+        }
+        
         this.log(`执行渲染任务: ${task.name}`);
         this.updateDisplay();
         
         await this.sleep(1000);
+        
+        if (taskElement) {
+            taskElement.classList.add('fade-out');
+            await this.sleep(500);
+        }
+        
+        this.renderQueue.shift();
         this.log(`渲染完成: ${task.name}`);
+        this.updateDisplay();
     }
 
     pauseExecution() {
@@ -319,6 +494,42 @@ class EventLoopSimulator {
         this.isRunning = false;
         this.isPaused = false;
         this.statusLog = [];
+        
+        const allQueueElements = [
+            this.elements.callStack,
+            this.elements.microtaskQueue, 
+            this.elements.macrotaskQueue,
+            this.elements.eventQueue,
+            this.elements.renderQueue,
+            this.elements.timerTasks,
+            this.elements.networkTasks,
+            this.elements.eventTasks
+        ];
+        
+        allQueueElements.forEach(element => {
+            if (element) {
+                element.classList.remove('highlight', 'receiving-task', 'sending-task');
+            }
+        });
+        
+        const threadElements = [
+            this.elements.timerThread,
+            this.elements.networkThread,
+            this.elements.eventThread
+        ];
+        
+        threadElements.forEach(element => {
+            if (element) {
+                element.classList.remove('active', 'processing');
+            }
+        });
+        
+        const transferElements = document.querySelectorAll('.transfer-animation');
+        transferElements.forEach(element => {
+            if (element.parentNode) {
+                element.parentNode.removeChild(element);
+            }
+        });
         
         this.updateDisplay();
         this.updateStatusDisplay();
