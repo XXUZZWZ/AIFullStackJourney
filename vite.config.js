@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"), // 确保别名指向 src 目录
+      "@": path.resolve(__dirname, "src"), // 使用 __dirname 更加简洁
     },
   },
 });
