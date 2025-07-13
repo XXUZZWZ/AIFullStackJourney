@@ -1,0 +1,119 @@
+{
+  "/home/AIFullStackJourney/cladue/mini-claude-code-v2": {
+    "languages": {
+      "javascript": 2218,
+      "markdown": 95,
+      "typescript": 956,
+      "json": 100,
+      "html": 2
+    },
+    "frameworks": [
+      {
+        "name": "react",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "vue",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "angular",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "express",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "next",
+        "confidence": 0.3,
+        "score": 3
+      }
+    ],
+    "packageManager": "npm",
+    "totalFiles": 5592,
+    "codeFiles": 3371,
+    "structure": {
+      "hasTests": true,
+      "hasDocs": false,
+      "hasConfig": false,
+      "hasSource": true,
+      "commonDirs": [
+        "bin",
+        "examples",
+        "lib",
+        "node_modules",
+        "test",
+        "tools"
+      ]
+    },
+    "lastAccessed": "2025-07-13T18:46:09.191Z",
+    "lastUsedCommands": [
+      "read",
+      "generate",
+      "chat"
+    ],
+    "preferredFramework": "React",
+    "codeStyle": "ES6+",
+    "testingFramework": "Jest"
+  },
+  "/home/AIFullStackJourney/cladue/mini-claude-code-v3": {
+    "languages": {
+      "javascript": 2227,
+      "markdown": 95,
+      "typescript": 956,
+      "json": 100,
+      "html": 2
+    },
+    "frameworks": [
+      {
+        "name": "react",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "vue",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "angular",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "express",
+        "confidence": 0.3,
+        "score": 3
+      },
+      {
+        "name": "next",
+        "confidence": 0.3,
+        "score": 3
+      }
+    ],
+    "packageManager": "npm",
+    "totalFiles": 5601,
+    "codeFiles": 3380,
+    "structure": {
+      "hasTests": true,
+      "hasDocs": false,
+      "hasConfig": false,
+      "hasSource": true,
+      "commonDirs": [
+        "bin",
+        "error-test-files",
+        "examples",
+        "lib",
+        "node_modules",
+        "test",
+        "tools"
+      ]
+    },
+    "lastAccessed": "2025-07-13T19:27:44.783Z"
+  }
+}
