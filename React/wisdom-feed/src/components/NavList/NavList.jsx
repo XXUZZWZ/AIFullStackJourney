@@ -1,4 +1,4 @@
-import  useUserId  from "@/hooks/useUserId";
+import  useUserId  from "../../hooks/useUserId";
 
 const NavList = () =>{
   const userId = useUserId(); // Accessing userId from context

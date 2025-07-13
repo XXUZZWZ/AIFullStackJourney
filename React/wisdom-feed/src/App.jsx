@@ -3,6 +3,11 @@ import {
    useState,
    useRef, 
   } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+}from react-router-dom
 import TextList from './components/TextList/TextList'
 import { UserIdContext} from    './Context/UserIdContext'
 import NavList from './components/NavList/NavList'
