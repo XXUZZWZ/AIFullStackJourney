@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +34,7 @@
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .header p {
@@ -52,7 +53,9 @@
             background: white;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: visible;
             position: relative;
             overflow: visible;
         }
@@ -61,7 +64,7 @@
             background: white;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             height: fit-content;
         }
 
@@ -369,7 +372,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn:active {
@@ -398,9 +401,74 @@
         }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .queue-container.highlight {
+            animation: queueHighlight 0.5s ease-in-out;
+        }
+
+        @keyframes queueHighlight {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 rgba(102, 126, 234, 0);
+            }
+
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+            }
+        }
+
+        .transfer-animation {
+            position: absolute;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .transfer-animation.active {
+            animation: transferTask 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes transferTask {
+            0% {
+                opacity: 1;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
         }
 
         .queue-container.highlight {
@@ -535,7 +603,7 @@
             background: white;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .code-example h3 {
@@ -564,17 +632,18 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
-            
+
             .thread-section {
                 grid-template-columns: 1fr;
             }
-            
+
             .thread-transfer {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -691,4 +760,5 @@
 
     <script src="event-loop-simulator.js"></script>
 </body>
+
 </html>

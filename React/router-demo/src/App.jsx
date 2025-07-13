@@ -5,10 +5,7 @@ import {
 } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
-import { lazy, Suspense } from 'react'
-
-const Home = lazy(() => import('./pages/Home'))
-const About = lazy(() => import('./pages/About'))
+import UserProfile from './pages/UserProfile'
 
 function App() {
 
@@ -16,12 +13,10 @@ function App() {
     <>
       {/* 前端路由接管一切，配置 */}
       <Router>
-        <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
           </Routes>
-        </Suspense>
       </Router>
     </>
   )
