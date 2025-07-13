@@ -1,0 +1,28 @@
+[
+  {
+    "id": "conv_1752432381603_6ejslt",
+    "sessionId": "session_1752432361026_oe7xlcwgt",
+    "timestamp": "2025-07-13T18:46:21.603Z",
+    "userInput": "什么是React组件的生命周期？",
+    "aiResponse": "React组件的生命周期分为三个阶段：  \n1. **挂载阶段**：`constructor`初始化状态，`render`渲染UI，`componentDidMount`在DOM加载后执行（如API请求）。  \n2. **更新阶段**：`shouldComponentUpdate`决定是否重新渲染，`render`更新UI，`componentDidUpdate`在更新后执行副作用。  \n3. **卸载阶段**：`componentWillUnmount`清理资源（如定时器）。  \n函数组件用`useEffect`替代生命周期，通过依赖项控制执行时机。  \n\n（注：React 16.3+已弃用部分旧生命周期，如`componentWillMount`。）",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v2",
+      "language": "javascript",
+      "framework": "react",
+      "commandType": "demo"
+    }
+  },
+  {
+    "id": "conv_1752432391468_9688pt",
+    "sessionId": "session_1752432361026_oe7xlcwgt",
+    "timestamp": "2025-07-13T18:46:31.468Z",
+    "userInput": "刚才的React组件如何添加状态管理？",
+    "aiResponse": "在函数组件中使用`useState`添加状态管理：\n\n```javascript\nimport { useState } from 'react';\n\nfunction Welcome({ name }) {\n  const [count, setCount] = useState(0);\n  return <h1 onClick={() => setCount(c => c+1)}>Hello, {name}! 点击次数: {count}</h1>;\n}\n```\n\n这样组件就具备了点击计数的状态功能。",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v2",
+      "language": "javascript",
+      "framework": "react",
+      "commandType": "integrated_demo"
+    }
+  }
+]
