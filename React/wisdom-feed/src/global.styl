@@ -1,3 +1,26 @@
+// ======================
+// 抖音网页版色彩系统 (深色模式为主)
+// ======================
+$brand-primary = #ff0050
+$brand-secondary = #00f2ea
+$brand-gradient = linear-gradient(45deg, $brand-primary, $brand-secondary)
+
+$bg-dark = #121212
+$bg-card = #1e1e1e
+$bg-hover = #2a2a2a
+$divider = #3d3d3d
+
+$text-primary = #ffffff
+$text-secondary = #b3b3b3
+$text-disabled = #707070
+
+$radius-md = 8px
+$shadow-sm = 0 2px 8px rgba(0, 0, 0, 0.25)
+$shadow-brand = 0 0 12px rgba(255, 0, 80, 0.4)
+
+// ======================
+// 全局样式调整
+// ======================
 *
   margin 0
   padding 0
@@ -6,11 +29,14 @@
 html, body
   touch-action: manipulation
   -ms-touch-action: manipulation
+  background $bg-dark
+  color $text-primary
+  font-family "PingFang SC", "Microsoft YaHei", sans-serif
+
 &::-webkit-scrollbar
   width 0
   scrollbar-width none
   scrollbar-color transparent
-
 
 .App
   touch-action: none
@@ -21,48 +47,76 @@ html, body
   justify-content center
   width 100vw
   height 100vh
-  font-family serif
   font-size 28px
-  background-color pink
+  background $bg-dark
   .text-container
-      margin-top 19vh
+    margin-top 19vh
+    display flex
+    flex-direction column
+    width 65%
+    height 100vh
+    overflow auto
+    overflow-y scroll
+    scroll-snap-type y mandatory
+    background $bg-card
+    border-radius $radius-md
+    box-shadow $shadow-sm
+    .text-item
+      position relative
+      justify-content center
+      align-content center
       display flex
       flex-direction column
-      width 65%
+      justify-content center
+      align-items center
+      width 100%
       height 100vh
-      
-      overflow-y scroll
-      scroll-snap-type y mandatory
-      .text-item
-        position relative
+      font-weight 700
+      text-align center
+      color $text-primary
+      background $brand-gradient
+      border 1px solid $divider
+      transition all 0.5s ease-in-out
+      scroll-snap-align start
+      scroll-snap-stop always
+      &:hover
+        transform scale(1.02)
+        box-shadow $shadow-brand
+      .text
+        height 100vh
+        display flex
         justify-content center
-        align-content center
-        width 100%
-        height 100vh 
-        font-weight 700
+        align-items center
+        text-align center
+        font-size 2rem
         text-align center
         justify-content center
-        color #f6f3a3
-        background linear-gradient(180deg, rgb(235, 189, 161) 0%, rgb(71, 49, 32) 100%);
-        borer 1px solid #000
-        transition all 0.5s ease-in-out
-        scroll-snap-align start
-        scroll-snap-stop always
-        .text
-          height 100vh
-          font-size 2rem
-          text-align center
-          justify-content center
-
 
 .nav-list
-    position fixed
-    top: 0
-    left: 0
-    margin 0
-    margin-bottom 89vh
-    width 100vw
-    height 9.5vh
-    background-color #297183
-    display  flex
-    justify-content space-around
+  position fixed
+  top 0
+  left 0
+  margin 0
+  margin-bottom 89vh
+  width 100vw
+  height 9.5vh
+  background $bg-hover
+  display flex
+  justify-content space-around
+  align-items center
+  border-bottom 1px solid $divider
+  box-shadow $shadow-sm
+  z-index 10
+
+  .nav-item
+    color $text-primary
+    font-size 1.2rem
+    font-weight 600
+    padding 0.5rem 1rem
+    border-radius $radius-md
+    transition all 0.3s ease-in-out
+    cursor pointer
+    &:hover
+      background $brand-primary
+      color $text-secondary
+      transform scale(1.05)
