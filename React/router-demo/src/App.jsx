@@ -6,7 +6,9 @@ import {
 import Home from './pages/Home'
 import About from './pages/About'
 import UserProfile from './pages/UserProfile'
-
+import NewProducts from './pages/Products/NewProducts'
+import ProductDetail  from './pages/Products/ProductDetail'
+import Products from './pages/Products'
 function App() {
 
   return (
@@ -15,7 +17,13 @@ function App() {
       <Router>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/user/:id" element={<UserProfile />} />
+            <Route path="/products" element={<Products />}>
+              <Route path=":new" element={<NewProducts />} />
+              <Route path=":productId" element={<ProductDetail />} />
+            </Route>
           </Routes>
       </Router>
     </>
