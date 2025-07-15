@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PagesThr</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 锚链接 -->
+  <a name="top">锚链接</a>
+  <h1>Navigation</h1>
+  <ul>
+    <li><a href="#home">#home</a></li>
+    <li><a href="#about">#about</a></li>
+    <li><a href="#contact">#contact</a></li>
+  </ul>
+  <div id="content-container" class="content">
+    Welcome to container
+    <div class="box" style="height: 200vh;background-color: #2da845;">
+    </div>
+    <a href="#top">回到顶部</a>
+  </div>
+  <script class="script">
+    const content = document.querySelector('content-container')
+    const divEle = document.querySelector('.box')
+    console.log(divEle.computedStyleMap
+    )
+    window.addEventListener('hashchange', () => {
+      console.log(window.location.hash);
+      switch (window.location.hash) {
+        case "#home": divEle.innerHTML = "welcome to home"
+          break;
+        case "#about": divEle.innerHTML = "welcome to about"
+          break;
+        case "#contact": divEle.innerHTML = "welcome to content"
+          break;
+        default: divEle.innerHTML = "404 not found"
+      }
+    })
+  </script>
+</body>
+
+</html>
