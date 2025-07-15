@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闭包-单例模式</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script class="script">
+    // 回到函数
+    // 自由变量(不被垃圾回收)
+    function StorageBase() {
+
+    }
+    StorageBase.prototype.getItem = (key) => {
+      return localStorage.getItem(key)
+    }
+    StorageBase.prototype.setItem = (key, value) => {
+      localStorage.setItem(key, value)
+    }
+    // 不能new 
+    console.log(new StorageBase() === new StorageBase());
+
+    // IIFE + 闭包 实现
+    const Storage = (function () {
+      let instance = null;
+      return function () {
+        if (!instance) {
+          instance = new StorageBase();
+        }
+        return instance;
+        // 自由变量 ，闭包引用的对象仍然是同一个，所以new 的对象返回值相等
+      }
+    })()
+    console.log(new Storage() === new Storage)
+    Storage().setItem("name", '刘福洲')
+    console.log(Storage().getItem('name'));
+  </script>
+</body>
+
+</html>

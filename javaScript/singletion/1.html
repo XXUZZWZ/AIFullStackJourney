@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单例模式</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script">
+    /**
+     * Storage 是本地存储类
+     * 单例模式
+     * getInstance 静态方法
+     * @func getItem(key) 获取本地储存的值
+     * @func setItem(key,value) 设置本地储存的值 
+    */
+
+
+    // 函数+prototype 实现单例模式 可以完成类
+    // 原型式的
+    // js的原型式的 ，灵活，优雅
+    // 面向对象都不用学
+    // JAVA C++ 不能理解
+    // es6 为了兼容企业级开发，拥抱更多开发者 推出了class关键字
+
+    // 单例的  ， 性能好
+    // 把new 的功能去掉，拿到对象的实例呢？？？？
+    // static  静态方法 属于类的方法 ，不用实例化
+    // public 属于实例的方法
+
+    class Storage {
+      // 静态方法
+      // 静态属性
+      // es6 class 语法糖
+      // Storage 对象 instance
+      static instance;
+      static getInstance = () => {
+        // 返回一个实例
+        // 如果实例化过 返回之前的
+        if (!Storage.instance) {
+          Storage.instance = new Storage();
+        }
+        return Storage.instance;
+      }
+
+
+      constructor() {
+        console.log(this, "||||||");
+      }
+      getItem(key) {
+        return localStorage.getItem(key);
+      }
+      setItem(key, value) {
+        try {
+          localStorage.setItem(key, value);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+    }
+    const storage1 = new Storage();
+    const storage2 = new Storage();
+    // 
+    // 引用 
+    // es6 class 构建类本质还是原型式的，class语法糖
+
+    console.log("storage1 === storage2:", storage1 === storage2)
+    // 单例模式目标是把这里变成true
+    // 如何让这里的class只会实例化一次。
+    // 1. 全局对象
+    // 静态方法
+    
+    const storage11 = Storage.getInstance();
+    const storage22 = Storage.getInstance();
+    console.log("storage11===storage22", storage11 === storage22)
+    storage11.setItem("name", "卢老板")
+    const name = storage22.getItem("name");
+    console.log(name);
+    // 为啥要做这个抽象，因为只有前端知道localstorage
+
+
+  </script>
+</body>
+
+</html>
