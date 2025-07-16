@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="list"></div>
+  <script class="script">
+    const items = [
+      {
+        id: 1,
+        title: '标题1',
+        content: '内容1'
+      },
+      {
+        id: 2,
+        title: '标题2',
+        content: '内容'
+      }
+    ]
+    const Container = document.getElementById('list');
+    console.log(Container);
+    const oDiv = document.createElement('div');
+    const fragment = document.createDocumentFragment();
+    items.forEach(item => {
+      const wrapper = document.createElement('div');
+      const title = document.createElement('h3');
+      const desc = document.createElement('p');
+      title.textContent = item.title;
+      desc.textContent = item.content;
+      wrapper.appendChild(title);
+      wrapper.appendChild(desc);
+      fragment.appendChild(wrapper);
+    })
+    // 批量更新，减少重排重绘
+    Container.appendChild(fragment);
+
+  </script>
+</body>
+
+</html>

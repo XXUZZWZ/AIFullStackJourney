@@ -32,3 +32,4 @@ setItem(key,value),和 getItem(key)
     - 推迟到第一次用的时候
     - 以后再加载，就加载之前的复用。
     - 单例
+ 
