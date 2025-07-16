@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单例模式 Modal 登陆弹窗</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    #modal {
+      height: 200px;
+      width: 200px;
+      line-height: 200px;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #1d8f69;
+      border: 1px solid #4765dc;
+      text-align: center;
+      transition: all 1s;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button id="open">打开弹窗</button>
+  <button id="close">关闭弹窗</button>
+  <button id="open2">打开弹窗2</button>
+  <script class="script">
+    // DOM js 来加载弹窗,推迟加载到第一次。
+    // 单例模式
+    const Modal = (() => {
+      let modal = null;
+      return function () {
+        if (!modal) {// 只执行一下和唯一一次
+          modal = document.createElement('div');
+          modal.innerHTML = `
+          我是一个全局唯一的modal
+          `
+          modal.id = 'modal';
+          modal.style.display = "none";
+          document.body.appendChild(modal);
+        } else {
+          return modal;
+        }
+      }
+    })()
+    document.getElementById('open').addEventListener('click', function (e) {
+      const modal = new Modal();
+      modal.style.display = "block";
+      e.preventDefault();
+      e.stopPropagation();
+    })
+    document.getElementById('close').addEventListener('click', function () {
+      modal = new Modal();// 因为是单例所以不会再实例化，所以可以直接new。
+      // 我们确保一定new Modal()拿到的是同一个
+      modal.style.display = "none";
+    })
+    document.getElementById('open2').addEventListener('click', function (e) {
+      const modal = new Modal();
+      modal.style.display = "block";
+      e.preventDefault();
+      e.stopPropagation();
+    })
+    document.querySelector('body').addEventListener('click', function (e) {
+
+      modal.style.display = "none";
+
+    }, false)
+    modal.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    })
+  </script>
+</body>
+
+</html>

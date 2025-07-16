@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Loop 演示</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .log { margin: 10px 0; padding: 8px; background: #f0f0f0; border-left: 4px solid #3498db; }
+    </style>
+</head>
+<body>
+    <h1>Event Loop 执行顺序演示</h1>
+    <button onclick="startDemo()">开始演示</button>
+    <div id="output"></div>
+
+    <script>
+        function log(text) {
+            const output = document.getElementById('output');
+            const div = document.createElement('div');
+            div.className = 'log';
+            div.textContent = text;
+            output.appendChild(div);
+        }
+
+        function startDemo() {
+            // 清空之前的日志
+            document.getElementById('output').innerHTML = '';
+
+            // 宏任务：setTimeout
+            setTimeout(() => {
+                log('宏任务：setTimeout 回调执行');
+            }, 0);
+
+            // 微任务：Promise.then
+            Promise.resolve().then(() => {
+                log('微任务：Promise.then 回调执行');
+            });
+
+            // 同步任务
+            log('同步任务：脚本直接执行');
+        }
+    </script>
+</body>
+</html>
