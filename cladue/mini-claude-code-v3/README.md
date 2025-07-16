@@ -83,9 +83,15 @@ export DEEPSEEK_API_KEY=sk-your-deepseek-api-key
 
 ```bash
 npm start
-# 或者
-node bin/cli.js interactive
+# 或者使用重构后的版本
+node bin/cli-refactored.js interactive
 ```
+
+## 📚 文档
+
+- **[快速入门指南](docs/quick-start.md)** - 5分钟上手指南
+- **[开发者文档](docs/developer-guide.md)** - 完整的开发文档
+- **[API参考](docs/api-reference.md)** - 详细的API文档
 
 ## 🔧 新增命令
 
@@ -332,12 +338,11 @@ MIT License - 查看 [LICENSE](LICENSE) 文件了解详情。
 ## 🙏 致谢
 
 - **DeepSeek AI** - 提供强大的 AI 能力
-- **Anthropic Claude Code** - 灵感来源和目标标杆
 - **OpenAI SDK** - API 集成支持
 
 ---
 
-🤖 **Made with Mini Claude Code v3** - 展示现代 AI 编程助手的真正复杂性！
+🤖 **Made with AI Assistant** - 展示现代 AI 编程助手的真正复杂性！
 
 ## 🎉 立即体验 v3
 

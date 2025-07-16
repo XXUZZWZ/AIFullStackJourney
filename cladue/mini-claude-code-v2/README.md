@@ -1,6 +1,6 @@
-# 🤖 Mini Claude Code v1 - AI Enhanced
+# 🤖 Mini DeepSeek Code v1 - AI Enhanced
 
-一个集成了 DeepSeek AI 的 Mini Claude Code，展示真正的 AI 驱动编程助手功能。
+一个集成了 DeepSeek AI 的 Mini DeepSeek Code，展示真正的 AI 驱动编程助手功能。
 
 ## ✨ 核心特性
 
@@ -19,7 +19,7 @@
 ### 1. 安装依赖
 
 ```bash
-cd mini-claude-code-v1
+cd mini-deepseek-code-v1
 npm install
 ```
 
@@ -32,7 +32,7 @@ npm install
 npm start
 
 # 在交互模式中配置 API Key
-mini-claude> config set-api-key sk-your-deepseek-api-key
+mini-deepseek> config set-api-key sk-your-deepseek-api-key
 
 # 或者设置环境变量
 export DEEPSEEK_API_KEY=sk-your-deepseek-api-key
@@ -137,27 +137,27 @@ node examples/ai-demo.js
 
 ### 1. 日常开发
 ```bash
-mini-claude> 创建一个用户管理的React组件
-mini-claude> 搜索所有的API端点
-mini-claude> 运行测试并检查结果
+mini-deepseek> 创建一个用户管理的React组件
+mini-deepseek> 搜索所有的API端点
+mini-deepseek> 运行测试并检查结果
 ```
 
 ### 2. 代码审查
 ```bash
-mini-claude> ai review src/components/Login.jsx
-mini-claude> chat 这个组件有什么可以改进的地方？
+mini-deepseek> ai review src/components/Login.jsx
+mini-deepseek> chat 这个组件有什么可以改进的地方？
 ```
 
 ### 3. 项目分析
 ```bash
-mini-claude> analyze
-mini-claude> chat 分析一下这个项目的技术栈和架构
-mini-claude> suggest
+mini-deepseek> analyze
+mini-deepseek> chat 分析一下这个项目的技术栈和架构
+mini-deepseek> suggest
 ```
 
 ### 4. 智能生成
 ```bash
-mini-claude> generate 创建一个完整的CRUD API
+mini-deepseek> generate 创建一个完整的CRUD API
 mini-claude> 生成一个响应式的导航栏组件
 ```
 
@@ -167,7 +167,7 @@ mini-claude> 生成一个响应式的导航栏组件
 
 1. **交互式配置**:
    ```bash
-   mini-claude> config set-api-key sk-your-key
+   mini-deepseek> config set-api-key sk-your-key
    ```
 
 2. **环境变量**:
@@ -186,7 +186,7 @@ mini-claude> 生成一个响应式的导航栏组件
 ## 🎨 项目结构
 
 ```
-mini-claude-code-v1/
+mini-deepseek-code-v1/
 ├── bin/cli.js                    # 命令行界面 (AI 增强)
 ├── lib/
 │   ├── tool-manager.js           # 工具管理系统 (AI 集成)
@@ -206,11 +206,11 @@ mini-claude-code-v1/
 └── README.md                    # 本文档
 ```
 
-## 🔍 与真实 Claude Code 的对比
+## 🔍 与其他 AI Code 工具的对比
 
-| 特性 | Mini Claude Code v1 | 真实 Claude Code |
+| 特性 | Mini DeepSeek Code v1 | 其他 AI Code 工具 |
 |------|---------------------|------------------|
-| 自然语言处理 | ✅ DeepSeek API + 本地规则 | ✅ Claude AI |
+| 自然语言处理 | ✅ DeepSeek API + 本地规则 | ✅ DeepSeek AI |
 | 项目分析 | ✅ 智能检测 | ✅ 深度分析 |
 | 代码生成 | ✅ AI 生成 | ✅ AI 生成 |
 | 文件操作 | ✅ 完整支持 | ✅ 完整支持 |
@@ -223,7 +223,7 @@ mini-claude-code-v1/
 
 ## 🚧 扩展建议
 
-要使这个版本更接近真实 Claude Code：
+要使这个版本更接近真实 DeepSeek Code：
 
 1. **增强 AI 集成**
    - 支持更多 AI 服务 (OpenAI, Anthropic, etc.)
@@ -258,12 +258,12 @@ MIT License - 查看 [LICENSE](LICENSE) 文件了解详情。
 ## 🙏 致谢
 
 - **DeepSeek AI** - 提供强大的 AI 能力
-- **Anthropic Claude Code** - 灵感来源
+- **XXUZZWZ** - 项目作者和主要贡献者
 - **OpenAI SDK** - API 集成支持
 
 ---
 
-🤖 **Made with Mini Claude Code v1** - 展示 AI 驱动编程助手的无限可能！
+🤖 **Made with Mini DeepSeek Code v1** - 展示 AI 驱动编程助手的无限可能！
 
 ## 🎉 立即体验
 

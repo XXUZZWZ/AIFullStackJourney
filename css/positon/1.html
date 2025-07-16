@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .modal-overlay {
+      position: fixed;
+      /* 相对于视口 */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal {
+      position: relative;
+      /* 建立定位上下文 */
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+    }
+
+    .close-btn {
+      position: absolute;
+      /* 相对于 .modal */
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="modal-overlay">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h2>我是模态框</h2>
+      <p>这是一个完美居中的模态框</p>
+    </div>
+  </div>
+</body>
+
+</html>

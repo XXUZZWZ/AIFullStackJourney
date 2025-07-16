@@ -1,0 +1,3 @@
+*.deepseek-config.json
+*.claude
+mode_moudle/

@@ -1,6 +1,6 @@
-# 🤖 Mini Claude Code
+# 🤖 Mini DeepSeek Code
 
-一个简化版的 Claude Code，展示 AI 驱动的编程助手的核心功能和复杂性。
+一个简化版的 DeepSeek Code，展示 AI 驱动的编程助手的核心功能和复杂性。
 
 ## ✨ 特性
 
@@ -16,7 +16,7 @@
 ### 安装依赖
 
 ```bash
-cd mini-claude-code
+cd mini-deepseek-code
 npm install
 ```
 
@@ -78,7 +78,7 @@ node bin/cli.js run "ls -la"
 ### 核心组件
 
 ```
-mini-claude-code/
+mini-deepseek-code/
 ├── bin/
 │   └── cli.js              # 命令行界面
 ├── lib/
@@ -123,29 +123,29 @@ mini-claude-code/
 npm start
 
 # 在交互模式中
-mini-claude> analyze ./my-react-app
-mini-claude> create component UserProfile
-mini-claude> create hook useUserData
-mini-claude> run "npm install"
+mini-deepseek> analyze ./my-react-app
+mini-deepseek> create component UserProfile
+mini-deepseek> create hook useUserData
+mini-deepseek> run "npm install"
 ```
 
 ### 示例 2: 创建 Express 应用
 
 ```bash
-mini-claude> create package MyAPI
-mini-claude> create route users
-mini-claude> create route products
+mini-deepseek> create package MyAPI
+mini-deepseek> create route users
+mini-deepseek> create route products
 mini-claude> write app.js "const express = require('express');\nconst app = express();\napp.listen(3000);"
 ```
 
 ### 示例 3: 项目维护
 
 ```bash
-mini-claude> search "TODO"
-mini-claude> list ./src
-mini-claude> status
-mini-claude> suggest
-mini-claude> report
+mini-deepseek> search "TODO"
+mini-deepseek> list ./src
+mini-deepseek> status
+mini-deepseek> suggest
+mini-deepseek> report
 ```
 
 ## 🧪 运行测试
@@ -165,7 +165,7 @@ node test/test.js
 
 ## 🎯 设计理念
 
-这个 Mini Claude Code 展示了真实 Claude Code 的核心概念：
+这个 Mini DeepSeek Code 展示了真实 DeepSeek Code 的核心概念：
 
 1. **模块化设计** - 每个功能都是独立的工具模块
 2. **智能分析** - 自动理解项目结构和技术栈
@@ -173,9 +173,9 @@ node test/test.js
 4. **用户友好** - 直观的命令行界面和清晰的反馈
 5. **可扩展性** - 易于添加新的工具和功能
 
-## 🔍 与真实 Claude Code 的对比
+## 🔍 与其他 AI Code 工具的对比
 
-| 特性 | Mini Claude Code | 真实 Claude Code |
+| 特性 | Mini DeepSeek Code | 其他 AI Code 工具 |
 |------|------------------|------------------|
 | 项目分析 | ✅ 基础检测 | ✅ 深度分析 |
 | 代码生成 | ✅ 模板生成 | ✅ AI 生成 |
@@ -187,7 +187,7 @@ node test/test.js
 
 ## 🚧 扩展建议
 
-要使这个 mini 版本更接近真实 Claude Code，可以考虑添加：
+要使这个 mini 版本更接近真实 DeepSeek Code，可以考虑添加：
 
 1. **AI 集成** - 接入 OpenAI API 或其他 LLM
 2. **自然语言处理** - 理解用户的自然语言指令
@@ -206,8 +206,8 @@ MIT License - 查看 [LICENSE](LICENSE) 文件了解详情。
 
 ## 🙏 致谢
 
-本项目灵感来源于 Anthropic 的 Claude Code，旨在展示 AI 编程助手的工作原理和复杂性。
+- **XXUZZWZ** - 项目作者和主要贡献者
 
 ---
 
-🤖 **Made with Mini Claude Code** - 展示 Claude Code 的复杂性和强大功能！
+🤖 **Made with Mini DeepSeek Code** - 展示 DeepSeek Code 的复杂性和强大功能！

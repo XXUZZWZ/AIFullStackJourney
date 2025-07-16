@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "userId": "userId_123456",
+  "todos": [
+    {
+      "id": "todo_1",
+      "text": "完成项目文档",
+      "done": false,
+      "createdAt": "2025-07-16T12:00:00Z",
+      "processedAt": "2025-07-16T13:03:06.309Z"
+    },
+    {
+      "id": "todo_2",
+      "text": "测试API接口",
+      "done": true,
+      "createdAt": "2025-07-15T09:30:00Z",
+      "processedAt": "2025-07-16T13:03:06.309Z"
+    }
+  ],
+  "receivedAt": "2025-07-16T13:03:06.309Z"
+}

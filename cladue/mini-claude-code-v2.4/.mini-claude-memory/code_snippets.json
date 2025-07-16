@@ -1,0 +1,72 @@
+[
+  {
+    "id": "code_1752431786496_l0c8kf",
+    "sessionId": "session_1752431739530_l6jbtxvo4",
+    "timestamp": "2025-07-13T18:36:26.496Z",
+    "code": "```javascript\n/**\n * Calculates the sum of two numbers\n * @param {number} a - The first number\n * @param {number} b - The second number\n * @returns {number} The sum of a and b\n * @throws {TypeError} If either parameter is not a number\n */\nfunction sum(a, b) {\n  if (typeof a !== 'number' || typeof b !== 'number') {\n    throw new TypeError('Both arguments must be numbers');\n  }\n  \n  return a + b;\n}\n```",
+    "description": "创建一个计算两个数之和的函数",
+    "language": "javascript",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v2",
+      "framework": "react",
+      "fileType": "generated"
+    },
+    "useCount": 24
+  },
+  {
+    "id": "code_1752432381603_h3423a",
+    "sessionId": "session_1752432361026_oe7xlcwgt",
+    "timestamp": "2025-07-13T18:46:21.603Z",
+    "code": "\nfunction Welcome(props) {\n  return <h1>Hello, {props.name}!</h1>;\n}\n\nexport default Welcome;",
+    "description": "React 欢迎组件示例",
+    "language": "javascript",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v2",
+      "framework": "react",
+      "fileType": "component"
+    },
+    "useCount": 22
+  },
+  {
+    "id": "code_1752432630337_i79j0z",
+    "sessionId": "session_1752432608088_oqr41136c",
+    "timestamp": "2025-07-13T18:50:30.337Z",
+    "code": "\nfunction Welcome(props) {\n  return <h1>Hello, {props.name}!</h1>;\n}\n\nexport default Welcome;",
+    "description": "React 欢迎组件示例",
+    "language": "javascript",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
+      "framework": "react",
+      "fileType": "component"
+    },
+    "useCount": 0
+  },
+  {
+    "id": "code_1752433337047_1ixo4t",
+    "sessionId": "session_1752433279275_n2gnizmd7",
+    "timestamp": "2025-07-13T19:02:17.047Z",
+    "code": "const undefined = require('undefined');",
+    "description": "Auto-fix: import error",
+    "language": "auto-fix",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
+      "framework": null,
+      "fileType": null
+    },
+    "useCount": 0
+  },
+  {
+    "id": "code_1752434505812_cujv5l",
+    "sessionId": "session_1752434459086_d9afrzg6a",
+    "timestamp": "2025-07-13T19:21:45.812Z",
+    "code": "const undefined = require('undefined');",
+    "description": "Auto-fix: import error",
+    "language": "auto-fix",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
+      "framework": null,
+      "fileType": null
+    },
+    "useCount": 0
+  }
+]
