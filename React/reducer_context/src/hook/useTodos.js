@@ -38,7 +38,9 @@ export function useTodos() {
   };
   console.log(userInfo);
   useEffect(() => {
-    axios.post("/api/uploadtodos", userInfo);
+    axios.post("/api/uploadtodos", userInfo, {
+      withCredentials: true,
+    });
   }, [todos]);
   const addTodo = (text) => {
     dispatch({ type: "ADD_TODO", text });
