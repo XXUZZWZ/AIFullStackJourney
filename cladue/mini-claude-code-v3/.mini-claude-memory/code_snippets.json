@@ -11,7 +11,7 @@
       "framework": "react",
       "fileType": "generated"
     },
-    "useCount": 18
+    "useCount": 39
   },
   {
     "id": "code_1752432381603_h3423a",
@@ -25,7 +25,7 @@
       "framework": "react",
       "fileType": "component"
     },
-    "useCount": 16
+    "useCount": 37
   },
   {
     "id": "code_1752432630337_i79j0z",
@@ -66,6 +66,48 @@
       "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
       "framework": null,
       "fileType": null
+    },
+    "useCount": 0
+  },
+  {
+    "id": "code_1752439919389_zjk367",
+    "sessionId": "session_1752439770961_a767l6sah",
+    "timestamp": "2025-07-13T20:51:59.389Z",
+    "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Mini Claude Code V3</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            line-height: 1.6;\n            margin: 0;\n            padding: 20px;\n            color: #333;\n            max-width: 1200px;\n            margin: 0 auto;\n        }\n        header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            padding: 20px 0;\n            border-bottom: 1px solid #eee;\n        }\n        .project-stats {\n            display: grid;\n            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n            gap: 20px;\n            margin: 30px 0;\n        }\n        .stat-card {\n            background: #f9f9f9;\n            padding: 15px;\n            border-radius: 5px;\n            box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n        }\n        .frameworks {\n            display: flex;\n            flex-wrap: wrap;\n            gap: 10px;\n            margin: 20px 0;\n        }\n        .framework-tag {\n            background: #e0f7fa;\n            padding: 5px 10px;\n            border-radius: 20px;\n            font-size: 0.8em;\n        }\n    </style>\n</head>\n<body>\n    <header>\n        <h1>Mini Claude Code V3</h1>\n        <div>Project Path: /home/AIFullStackJourney/cladue/mini-claude-code-v3</div>\n    </header>\n\n    <main>\n        <section class=\"project-stats\">\n            <div class=\"stat-card\">\n                <h3>Total Files</h3>\n                <p>5,612</p>\n            </div>\n            <div class=\"stat-card\">\n                <h3>Code Files</h3>\n                <p>3,390</p>\n            </div>\n            <div class=\"stat-card\">\n                <h3>Languages</h3>\n                <p>JavaScript: 2,234</p>\n                <p>TypeScript: 956</p>\n                <p>Markdown: 98</p>\n                <p>JSON: 100</p>\n                <p>HTML: 2</p>\n            </div>\n        </section>\n\n        <section>\n            <h2>Frameworks</h2>\n            <div class=\"frameworks\">\n                <span class=\"framework-tag\">React</span>\n                <span class=\"framework-tag\">Vue</span>\n                <span class=\"framework-tag\">Angular</span>\n                <span class=\"framework-tag\">Express</span>\n                <span class=\"framework-tag\">Next</span>\n            </div>\n        </section>\n\n        <section>\n            <h2>Project Structure</h2>\n            <ul>\n                <li>Has Tests: Yes</li>\n                <li>Has Docs: Yes</li>\n                <li>Has Config: No</li>\n                <li>Has Source: Yes</li>\n            </ul>\n            <h3>Common Directories</h3>\n            <ul>\n                <li>bin</li>\n                <li>docs</li>\n                <li>error-test-files</li>\n                <li>examples</li>\n                <li>lib</li>\n                <li>node_modules</li>\n                <li>test</li>\n                <li>tools</li>\n            </ul>\n        </section>\n    </main>\n\n    <footer>\n        <p>Package Manager: npm</p>\n    </footer>\n</body>\n</html>",
+    "description": "1.html",
+    "language": "javascript",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
+      "framework": "react",
+      "fileType": "generated"
+    },
+    "useCount": 0
+  },
+  {
+    "id": "code_1752440061085_46lga9",
+    "sessionId": "session_1752440042427_9q94me8wj",
+    "timestamp": "2025-07-13T20:54:21.085Z",
+    "code": "\nfunction Welcome(props) {\n  return <h1>Hello, {props.name}!</h1>;\n}\n\nexport default Welcome;",
+    "description": "React 欢迎组件示例",
+    "language": "javascript",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
+      "framework": "react",
+      "fileType": "component"
+    },
+    "useCount": 0
+  },
+  {
+    "id": "code_1752463853197_w4r02r",
+    "sessionId": "session_1752463832592_02hfegeu4",
+    "timestamp": "2025-07-14T03:30:53.197Z",
+    "code": "\nfunction Welcome(props) {\n  return <h1>Hello, {props.name}!</h1>;\n}\n\nexport default Welcome;",
+    "description": "React 欢迎组件示例",
+    "language": "javascript",
+    "context": {
+      "projectPath": "/home/AIFullStackJourney/cladue/mini-claude-code-v3",
+      "framework": "react",
+      "fileType": "component"
     },
     "useCount": 0
   }

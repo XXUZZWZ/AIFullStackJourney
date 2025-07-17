@@ -1,6 +1,6 @@
-# 🤖 Mini Claude Code v3 - Advanced AI Assistant
+# 🤖 Mini DeepSeek Code v3 - Advanced AI Assistant
 
-一个功能完整的 AI 编程助手，展示现代智能开发工具的复杂性和强大能力。
+一个功能完整的 AI 编程助手，基于 DeepSeek AI，展示现代智能开发工具的复杂性和强大能力。
 
 ## 🌟 v3 新特性
 
@@ -60,7 +60,7 @@
 ### 1. 安装依赖
 
 ```bash
-cd mini-claude-code-v3
+cd mini-deepseek-code-v3
 npm install
 ```
 
@@ -73,7 +73,7 @@ npm install
 npm start
 
 # 在交互模式中配置 API Key
-mini-claude> config set-api-key sk-your-deepseek-api-key
+mini-deepseek> config set-api-key sk-your-deepseek-api-key
 
 # 或者设置环境变量
 export DEEPSEEK_API_KEY=sk-your-deepseek-api-key
@@ -228,7 +228,7 @@ npm run demo
 
 ### 1. 智能对话编程
 ```bash
-mini-claude> 我想创建一个React应用的用户管理系统
+mini-deepseek> 我想创建一个React应用的用户管理系统
 # AI 流式响应 + 上下文记忆
 mini-claude> 刚才的用户管理如何添加权限控制？
 # 基于历史对话的上下文感知回答
@@ -236,31 +236,31 @@ mini-claude> 刚才的用户管理如何添加权限控制？
 
 ### 2. 智能补全体验
 ```bash
-mini-claude> cre[Tab]        # → create
-mini-claude> create comp[Tab] # → component  
-mini-claude> create component Bu[Tab] # → Button
+mini-deepseek> cre[Tab]        # → create
+mini-deepseek> create comp[Tab] # → component  
+mini-deepseek> create component Bu[Tab] # → Button
 ```
 
 ### 3. 跨会话记忆
 ```bash
 # 第一次会话
-mini-claude> 生成一个登录组件
+mini-deepseek> 生成一个登录组件
 # 退出，重新启动
-mini-claude> 如何为之前的登录组件添加验证？
+mini-deepseek> 如何为之前的登录组件添加验证？
 # 系统记住了之前的对话
 ```
 
 ### 4. 项目智能分析
 ```bash
-mini-claude> analyze
-mini-claude> suggest  # 基于项目类型的智能建议
-mini-claude> ai status  # 显示记忆和补全统计
+mini-deepseek> analyze
+mini-deepseek> suggest  # 基于项目类型的智能建议
+mini-deepseek> ai status  # 显示记忆和补全统计
 ```
 
 ## 🎨 v3 项目结构
 
 ```
-mini-claude-code-v3/
+mini-deepseek-code-v3/
 ├── bin/cli.js                    # 增强命令行界面 (readline + 自动补全)
 ├── lib/
 │   ├── tool-manager.js           # 工具管理系统 (集成记忆)
@@ -285,11 +285,11 @@ mini-claude-code-v3/
 └── README.md                    # v3 完整文档
 ```
 
-## 🔍 v3 vs 真实 Claude Code 对比
+## 🔍 v3 vs 其他 AI Code 工具对比
 
-| 特性 | Mini Claude Code v3 | 真实 Claude Code |
+| 特性 | Mini DeepSeek Code v3 | 其他 AI Code 工具 |
 |------|---------------------|------------------|
-| 自然语言处理 | ✅ DeepSeek API + 本地规则 | ✅ Claude AI |
+| 自然语言处理 | ✅ DeepSeek API + 本地规则 | ✅ DeepSeek AI |
 | 项目分析 | ✅ 智能检测 | ✅ 深度分析 |
 | 代码生成 | ✅ AI 生成 | ✅ AI 生成 |
 | 文件操作 | ✅ 完整支持 | ✅ 完整支持 |
@@ -332,12 +332,12 @@ MIT License - 查看 [LICENSE](LICENSE) 文件了解详情。
 ## 🙏 致谢
 
 - **DeepSeek AI** - 提供强大的 AI 能力
-- **Anthropic Claude Code** - 灵感来源和目标标杆
+- **XXUZZWZ** - 项目作者和主要贡献者
 - **OpenAI SDK** - API 集成支持
 
 ---
 
-🤖 **Made with Mini Claude Code v3** - 展示现代 AI 编程助手的真正复杂性！
+🤖 **Made with Mini DeepSeek Code v3** - 展示现代 AI 编程助手的真正复杂性！
 
 ## 🎉 立即体验 v3
 
@@ -349,28 +349,28 @@ npm start
 
 ### 🚀 流式响应
 ```bash
-mini-claude> chat 请详细解释React的设计理念
+mini-deepseek> chat 请详细解释React的设计理念
 # 实时流式输出，无需等待
 ```
 
 ### 🧠 上下文记忆
 ```bash
-mini-claude> 生成一个计算器组件
-mini-claude> 刚才的计算器如何添加历史记录？
+mini-deepseek> 生成一个计算器组件
+mini-deepseek> 刚才的计算器如何添加历史记录？
 # 系统记住了之前的对话
 ```
 
 ### ⚡ 智能补全
 ```bash
-mini-claude> cre[Tab]         # 自动补全 create
-mini-claude> create comp[Tab] # 自动补全 component
-mini-claude> create component [Tab][Tab] # 显示所有文件名建议
+mini-deepseek> cre[Tab]         # 自动补全 create
+mini-deepseek> create comp[Tab] # 自动补全 component
+mini-deepseek> create component [Tab][Tab] # 显示所有文件名建议
 ```
 
 ### 🔗 集成体验
 ```bash
-mini-claude> ai status        # 查看所有系统状态
-mini-claude> completion       # 查看补全统计
+mini-deepseek> ai status        # 查看所有系统状态
+mini-deepseek> completion       # 查看补全统计
 mini-claude> npm run demo     # 运行完整演示
 ```
 

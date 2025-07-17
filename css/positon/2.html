@@ -1,0 +1,39 @@
+<style>
+  .card-container {
+    position: relative;
+    /* 为徽章创建包含块 */
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  }
+
+  .card-badge {
+    position: absolute;
+    /* 相对于 .card-container */
+    top: -10px;
+    right: -10px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .card-title {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+</style>
+
+<div class="card-container">
+  <div class="card-badge">NEW</div>
+  <h3 class="card-title">产品标题</h3>
+  <p>这是产品描述...</p>
+</div>

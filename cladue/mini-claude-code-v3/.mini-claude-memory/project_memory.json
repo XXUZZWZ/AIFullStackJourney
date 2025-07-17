@@ -63,8 +63,8 @@
   },
   "/home/AIFullStackJourney/cladue/mini-claude-code-v3": {
     "languages": {
-      "javascript": 2229,
-      "markdown": 95,
+      "javascript": 2234,
+      "markdown": 98,
       "typescript": 956,
       "json": 100,
       "html": 2
@@ -97,15 +97,16 @@
       }
     ],
     "packageManager": "npm",
-    "totalFiles": 5603,
-    "codeFiles": 3382,
+    "totalFiles": 5612,
+    "codeFiles": 3390,
     "structure": {
       "hasTests": true,
-      "hasDocs": false,
+      "hasDocs": true,
       "hasConfig": false,
       "hasSource": true,
       "commonDirs": [
         "bin",
+        "docs",
         "error-test-files",
         "examples",
         "lib",
@@ -114,6 +115,6 @@
         "tools"
       ]
     },
-    "lastAccessed": "2025-07-13T19:42:40.227Z"
+    "lastAccessed": "2025-07-14T03:51:13.088Z"
   }
 }
