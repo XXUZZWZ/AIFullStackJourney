@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>history spa</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>SPA 路由模拟</h2>
+  <button onclick="navigate('/home')">BTN TO 首页</button>
+  <button onclick="navigate('/about')">BTN TO 关于</button>
+  <button onclick="navigate('/contact')">BTN TO 联系我们</button>
+  <button onclick="replace('/login')">BTN TO 登陆</button>
+  <button onclick="replace('/pay')">BTN TO pay</button>
+  <a href="https://www.zhihu.com/"></a>
+  <div id="view">
+    当前试图
+  </div>
+  <script class="script">
+    function render(path) {
+      document.getElementById('view').innerHTML = "当前试图访问" + path
+    }
+    function navigate(path) {
+      // url 含义，持有数据状态
+      // 入 history 栈,不更新。
+      history.pushState({ path }, null, path)
+      render(path)
+    }
+    function replace(path) {
+      history.replaceState({ path }, null, path);
+      render(path)
+    }
+    window.addEventListener('pushstate', (event) => {
+      console.log(event.state.path)
+      render(event.state.path)
+    })
+    window.addEventListener('popstate', (event) => {
+      console.log(event.state.path)
+      render(event.state?.path || location.pathname)
+    })
+  </script>
+</body>
+
+</html>
