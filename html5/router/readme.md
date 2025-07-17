@@ -56,4 +56,29 @@
   <a href="#top">回到顶部</a>
   ```
 
-  - 会触发事件，hashchange,在事件监听里处理dom
+  - 会触发事件，hashchange,在事件监听里处理 dom
+
+## 基于 SPA
+
+- url 可以改变，但是不会向后端发送请求，前端路由
+  - hash + hashchange 事件+dom 操作
+  - history + popstate 和 pushState + dom 操作
+- 前端路由 react-router-dom 配置 页面级别·组件
+  - 热更新
+    - 二级路由局部热更新 Outlet
+- 单页应用
+
+  - 只有一个页面，但可以有多个 url 路由状态
+  - 很多页面级别组件
+  - window.location window.history.pushState
+  - state 栈
+
+- history
+  - 很早就有，在浏览器历史记录里游走。history.go() history.back() history.forward()
+  - html5 赋予 html 新的功能,因为
+    - hash + hashchange 事件 + dom 操作做局部热更新
+      - 优点： 兼容性好
+      - 缺点： hash 不好理解，路径：`http://127.0.0.1:5502/html5/router/3.html#contact` 后端 boy 看不懂
+        我们希望和后端路径一致，后端 boy 可以理解 `/contact`,不用#
+    - 我们要做到像后端路由又不刷新页面？？
+    - html5 升级了 history API 来实现

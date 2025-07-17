@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>concat联系我们</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<nav>
+  <ul>
+    <li><a href="./index.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./concat.html">Contact</a></li>
+  </ul>
+</nav>
+
+<body>
+  <h1>联系我们</h1>
+  <button onclick="navigateHistory(-2)">返回主页</button>
+  <button onclick="navigateHistory(-1)">后退一页关于我们</button>
+  <button onclick="history.back();"></button>
+  <script class="script">
+    function navigateHistory(steps) {
+      history.go(steps);
+    }
+  </script>
+</body>
+
+</html>
