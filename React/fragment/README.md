@@ -1,12 +1,13 @@
-# React + Vite
+# fragment <></> 是什么？
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- 解决了什么问题？
+  - React 要求每个组件的返回值只能有一个根元素，是由它的数据结构决定的，dom 树只有一个根的元素
+- 是什么？
+  - React 中，<></> 是语法糖，它可以替换<React.Fragment></React.Fragment> 缩写，从而解决这个问题。
+- <> </> 和 <React.Fragment></React.Fragment> 是什么关系？
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 功能
+  - 避免多余的 dom 结构和层次和元素
+  - 性能更好
+  - fragment 可以有 key 属性
+- 项目中一定安排 Fragment key 属性
