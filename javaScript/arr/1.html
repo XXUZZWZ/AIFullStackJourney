@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>初始化数组</title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script">
+    const Arr = [1, 2, 3];
+    // undefined 是一种数据类型，表示变量声明但未赋值
+    const arr = new Array(5);
+    const arr2 = new Array(5).fill(undefined)
+    for (let key in arr) {
+      // empty 代表key 没有
+      console.log("|||||");
+      console.log(key, arr[key]);
+    }
+    for (let key in arr2) {
+      console.log("|||||");
+      console.log(key, arr2[key]);
+    }
+    arr[100] = 1;
+    console.log(a[100]);
+    console.log(arr);
+
+  </script>
+</body>
+
+</html>

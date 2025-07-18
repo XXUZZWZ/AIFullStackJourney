@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script">
+    // // for   of
+    const arr = [1, 2, 3, 4, 5];
+
+    // 比计数循环好理解
+    for (let i of arr) {
+      console.log(i);
+    }
+    // for item  of arr   item 怎么拿到index
+    for (let [index, item] of arr.entries()) {
+      // 每一项都是数组，第一项是key,第二项是值
+      console.log(index + 1, item);
+    }
+    for (let entry of arr.entries()) {
+      console.log(entry);
+    }
+    console.log(arr.entries());
+  </script>
+</body>
+
+</html>
