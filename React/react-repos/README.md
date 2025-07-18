@@ -42,4 +42,18 @@
   - 项目入口文件
   - 启动路由 SPA
   - 添加全局状态管理
-  
+
+## RepoList
+
+- 功能模块
+  - param 解析
+    - 使用 useParam() 动态获取参数对象
+    - 不要放到 useEffect 中,hook 中 hook 不能嵌套
+    - 对数据进行校验 id,id 不合适的话跳转到首页，不要相信用户的任何提交。
+    - navigate('/')最好放到 useEffect 中，处理副作用。
+- 组件的开发模式
+  - 页面组件负责页面 UI 显示,主要就是 hooks
+  - state 逻辑处理使用封装好的 自定义 hooks,方便。
+  - 全局状态管理应用层级 ，要用 context 来管理。
+    - repos local error => context value
+    - useReducer reducer 函数来改变状态
