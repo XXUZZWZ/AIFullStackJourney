@@ -30,7 +30,7 @@ const RepoList = ()=>{
         {
          repos.map((repo)=>(
           <div key={repo.id+Date.now()}>
-            <Link to={`/repo/${id}/${repo.name}`}>
+            <Link to={`/users/${id}/repos/${repo.id}`}>
               <h2>{repo.name}</h2>
             </Link>
           </div>
