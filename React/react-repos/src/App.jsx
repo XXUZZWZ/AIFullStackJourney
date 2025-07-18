@@ -23,15 +23,25 @@ import {
 const RepoList = lazy(()=>{
   return import('./pages/RepoList/RepoList')
 })
-
+const RepoDetail = lazy(()=>{
+  return import('./pages/RepoDetails/RepoDetails')
+})
+const Home = lazy(()=>{
+  return import('./pages/Home/Home')
+})
+const NotFound = lazy(()=>{
+  return import('./pages/NotFound')
+})
 function App() {
  
   
   return (
     <Suspense fallback={<Loading/>}>
      <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/users/:id/repos" element={<RepoList/>} />
-      <Route path="*" element={<Navigate to="/users/XXUZZWZ/repos" />} />
+      <Route path="/users/:id/repos/:repoId" element={<RepoDetail/>} />
+      <Route path="*" element={<NotFound/>} />
      </Routes>
     </Suspense>
   )
