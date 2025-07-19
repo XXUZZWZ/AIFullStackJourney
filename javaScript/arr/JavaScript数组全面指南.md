@@ -99,6 +99,46 @@ const compose =
     fns.reduceRight((v, f) => f(v), x);
 ```
 
+<!-- 动手实现一下 -->
+
+```js
+Array.prototype.myReduce = function (callback, initialValue) {
+  if (typeof callback !== "function") {
+    throw new TypeError("Callback must be a function");
+  }
+
+  const array = this;
+  const length = array.length;
+
+  // 处理空数组无初始值的情况
+  if (length === 0 && initialValue === undefined) {
+    throw new TypeError("Reduce of empty array with no initial value");
+  }
+
+  let accumulator;
+  let startIndex;
+
+  // 设置初始累加值
+  if (initialValue !== undefined) {
+    accumulator = initialValue;
+    startIndex = 0;
+  } else {
+    accumulator = array[0];
+    startIndex = 1;
+  }
+
+  // 遍历数组执行回调
+  for (let i = startIndex; i < length; i++) {
+    if (i in array) {
+      // 跳过空位（稀疏数组）
+      accumulator = callback(accumulator, array[i], i, array);
+    }
+  }
+
+  return accumulator;
+};
+```
+
 ## 四、性能优化
 
 1. 避免稀疏数组
@@ -120,11 +160,30 @@ arr.forEach((item) => console.log(item)); // 不会执行
 
 2. 浅拷贝问题：
 
-```javascript
-const arr = [{ a: 1 }];
-const copy = [...arr];
-copy[0].a = 2; // 原数组也会被修改
-```
+````javascript
+const arr1 = [{ a: 1 }];
+const copy1 = [...arr1];
+copy1[0].a = 2; // 原数组也会被修改
+console.log(arr1);
+console.log(copy1);
+// ```
+// 运行这段代码，会输出：
+// [ { a: 2 } ]
+// [ { a: 2 } ]
+// ```
+
+const arr2 = [{ a: 1 }];
+const copy2 = structuredClone(arr2);
+copy2[0].a = 3;
+
+console.log(arr2);
+console.log(copy2);
+// ```
+// [ { a: 1 } ]
+// [ { a: 3 } ]
+// 这是因为 `structuredClone` 函数会创建一个新对象，并复制对象的所有属性。因此，修改 `copy2` 对象不会影响 `arr2` 对象。
+// ```
+````
 
 3. 数组判断：
 
@@ -145,18 +204,135 @@ const newArr = [...arr, 4, 5, 6];
 
 ```javascript
 const [first, ...rest] = [1, 2, 3, 4];
+console.log(first, rest);
+// 输出1 [ 2, 3, 4 ]
+let [a, b] = [1, 2];
+[a, a, b, a] = [1, 2, 3, 4];
+
+console.log([a, b]);
+// 输出[4, 3];
+// 解构赋值从左到右依次执行：
+
+// 第一个a：用数组右侧第一个值 1 赋值 → a = 1
+
+// 第二个a：用右侧第二个值 2 赋值 → a = 2（覆盖之前的值）
+
+// b：用右侧第三个值 3 赋值 → b = 3
+
+// 第三个a：用右侧第四个值 4 赋值 → a = 4（再次覆盖）
 ```
 
 3. Array.prototype.includes：
 
 ```javascript
 [1, 2, 3].includes(2); // true
+// 线性查找 空槽 会被当做undfined
+// 这里使用 SameValueZero 比较 NaN = NaN
+// 使用 Set（const set = new Set([1, 2, 3]); set.has(2);），时间复杂度 O(1)。
 ```
 
 4. 扁平化方法：
+   arr.flat([depth])
+   参数：
+   depth（可选）：指定要提取嵌套数组的结构深度，默认值为 1。
+   flat() 会自动移除数组中的空位（empty 值）
 
 ```javascript
-[1, [2, [3]]].flat(2); // [1,2,3]
+const FF = [1, "a", [2]].flat(); // 输出: [1, "a", 2]
+
+console.log(FF);
+// 输出: [1, "a", 2]
+const FFF = [
+  1,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  "a",
+  [2],
+  {
+    a: 1,
+    b: {
+      a: 2,
+    },
+  },
+].flat(2);
+console.log(FFF);
+// 输出： [ 1, 'a', 2, { a: 1, b: { a: 2 } } ]
+
+// flat() 会自动移除数组中的空位（empty 值）
+```
+
+```js
+自己简单实现;
+function flatten(arr, depth = 1) {
+  return depth > 0
+    ? arr.reduce(
+        (acc, val) =>
+          acc.concat(Array.isArray(val) ? flatten(val, depth - 1) : val),
+        []
+      )
+    : arr.slice();
+}
+
+// 使用示例
+flatten([1, [2, [3]]], 2); // 输出: [1, 2, 3]
 ```
 
 本文全面总结了 JavaScript 数组的核心知识点和最佳实践，可作为日常开发的参考指南。
