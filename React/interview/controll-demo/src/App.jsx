@@ -68,6 +68,9 @@ function App() {
     <>
        <ControlledInput onSubmit={handleSubmit}/>
        <UncontrolledInput onSubmit={handleSubmit}/>
+       <input type="text" name="" id="dd" placeholder='输入内容' value={'dddddd'} />
+       <label htmlFor="dd"></label>
+
     </>
   )
 }
