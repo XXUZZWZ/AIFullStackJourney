@@ -1,0 +1,10 @@
+.box {
+  width: 100px;
+  height: 1px;
+  background-color: red;
+  transition: height 0.3s ease;
+  overflow: hidden;
+}
+.box.open {
+  height: 100px;
+}
