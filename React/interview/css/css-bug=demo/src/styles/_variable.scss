@@ -1,0 +1,25 @@
+// _variables.scss
+$breakpoints: (
+  mobile: 320px,
+  tablet: 768px,
+  desktop: 1024px
+);
+
+$colors: (
+  primary: #1890ff,
+  success: #52c41a,
+  warning: #faad14,
+  error: #f5222d,
+  text: (
+    primary: rgba(0, 0, 0, 0.85),
+    secondary: rgba(0, 0, 0, 0.45)
+  )
+);
+
+$spacing: (
+  xs: 4px,
+  sm: 8px,
+  md: 16px,
+  lg: 24px,
+  xl: 32px
+);
