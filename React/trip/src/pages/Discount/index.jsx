@@ -5,3 +5,4 @@ const Discount = ()=>{
     </div>
   )
 }
+export default Discount

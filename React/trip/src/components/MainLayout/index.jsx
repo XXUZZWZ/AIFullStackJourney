@@ -30,9 +30,9 @@ const MainLayout = ()=>{
   const location = useLocation();
   useEffect(()=>{
     console.log(location.pathname,'||||')
-   const index = tabs.findIndex(tab=>tab.path === location.pathname.startsWith(tab.path))
-   setActive( index)
-  },[])
+   const index = tabs.findIndex(tab=>location.pathname.startsWith(tab.path))
+   setActive(index)
+  })
 
   return (
     <div>
@@ -43,6 +43,7 @@ const MainLayout = ()=>{
      value={active}
      onChange={
       (key)=>{
+        console.log(key,'key')
         setActive(key)
         navigate(tabs[key].path)
       }
