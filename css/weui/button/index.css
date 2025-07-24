@@ -1,35 +1,35 @@
- /* index.css */
- *{
+/* index.css */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
- }
- body{
+}
+body {
   background-color: #ededed;
   height: 100%;
- }
- .weui-page {
+}
+.weui-page {
   padding: 18px;
- }
- .weui-page__header {
+}
+
+.weui-page__header {
   padding: 40px;
- }
- .weui-page__title{
+}
+.weui-page__title {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 10px;
-
- }
- .weui-page__desc{
+}
+.weui-page__desc {
   font-size: 12px;
-  color:#827856;
- }
- 
- .weui-btn-sp-area{
-   margin-top: 10px;
- }
- .weui-btn{
-  display:block;
+  color: #827856;
+}
+
+.weui-btn-sp-area {
+  margin-top: 10px;
+}
+.weui-btn {
+  display: block;
   border-width: 0px;
   width: 153px;
   height: 42px;
@@ -39,29 +39,28 @@
   margin: 0 auto;
   margin-bottom: 12px;
   border-radius: 4px;
- }
- .weui-btn_default{
+}
+.weui-btn_default {
   background-color: #dddddd;
   color: #333;
- }
- .weui-btn_loading {
+}
+.weui-btn_loading {
   background: url(./loding.png) no-repeat center center;
   background-color: #00b853;
- }
+}
 
-.weui-btn_default.weui-btn_loading{
-  background: url(./wloding.png) no-repeat 30px  center;
+.weui-btn_default.weui-btn_loading {
+  background: url(./wloding.png) no-repeat 30px center;
   background-color: #dddddd;
- }
- .weui-btn_primary.weui-btn_loading{
-  background: url(./loding.png) no-repeat 25px  center;
+}
+.weui-btn_primary.weui-btn_loading {
+  background: url(./loding.png) no-repeat 25px center;
   background-color: #00b853;
- }
- .weui-btn_unableclick{
+}
+.weui-btn_unableclick {
   color: #ccc8c9;
- }
- .weui-btn_primary.weui-btn_unableclick{
-  background-color:#ddd ;
+}
+.weui-btn_primary.weui-btn_unableclick {
+  background-color: #ddd;
   color: #333;
-
- }
+}

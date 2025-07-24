@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarouseList</title>
+
+  <style>
+    .carouselist-container {
+      width: 100px;
+      height: 80px;
+      background-color: transparent;
+      border: 1px solid #000;
+      /* overflow: hidden; */
+    }
+
+    .carouselist__item {
+      display: flex;
+      width: 300px;
+      height: 80px;
+      /* background-color: skyblue; */
+      /* transform: translateX(-200%); */
+
+    }
+
+    .carouselist__item_body {
+      text-align: center;
+      line-height: 80px;
+      width: 100px;
+
+      /* background-color: rgb(112, 172, 112); */
+
+    }
+
+    .btn {
+      display: flex;
+      justify-content: space-between;
+      margin-top: -50px;
+    }
+
+    .list {
+      display: flex;
+      justify-content: center;
+
+    }
+
+    .list span {
+      width: 8px;
+      height: 8px;
+      margin: 2px;
+      background-color: red;
+      border-radius: 50%;
+      margin-top: 10px;
+    }
+
+    .list .active {
+      background-color: #22a633;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div class="carouselist-container">
+    <div class="carouselist__item">
+      <div class="carouselist__item_body">1</div>
+      <div class="carouselist__item_body">2</div>
+      <div class="carouselist__item_body">3</div>
+    </div>
+
+
+    <div class="btn">
+      <div class="btn-left">&blacktriangleleft;</div>
+      <div class="btn-right">&blacktriangleright;</div>
+    </div>
+    <div class="list">
+      <span class="active"></span>
+      <span></span>
+      <span></span>
+    </div>
+
+
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
