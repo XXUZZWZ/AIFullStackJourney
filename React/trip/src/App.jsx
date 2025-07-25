@@ -8,6 +8,7 @@ import {
   Route,
   Navigate
 }from 'react-router-dom'
+import { Flex, Loading } from 'react-vant';
 import MainLayout from '@/components/MainLayout'
 import BlankLayout from '@/components/BlankLayout'
 const Home = lazy(()=>import('@/pages/Home'))
@@ -19,7 +20,11 @@ const Trip = lazy(()=>import('./pages/Trip'))
 function App() {
   return (
     <>
-      <Suspense fallback={<div>加载中....</div>}>
+     <Suspense fallback={
+    <Flex justify='center' align='center'  style={{ width: '100vw', height: '100vh' }}>
+      <Loading color="#3f45ff" />
+    </Flex>
+}>
       {/*  带有tabbar的layout */}
          <Routes >
          <Route element = {<MainLayout/>}>
