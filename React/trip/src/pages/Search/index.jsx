@@ -1,10 +1,10 @@
 import   useTitle from '@/hooks/useTitle'
 import {Search as SearchComponent} from 'react-vant'
 import {  NavBar } from 'react-vant'
-import {useNavigate,useLocation}from 'react-router-dom'
+import {useNavigate}from 'react-router-dom'
 const Search = ()=>{
   const navigate = useNavigate()
-  const location = useLocation()
+  
   useTitle('奶龙搜索')
   return (
     <div>
