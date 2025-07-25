@@ -17,6 +17,7 @@ import {
   SettingO,
   UserO
 }from '@react-vant/icons'
+
 const MainLayout = ()=>{
   const tabs = [
     {icon:<HomeO/>,title:'首页',path:'/home'},
@@ -35,9 +36,12 @@ const MainLayout = ()=>{
   })
 
   return (
-    <div>
-        <Outlet/>
-     MainLayout
+    <div className="flex flex-col h-screen"  style={{paddingBottom:"50px"}} >
+        <div className="flex-1">
+          <Outlet/>
+        </div>
+        
+     {/* MainLayout */}
      {/* tabbar */}
      < Tabbar 
      value={active}
