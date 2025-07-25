@@ -1,7 +1,7 @@
 const Search = ()=>{
   return (
     <div>
-      Login
+      Search
     </div>
   )
 }
