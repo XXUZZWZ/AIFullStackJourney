@@ -106,7 +106,7 @@
   - 设计稿中像素单位
   - /75
 
-## 项目亮点
+## 项目亮点和难点
 
 - 移动端适配
   - lib-flexible 1rem = 屏幕宽度的 1/10;
@@ -117,6 +117,12 @@
   - postcss 是 css 预处理器，功能强大
   - vite 自动读取 postcss.config.js 将 css 内容编译
   - 自动把 px ==> rem
+- 前端智能
+  - chat 函数
+  - 对各家模型比较感兴趣，升级为 kimichat,doubaochat
+    - 随意切换大模型，通过参数抽象，实现切换。
+    - 性能 能力 性价比
+    - 灵活拓展各种平台和
 
 ## git 提交规范
 
@@ -133,6 +139,9 @@
   - Layout 组件
   - Layout 组件
     - 嵌套路由 Outlet 分组路由配置
+- chatbot
+  - llm 模块
+  - 迭代 chat ,支持任意模型。
 - 自定义 hooks
 
   - useTitle
@@ -142,6 +151,15 @@
   - value + onChange 响应式
   - 直接点击链接分享 active 的设置
 - es6 特性的使用
+
   - Tabbar 的高亮
   - arr.findIndex
   - string.startsWith
+
+- 项目迭代
+  - 功能由由浅入深
+  - chatbot deepseek 简单 chat
+  - deepseek-r1 推理模型
+  - 流式输出
+  - coze 工作流接口调用
+  - 上下文 LRU
