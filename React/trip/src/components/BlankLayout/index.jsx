@@ -5,7 +5,6 @@ const BlankLayout = ()=>{
   return (
     <div>
       <Outlet/>
-     BlankLayout
     </div>
   )
 }
