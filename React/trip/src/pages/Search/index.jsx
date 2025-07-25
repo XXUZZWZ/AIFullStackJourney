@@ -1,7 +1,18 @@
+import   useTitle from '@/hooks/useTitle'
+import {Search as SearchComponent} from 'react-vant'
+import {  NavBar } from 'react-vant'
+import {useNavigate,useLocation}from 'react-router-dom'
 const Search = ()=>{
+  const navigate = useNavigate()
+  const location = useLocation()
+  useTitle('奶龙搜索')
   return (
     <div>
-      Login
+      <NavBar 
+      title="搜索"
+      onClickLeft={() =>{navigate(-1) }}
+      />
+      <SearchComponent placeholder="请输入内容" />
     </div>
   )
 }
