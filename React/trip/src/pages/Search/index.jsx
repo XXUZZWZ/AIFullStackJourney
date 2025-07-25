@@ -13,6 +13,7 @@ const Search = ()=>{
       onClickLeft={() =>{navigate(-1) }}
       />
       <SearchComponent placeholder="请输入内容" />
+      
     </div>
   )
 }
