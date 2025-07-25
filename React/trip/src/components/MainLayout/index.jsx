@@ -37,7 +37,6 @@ const MainLayout = ()=>{
   return (
     <div>
         <Outlet/>
-     MainLayout
      {/* tabbar */}
      < Tabbar 
      value={active}
