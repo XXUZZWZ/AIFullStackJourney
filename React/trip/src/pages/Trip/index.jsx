@@ -1,4 +1,6 @@
+import   useTitle from '@/hooks/useTitle'
 const Trip = ()=>{
+  useTitle('奶龙Trip')
   return (
     <div>
       Login
