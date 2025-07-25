@@ -49,3 +49,12 @@ export const kimiChat = async (messages) => {
   );
   return res;
 };
+
+export const generateAvatar = async (text) => {
+  // 设计prompt
+  const prompt = `
+  你是一位漫画设计师，生成奶龙风格，
+  用户信息为：${text}
+  要求有个性，有设计感。
+  `;
+};

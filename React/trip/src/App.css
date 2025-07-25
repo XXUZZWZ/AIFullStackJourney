@@ -20,3 +20,12 @@
   transform: translate(-50%);
   z-index: 999999;
 }
+.mt2 {
+  margin-top: 2px;
+}
+.mt3 {
+  margin-top: 3px;
+}
+.ml4 {
+  margin-left: 4px;
+}
