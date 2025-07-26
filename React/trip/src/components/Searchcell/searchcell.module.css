@@ -1,0 +1,13 @@
+.searchcell {
+  display: inline-block;
+  background-color: rgb(223, 227, 232);
+  border-radius: 30px;
+  padding: 12px;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-left: 30px;
+  margin-top: 30px;
+}
+.searchcell:hover {
+  background-color: rgba(122, 122, 127, 0.69);
+}
