@@ -3,3 +3,9 @@
   height: 200px;
   background: red;
 }
+.grid {
+  display: grid;
+}
+.pt-2 {
+  padding-top: 20px;
+}
