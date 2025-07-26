@@ -1,0 +1,17 @@
+.cellgroup {
+  margin-top: 100px;
+}
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  fontfamily: Arial;
+}
+.hidden {
+  position: fixed;
+  visibility: hidden;
+  top:43%;
+  left:0;
+  background: white;
+  height: 80%;
+  width: 100%;
+}
