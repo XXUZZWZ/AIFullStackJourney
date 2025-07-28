@@ -157,8 +157,17 @@
   - Layout 组件
     - 嵌套路由 Outlet 分组路由配置
 - chatbot
+
   - llm 模块
   - 迭代 chat ,支持任意模型。
+
+- Search
+
+  - 防抖
+  - api
+    - google suggest
+  - localStorage
+
 - 自定义 hooks
 
   - useTitle
@@ -180,3 +189,10 @@
   - 流式输出
   - coze 工作流接口调用
   - 上下文 LRU
+
+## 通用组件
+
+- Loading
+  - 相对视口 居中方案 。position: fixed; left: 0; right: 0; bottom: 0; top: 0; margin: auto;
+  - React.memo 无状态的组件不重新渲染
+  - animation
