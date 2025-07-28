@@ -31,6 +31,7 @@
     "jwt": "^0.2.0",
     "postcss": "^8.5.1",
     "postcss-pxtorem": "^6.1.0",
-    "vite": "^6.3.4"
+    "vite": "^6.3.4",
+    "vite-plugin-mock": "^3.0.2"
   }
 }
