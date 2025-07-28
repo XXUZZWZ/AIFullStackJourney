@@ -9,6 +9,7 @@ const Search = () => {
   // }
   const handleQuery = useCallback(() => {
     //处理api 请求
+    console.log("handleQuery")
   })
   return (
     <div>

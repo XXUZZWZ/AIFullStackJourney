@@ -19,7 +19,7 @@ const Search = lazy(() => import('./pages/Search'))
 const Trip = lazy(() => import('./pages/Trip'))
 function App() {
   return (
-    <><Loading />
+    <>
       <Suspense fallback={<Loading />}>
         {/*  带有tabbar的layout */}
         <Routes >
