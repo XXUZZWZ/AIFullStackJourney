@@ -1,0 +1,123 @@
+/* Discount.module.css */
+.discountContainer {
+  padding: 10px;
+}
+
+.swiperBanner {
+  margin-bottom: 20px;
+}
+
+.bannerItem {
+  background: linear-gradient(to right, #1565c0, #64b5f6);
+  padding: 20px;
+  border-radius: 8px;
+  margin: 0 10px;
+}
+
+.bannerTitle {
+  color: white;
+  margin: 0;
+}
+
+.bannerText {
+  color: white;
+}
+
+.discountSectionTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.discountIcon {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #1565c0;
+}
+
+.cardContent {
+  display: flex;
+}
+
+.cardDetails {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.cardTitleRow {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.cardTitle {
+  margin: 0;
+  flex: 1;
+  /* 添加文本溢出处理 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardDescription {
+  margin-bottom: 10px;
+  display: block;
+  /* 添加文本溢出处理 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.cardPriceRow {
+  display: flex;
+  align-items: center;
+}
+
+.cardPrice {
+  color: #1565c0;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.cardOriginalPrice {
+  text-decoration: line-through;
+  color: #666;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.divider {
+  margin: 20px 0;
+}
+
+.couponSectionTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.couponIcon {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #1565c0;
+}
+
+.couponCardContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 增大标签字体大小 */
+.cardTitleRow :global(.rv-tag) {
+  font-size: 20px;
+  padding: 4px 8px;
+}
+
+.couponCardContent :global(.rv-tag) {
+  font-size: 20px;
+  padding: 6px 12px;
+}
