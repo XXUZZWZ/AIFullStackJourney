@@ -14,7 +14,7 @@ import {
   Loading,
 } from 'react-vant'
 import styles from './account.module.css'
-import { generateAvatar } from '@/llm/generateAvatar'
+import { generateAvatar } from '@/llm'
 const Account = () => {
   useTitle('我的')
 
@@ -88,6 +88,7 @@ const Account = () => {
         cancelText="取消"
         onCancel={() => setShowActionSheet(false)}
         onSelect={(e) => handleAction(e)}
+        duration={200}
       >
 
       </ActionSheet>
