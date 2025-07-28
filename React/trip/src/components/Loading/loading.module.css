@@ -1,0 +1,35 @@
+.wrapper > div {
+  position: fixed; /* static 取消定位 */
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background: #d44439;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  /* 关键帧动画 */
+  /* 第一个参数 animation-name */
+  /* 第二个参数 animation-duration */
+  /* 第三个参数 animation-iteration-count 迭代次数 */
+  /* infinite 无限循环 */
+  /* 第四个参数 animation-timing-function 动画执行方式  */
+  animation: loading 1.4s infinite ease-in-out;
+}
+.wrapper > div:nth-child(2) {
+  background-color: green;
+  animation-delay: -0.7s;
+  /* transform: translate(4px, 0); */
+}
+
+@keyframes loading {
+  0%,
+  100% {
+    transform: scale(0) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1) rotate(360deg);
+  }
+}
