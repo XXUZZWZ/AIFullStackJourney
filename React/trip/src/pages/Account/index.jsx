@@ -30,27 +30,28 @@ const Account = () => {
       type: 1
     }
   ]
-  const [showActionSheet, setShowActionSheet] = useState(true);
+  const [showActionSheet, setShowActionSheet] = useState(false);
   const [userInfo, setUserInfo] = useState({
     nickname: '奶龙',
     slogan: '我是奶龙',
     level: 3,
     avatar: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.Pq8dDCkuj2fBhQsiC6A7WgHaD_?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3'
   });
-  const handleAction = async (e) => {
+  const handleAction = (e) => {
     console.log(e)
-    if (e.type === 1) {
-      console.log('生成头像')
-      const text = `
-      昵称：${userInfo.nickname},
-      签名：${userInfo.slogan}
-      `;
-      const newAavatar = await generateAvatar(text);
+    setShowActionSheet((pre) => !pre)
+    // if (e.type === 1) {
+    //   console.log('生成头像')
+    //   const text = `
+    //   昵称：${userInfo.nickname},
+    //   签名：${userInfo.slogan}
+    //   `;
+    //   // const newAavatar = await generateAvatar(text);
 
-    } else {
-      console.log('头像')
-    }
-    // setShowActionSheet((pre) => !pre)
+    // } else {
+    //   console.log('头像')
+    // }
+
   }
   return (
     <div className={styles.container}>
@@ -61,7 +62,7 @@ const Account = () => {
           height='64px'
           src={userInfo.avatar}
           style={{ cursor: 'pointer' }}
-          onClick={() => { handleAction }}
+          onClick={handleAction}
         />
         <div className='ml4'>
           <div className={styles.nickname}>昵称：{userInfo.nickname}</div>
@@ -85,6 +86,7 @@ const Account = () => {
       <ActionSheet
         visible={showActionSheet}
         actions={actions}
+        duration={300}
         cancelText="取消"
         onCancel={() => setShowActionSheet(false)}
         onSelect={(e) => handleAction(e)}
