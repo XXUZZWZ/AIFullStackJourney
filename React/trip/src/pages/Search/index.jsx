@@ -47,7 +47,7 @@ const Search = () => {
     setSuggestList(query)
     console.log("handleQuery")
 
-  })
+  },[])
   const suggestListStyle = {
     display: query.length > 0 ? "block" : "none",
   };
