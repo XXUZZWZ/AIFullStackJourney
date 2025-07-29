@@ -1,11 +1,11 @@
 import {
   Outlet
-}from "react-router-dom"
-const BlankLayout = ()=>{
+} from "react-router-dom"
+const BlankLayout = () => {
   return (
     <div>
-      <Outlet/>
-     BlankLayout
+      <Outlet />
+
     </div>
   )
 }
