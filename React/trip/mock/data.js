@@ -51,4 +51,53 @@ export default [
       };
     },
   },
+  {
+    url: "/api/detail/:id",
+    method: "get",
+    response: (req, res) => {
+      const randomData = Mock.mock({
+        title: "@ctitle(5,10)",
+        price: "@integer(1000, 5000)",
+        desc: "@cparagraph(3,4)",
+        images: [
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+          {
+            url: "@image(200x200, @color,#fff,@ctitle)",
+            alt: "@ctitle(5,10)",
+          },
+        ],
+      });
+      return {
+        code: 0,
+        data: randomData,
+      };
+    },
+  },
 ];
