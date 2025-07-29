@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  .box1 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-color: #1ba7aee0;
+    width: 2vw;
+    height: 2vw;
+    border-radius: 10% 10% 50% 50%;
+    transform-origin: 0 0;
+    animation: loading 1s infinite alternate;
+  }
+
+  @keyframes loading {
+
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+
+
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(110deg);
+      }
+    }
+
+    20%,
+    30% {
+      transform: translateY(-10%);
+      opacity: 0.5;
+
+
+      from {
+        transform: rotate(90deg);
+      }
+
+      to {
+        transform: rotate(180deg);
+      }
+    }
+
+    30%,
+    70% {
+      transform: translateY(-20%);
+      opacity: 0.2;
+
+
+      from {
+        transform: rotate(180deg);
+
+      }
+
+      to {
+        transform: rotate(270deg);
+
+      }
+    }
+
+    40%,
+    80% {
+      transform: translateY(-30%);
+      opacity: 0.1;
+
+      from {
+        transform: rotate(270deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    50%,
+    90% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+
+
+
+  }
+
+  .container {
+    position: relative;
+    height: 700px;
+    width: 700px;
+    border: 1px dashed #ccc;
+    --x: 300px;
+    --y: 300px;
+  }
+
+  /* 旋转中心点（视觉标记） */
+  .pivot-point {
+    position: absolute;
+    top: var(--y);
+    /* 自定义旋转点Y坐标 */
+    left: var(--x);
+    /* 自定义旋转点X坐标 */
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+  }
+
+  .rotator {
+    position: absolute;
+    top: var(--y);
+    /* 自定义旋转点Y坐标 */
+    left: var(--x);
+    /* 自定义旋转点X坐标 */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #48dbfb;
+
+    /* 关键：设置旋转中心为自身中心（默认值可省略） */
+    transform-origin: center left;
+    /* 设置自身距离旋转中心的距离是 3px */
+
+
+    animation: orbit 1s linear infinite;
+  }
+
+  @keyframes orbit {
+    0% {
+      transform: rotate(0deg) translateX(10px);
+    }
+
+    /* 初始偏移距离 */
+    100% {
+      transform: rotate(360deg) translateX(10px);
+    }
+  }
+</style>
+
+<body>
+  <div class="box1"></div>
+  <div class="box2"></div>
+  <div class="box3"></div>
+  <div class="box4"></div>
+  <div class="container">
+    <div class="rotator"></div>
+
+    <div class="pivot-point"></div>
+  </div>
+</body>
+
+</html>
