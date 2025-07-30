@@ -5,15 +5,15 @@ const Home = () => {
   useTitle('奶龙首页');
   const navigate = useNavigate();
   const handleChange = (value) => {
-    console.log(value,"fdfsfsdf");
-    navigate('/search', { state: { keyword: value } });
+    console.log(value, "fdfsfsdf");
+    navigate('/search');
   };
   return (
     <div>
 
       <Search
         placeholder='搜索'
-        onClick={handleChange}
+        onClickInput={handleChange}
       ></Search>
     </div>
   )

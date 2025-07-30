@@ -18,6 +18,42 @@ import {
   Logistics
 } from '@react-vant/icons'
 
+const ProductSkeleton = () => {
+  return (
+    <div style={{ padding: '16px' }}>
+      {/* 图片骨架 */}
+      <Skeleton.Image
+        style={{
+          width: '100%',
+          height: '300px',
+          borderRadius: '4px',
+          backgroundColor: '#e6e6e6',
+        }}
+      />
+
+      {/* 商品价格 */}
+      <Skeleton.Paragraph row={1} style={{ marginTop: '16px', height: 24, width: '30%' }} />
+
+      {/* 登录查看更多按钮 */}
+      <Skeleton.Paragraph row={1} style={{ height: 20, width: '40%', marginTop: 8 }} />
+
+      {/* 商品标题 */}
+      <Skeleton.Paragraph row={1} style={{ height: 22, width: '70%', marginTop: 16 }} />
+
+      {/* 发货信息 */}
+      <Skeleton.Paragraph row={2} style={{ height: 16, marginTop: 16 }} />
+
+      {/* 7天无理由退货 / 其他说明 */}
+      <Skeleton.Paragraph row={2} style={{ height: 16, marginTop: 12 }} />
+
+      {/* 底部按钮 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
+        <Skeleton.Button style={{ width: '48%', height: 40, borderRadius: 4 }} />
+        <Skeleton.Button style={{ width: '48%', height: 40, borderRadius: 4 }} />
+      </div>
+    </div>
+  );
+};
 const BottomBar = memo(() => {
   return (
     <div className={styles.bottomBar}>
@@ -56,20 +92,25 @@ const Detail = () => {
     useTitle(detail.title)
   }, [detail])
 
-  if (loading) return <Skeleton title />
+  // if (loading) return <ProductSkeleton />
+
+
 
   return (
     <>
+   
       <nav className={styles.nav}>
         <ArrowLeft fontSize={36} />
         <Cart fontSize={36} />
       </nav>
       {/* 幻灯片 */}
+
       <div className={styles.container}>
+
         <Swiper>
           {
             detail.images.map((item, index) => (
-              <Swiper.Item key={index}>
+              <Swiper.Item key={index} lazyload>
                 <Image src={item.url} />
               </Swiper.Item>
             ))
