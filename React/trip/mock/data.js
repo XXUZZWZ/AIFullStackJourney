@@ -1,5 +1,12 @@
 import Mock from "mockjs";
-
+// 每页10个
+const getImages = (page, pageSize = 10) => {
+  return Array.from({ length: pageSize }, (_, i) => ({
+    id: `${page}-${i}`,
+    height: Mock.Random.integer(300, 600),
+    url: Mock.Random.image("300x400", Mock.Random.color(), "#fff", "image"),
+  }));
+};
 export default [
   {
     url: "/api/search",
@@ -97,6 +104,18 @@ export default [
       return {
         code: 0,
         data: randomData,
+      };
+    },
+  },
+  {
+    // ?page=1 url 里的queryString
+    url: "/api/images",
+    method: "get",
+    response: ({ query }) => {
+      const page = Number(query.page); // 将string 转成 number
+      return {
+        code: 0,
+        data: getImages(page),
       };
     },
   },

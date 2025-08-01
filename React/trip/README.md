@@ -134,6 +134,30 @@
     - 样式可以复用得更好，以后几乎可以不用写样式(积累足够的原子样式)
   - 文生图
     - 优化 prompt 设计
+  - 智能生成图片
+    - 产品
+    - 冰球社群的宠物智能出图
+    - 具有社交属性
+    - 商业价值
+    - 技术服务
+    - coze 工作流 智能编排 AI 流程
+    - API 调用
+  - 设计工作流 ani_pic
+    - 上传宠物照片，生成宠物并且冰球运动员
+    - 代码节点
+      - 参数校验和逻辑功能，返回运行结果
+      - 图片生成流程
+      - 图片理解插件 计算机视觉
+      - 大模型特征提取
+      - 结合 prompt
+    - workflow_id:7533134717945561123
+    - taken pat_ZQajpv00ut0C3wIBkcgPECPrW0FMpob2en9mujbwJadxElbUVDS2arT8wxmCCLWn
+    - coze 图片要上传到 coze 存贮
+    - 拿到 file_id
+    - url + token + new FromData
+    - append(file)
+    - workflowUrl + workflow_id + token
+      - 工作流需要的参数
 - 用户体验
   - 搜索建议+防抖+useMemo 性能优化
   - 组件粒度划分
@@ -142,12 +166,19 @@
   - 热门推荐 + 相关的商品(产品)
   - SPA
   - 骨架屏 不用用户等待
+  - 文件上传 preview html5 FileReader 对象
 
 ## 项目遇到过什么问题？
 
 - chat messages 遇到 message 覆盖问题
 - 闭包陷阱问题
   - 一次事件里面 ，两次 setMessage 设置值，第二次会覆盖第一次。
+- 升级的瀑布流？
+  - 骨架屏
+  - 瀑布流排布算法
+    - 奇偶来分布可能出现一边多，另一边少，不好看
+    - 优化，使用两个响应式数组，两个数组当前长度更低的高度就 添加元素进入数组。
+  - 封装一个 intersectionObserver 用了两次， 不符合 dry 原则封装成 自定义 hooks
 
 ## git 提交规范
 
@@ -184,11 +215,46 @@
   - react-vant + @react-vant/icons
   - value + onChange 响应式
   - 直接点击链接分享 active 的设置
+- 瀑布流
+  - 现代小红书等主流 app 的内容浏览用户体验产品
+  - 图片高度不一致
+  - 落差感
+  - 滚动加载更多，图片懒加载
+  - 接口
+    - /api/images?page=${n} 支持翻页
+    - 唯一 id page + index
+    - 水及图片 高度随机
+    - images 怎么放到两列中(奇偶来分配)？
+    - 加载更多，位于盒子底部元素 通过使用
+    - InterSectionObserver
+    - 组件卸载时直接 使用 useEffect(()=>{return ()=>{
+      disconnect();
+      } },[])
+      卸载观察器，防止内存泄漏
+    - 观察了是否出现在视窗,性能更好，使用了观察者模式。
+    - key id 下拉刷新
+    - 使用 IntersectionObserver 再次图片懒加载 data-src 属性
 - es6 特性的使用
 
   - Tabbar 的高亮
   - arr.findIndex
   - string.startsWith
+  - promise
+  - 瀑布流随机数据生成
+    - Array.from({length:10},(\_,i)=>({id:i})) es6 添加了 map 方法
+
+- toast 组件封装
+
+  - 需要自定义 UI 组件库满足需求
+  - UI props 属性 分别是 .....
+  - 使用 js 来显示出来，可以跨层级通信
+    - 订阅发布者
+  - 使用 mitt 轻量级 event bus 事件总线
+    - 实例化 mitt()
+    - on(自定义事件名,回调函数)
+    - emit(自定义事件名,参数)
+    - 收到事件后，执行回调函数 bind(this,参数)
+      组件通过监听一个自定义的事件，实现基于事件的组件通信
 
 - 项目迭代
   - 功能由由浅入深
