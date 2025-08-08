@@ -20,6 +20,8 @@ const Search = lazy(() => import('./pages/Search'))
 const Trip = lazy(() => import('./pages/Trip'))
 const Detail = lazy(() => import('./pages/Detail'))
 const Coze = lazy(() => import('./pages/Coze/index.jsx'));
+const Article = lazy(() => import('./pages/Article'))
+const ArticleNew = lazy(() => import('./pages/Article/ArticleNew'));
 function App() {
   return (
     <>
@@ -40,6 +42,9 @@ function App() {
             <Route path='/detail/:id' element={<Detail />}></Route>
             <Route path="/coze" element={<Coze />} />
             {/* <Route path='/detail/:id' element={<Detail />}></Route> */}
+            <Route path='/article' element={<Article />}> // 父路由element只包裹组件
+              <Route path="new" element={<ArticleNew />} /> // 子路由path改为相对路径
+            </Route>
           </Route>
         </Routes>
       </Suspense>

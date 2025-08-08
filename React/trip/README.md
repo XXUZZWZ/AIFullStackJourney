@@ -167,6 +167,11 @@
   - SPA
   - 骨架屏 不用用户等待
   - 文件上传 preview html5 FileReader 对象
+- 语音输入发表文章
+  - 字节的 tts
+  - onMouseDown
+  - BOM html5 API navigator.mediaDevices.getUserMedia({audio:true})
+    - 用户隐私，要授权 getLocation()
 
 ## 项目遇到过什么问题？
 
@@ -270,3 +275,10 @@
   - 相对视口 居中方案 。position: fixed; left: 0; right: 0; bottom: 0; top: 0; margin: auto;
   - React.memo 无状态的组件不重新渲染
   - animation
+
+## AI 功能
+
+- 智能前端(http 请求)
+- 工作流接口调用+coze api
+- ai 全新工作链路
+- 自动化 Agent
