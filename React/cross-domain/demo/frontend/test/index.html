@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+  <title>Vite + React + TS</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+
+
+
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.4.37/vue.global.min.js"></script>
+  <script type="module">
+    const app = Vue.createApp({
+      data() {
+        return {
+          message: 'Hello Vue!'
+        }
+      }
+    }) -->
+  <script>
+    function callback(data) {
+      console.log(data);
+      console.log(data.msg);
+    }
+  </script>
+  <script src='http://localhost:8080/api/hello'></script>
+
+  </script>
+</body>
+
+</html>
