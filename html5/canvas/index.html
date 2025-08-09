@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  #demo {
+    border: 1px solid black;
+    width: 500px;
+    height: 500px;
+  }
+</style>
+
+<body>
+  <canvas id='demo'></canvas>
+  <script>
+    // 画布
+    let canvas = document.getElementById('demo');
+    // 绘制上下文
+    let ctx = canvas.getContext('2d');
+    // 画笔
+    const img = new Image();
+    img.src = 'https://tse2.mm.bing.net/th/id/OIP.70CRUr2gRSq21nNBbnVU1wHaC9?cb=thfc1&rs=1&pid=ImgDetMain&o=7&rm=3'
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0);
+    }
+  </script>
+</body>
+
+</html>

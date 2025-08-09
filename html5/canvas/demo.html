@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  #demo {
+    /* width: 300px;
+    height: auto; */
+    border: 2px solid rgb(19, 182, 106);
+  }
+</style>
+
+<body>
+  <canvas id="demo">
+
+  </canvas>
+  <script>
+    let canvas = document.getElementById('demo')
+    let context = canvas.getContext('2d');
+    context.fillStyle = 'red';
+    context.fillRect(0, 0, 299, 478);
+    context.clearRect(20, 20, 100, 100);
+    var dis = 0;
+    function animation() {
+      // 以浏览器的刷帧率来频繁执行 1s 60 帧
+      requestAnimationFrame(function () {
+        context.clearRect(0, 0, 300, 150);
+        context.fillStyle = `rgba(${dis++},${dis % 44},${dis % 14})`
+        context.fillText(dis++, 110, 90);
+        context.font = '50px Verdana';
+        animation();
+        if (dis > 255) dis %= 255;
+      });
+    }
+    animation();
+  </script>
+</body>
+
+</html>
