@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script">
+    // 单线程
+    // html5 启动一个新线程 同步执行
+    const worker = new Worker('./worker.js');
+    //通过消息机制将任务派给worker线程  消息机制 
+    worker.postMessage('hello');
+    worker.addEventListener('message', (e) => {
+      console.log('主线程打印', e.data);
+    })
+  </script>
+</body>
+
+</html>
