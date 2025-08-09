@@ -20,6 +20,8 @@ const server = http.createServer((req, res) => {
   }
   // 浏览器发送一个预检请求
   if (req.method === "OPTIONS") {
+    console.log("OPTIONS 请求", req);
+    console.log("OPTIONS 请求头", res);
     res.writeHead(200);
     res.end();
     return;
