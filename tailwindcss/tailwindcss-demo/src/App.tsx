@@ -69,12 +69,25 @@ import './App.css'
 function App() {
   return (
     <div className="App">
-      <div className='rounded'>
-        <div className="rounded-t-2xl bg-blue-400 h-30 text-6xl text-gray-200 flex items-center justify-center ">
+      <div className='rounded bg-amber-50   '>
+        <div className="rounded-t-2xl bg-blue-400 h-30 text-6xl text-gray-200 flex items-center justify-center to-secondary relative  ">
           BANNER
         </div>
-        <div className="bg-gray-300 w-20 h-20 m-auto rounded-full "></div>
-        <h2 className='  '>张小明</h2>
+        <div className="bg-gray-300 w-20 h-20 m-auto rounded-full -mt-10 "></div>
+        <h2 className=' font-bold mt-3 '>张小明</h2>
+        <h3 className='text-blue-500 mb-5' >前端开发工程师</h3>
+        <p className='text-gray-500 mb-5'>拥有5年前端开发经验，专注于创建用户友好的界面和响
+          应式设计。熟练掌握avaScript框架和现代CSS技术。</p>
+        <button className='p-2 bg-blue-500 text-white rounded-full hover:transition-transform duration-500 hover:scale-105 hover:shadow-xl  ' >联系我</button>
+        <hr className='color-gray-300' />
+        <div className="flex items-center justify-between">
+          <div className='w-10 h-10 bg-gray-200 rounded-full' ></div>
+          <div className='w-10 h-10 bg-gray-200 rounded-full' ></div>
+
+          <div className='w-10 h-10 bg-gray-200 rounded-full' ></div>
+
+
+        </div>
       </div>
     </div>
   )
