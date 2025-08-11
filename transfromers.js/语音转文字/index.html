@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Transformers.js 语音转文字（ASR）</title>
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      padding: 20px;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 840px;
+      height: 160px;
+    }
+
+    .row {
+      margin: 10px 0;
+    }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+</head>
+
+<body>
+  <h1>语音转文字（Whisper, WebGPU 可选）</h1>
+
+  <div class="row">
+    <label><input type="checkbox" id="useWebGPU" checked> 尝试启用 WebGPU（若浏览器支持）</label>
+    &nbsp;&nbsp;
+    <label>
+      模型：
+      <select id="model">
+        <option value="Xenova/whisper-tiny" selected>whisper-tiny（快）</option>
+        <option value="Xenova/whisper-base">whisper-base</option>
+        <option value="Xenova/whisper-small">whisper-small（慢/更准）</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="start">开始录音</button>
+    <button id="stop" disabled>停止并转写</button>
+    <button id="cancel" disabled>取消</button>
+  </div>
+
+  <div id="status">状态：就绪</div>
+  <div class="row">
+    <textarea id="result" placeholder="识别结果将出现在这里"></textarea>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+
+</html>
