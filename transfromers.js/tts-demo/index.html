@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Transformers.js TTS（WebGPU 优化）</title>
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #333;
+    }
+
+    #progress {
+      width: 100%;
+      max-width: 800px;
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    #progress>i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: #4caf50;
+      transition: width .2s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Transformers.js TTS（WebGPU + 量化 可选）</h1>
+
+  <label>文本（中文/英文）：</label><br />
+  <textarea id="text" rows="4">你好，我是 transformers.js 优化版语音合成示例。</textarea><br />
+
+  <label>
+    <input type="checkbox" id="useWebGPU" checked /> 尝试启用 WebGPU（若浏览器支持）
+  </label>
+  &nbsp;&nbsp;
+  <label>
+    <input type="checkbox" id="useQuant" /> 使用量化（若模型有量化权重）
+  </label>
+  <br /><br />
+
+  <button id="speak">朗读</button>
+  <button id="cancel" disabled>取消</button>
+
+  <div id="status">状态：就绪</div>
+
+  <div id="progress"><i></i></div>
+  <audio src="" id="audio" controls></audio>
+  <script type="module" src="./main.js"></script>
+</body>
+
+</html>
