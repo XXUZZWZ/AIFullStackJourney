@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id='btn'>anniu</button>
+  <button id="reBtn">yichuf</button>
+
+  <script>
+    reBtn.addEventListener('click', () => {
+      btn.removeEventListener('click', callbackA)
+      btn.removeEventListener('click', callbackB)
+      btn.addEventListener('click', callbackA)
+    })
+    // 订阅发布者模式
+    const callbackA = function () {
+      alert('callbackA');
+    }
+    const btn = document.getElementById('btn');
+    const callbackB = function () {
+      alert('callbackB');
+    }
+    btn.addEventListener('click', callbackA)
+    btn.addEventListener('click', callbackB)
+  </script>
+</body>
+
+</html>
