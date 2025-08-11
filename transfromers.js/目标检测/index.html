@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Transformers.js 目标检测（DETR）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      padding: 20px;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #333;
+    }
+
+    .row {
+      margin: 10px 0;
+    }
+
+    canvas {
+      max-width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    #list {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    label b {
+      display: inline-block;
+      min-width: 5em;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>目标检测（Xenova/detr-resnet-50，WebGPU 可选）</h1>
+
+  <div class="row">
+    <input id="file" type="file" accept="image/*" />
+  </div>
+
+  <div class="row">
+    <label><input type="checkbox" id="useWebGPU" checked> 启用 WebGPU（若支持）</label>
+    &nbsp;&nbsp;
+    <label>
+      <b>模型：</b>
+      <select id="model">
+        <option value="Xenova/detr-resnet-50" selected>Xenova/detr-resnet-50</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="detect" disabled>开始检测</button>
+    <button id="cancel" disabled>取消</button>
+  </div>
+
+  <div id="status">状态：请选择一张图片</div>
+
+  <div class="row">
+    <canvas id="canvas" width="0" height="0"></canvas>
+  </div>
+
+  <div class="row">
+    <div id="list"></div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+
+</html>
