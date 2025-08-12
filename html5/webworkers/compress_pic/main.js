@@ -38,6 +38,7 @@ function handleFile(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {
+      console.log(reader.result);
       resolve(reader.result);
     };
     reader.readAsDataURL(file);

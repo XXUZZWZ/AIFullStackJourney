@@ -11,5 +11,5 @@ console.log(this);
 
 self.onmessage = function (e) {
   console.log("worker 正在打印", e.data);
-  self.postMessage("worker 回复 我打印好了");
+  self.postMessage(`worker 回复 我打印好了  ${e.data}`);
 };

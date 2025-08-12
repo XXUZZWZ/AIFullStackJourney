@@ -16,7 +16,13 @@
     3. 卸载时移除事件
   - 封装组件
 - 项目的难点
+
   - 单例模式封装 MyTextToSpeechPipeline
   - getInstance 只实例化一次
   - 懒执行
   - Promise.all + nlp 流程理解 (tokenizer model vocoder )
+
+- 需要有一个一格 audio 标签的 url <- URL.createObjectURL(Blob)<---二进制数据位<---ttsModel 生成 <---input_ids(tokenizer 分词)+speeak_embeddings + vocoder 合成器 <---tokenizer.decode(input_ids) 解码
+- URL.revokeObjectURL(url) 删除一个 url
+- URL.createObjectURL(file)
+- 大模型返回的 file (张量 )--> blob ---> URL.createObjectURL(blob) 创建一个 url

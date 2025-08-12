@@ -25,6 +25,9 @@
     const worker = new Worker('./worker.js');
     //通过消息机制将任务派给worker线程  消息机制 
     worker.postMessage('hello');
+    worker.onmessage = (e) => {
+      console.log('worker线程打印', e.data);
+    }
     worker.addEventListener('message', (e) => {
       console.log('主线程打印', e.data);
     })

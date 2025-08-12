@@ -1,55 +1,55 @@
 <script>
-    const getRepos = function (id) {
-      return new Promise((resolve, reject) => {
-        try {
-          setTimeout(() => {
-            resolve({ id })
-          }, 2000)
-        } catch (err) {
-          reject(err)
-        }
+  const getRepos = function (id) {
+    return new Promise((resolve, reject) => {
+      try {
+        setTimeout(() => {
+          resolve({ id })
+        }, 2000)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  };
+  // 批量异步任务
+  // 我希望并发
+  (async () => {
+    // 计时器变量
+    const startAwait = performance.now();
+
+    const res = []
+    const allPromises = [
+      getRepos('LeeAt67'),
+      getRepos('LeeAt68'),
+      getRepos('LeeAt69'),
+      getRepos('LeeAt60'),
+    ]
+    res[0] = await getRepos('LeeAt67');
+    res[1] = await getRepos('shunwuyu');
+    res[2] = await getRepos('LeeAt69');
+    res[3] = await getRepos('LeeAt60');
+
+    // 结束await计时
+    const endAwait = performance.now();
+    const durationAwait = (endAwait - startAwait).toFixed(2);
+
+    // 开始Promise.all计时
+    const startAll = performance.now();
+
+    Promise.all(allPromises)
+      .then(res => {
+        console.log(res);
       })
-    };
-    // 批量异步任务
-    // 我希望并发
-    (async () => {
-      // 计时器变量
-      const startAwait = performance.now();
-      
-      const res = []
-      const allPromises = [
-        getRepos('LeeAt67'),
-        getRepos('LeeAt68'),
-        getRepos('LeeAt69'),
-        getRepos('LeeAt60'),
-      ]
-      res[0] = await getRepos('LeeAt67');
-      res[1] = await getRepos('shunwuyu');
-      res[2] = await getRepos('LeeAt69');
-      res[3] = await getRepos('LeeAt60');
+      // 结束Promise.all计时
+      .finally(() => {
+        const endAll = performance.now();
+        const durationAll = (endAll - startAll).toFixed(2);
 
-      // 结束await计时
-      const endAwait = performance.now();
-      const durationAwait = (endAwait - startAwait).toFixed(2);
-      
-      // 开始Promise.all计时
-      const startAll = performance.now();
-      
-      Promise.all(allPromises)
-        .then(res => {
-          console.log(res);
-        })
-        // 结束Promise.all计时
-        .finally(() => {
-          const endAll = performance.now();
-          const durationAll = (endAll - startAll).toFixed(2);
-          
-          // 输出执行时间
-          console.log(`await执行时间: ${durationAwait}ms`);
-          console.log(`Promise.all执行时间: ${durationAll}ms`);
-        })
+        // 输出执行时间
+        console.log(`await执行时间: ${durationAwait}ms`);
+        console.log(`Promise.all执行时间: ${durationAll}ms`);
+      })
 
 
-      console.log(res);
-    })()
-  </script>
+    console.log(res);
+  })()
+</script>

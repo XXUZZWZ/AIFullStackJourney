@@ -6,7 +6,7 @@ self.onmessage = async function (e) {
     // console.log(await fetch(imgData));
     // console.log(await fetch(imgData).blob());
     const bitmap = await createImageBitmap(await (await fetch(imgData)).blob());
-    console.log(bitmap);
+    console.log(bitmap, "我是位图");
     // canvas 画布 可以在位图里取一些像素
     const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
     // 在画之前得到画画的句柄 2d
