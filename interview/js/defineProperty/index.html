@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 响应式 原理</title>
+</head>
+
+<body>
+  <div id="container">
+    1
+  </div>
+  <button id="button" type="button">点击</button>
+  <button id='loginBtn' type="button">登陆</button>
+  <script type="module">
+    // // js dom api
+    // 性能不好
+    // document.getElementById('button').addEventListener('click', function () {
+    //   var container = document.getElementById('container');
+    //   // 显示类型转化
+    //   container.innerHTML = Number(container.innerHTML) + 1;
+    // })
+    // 响应式开发
+    // mvvm 框架
+    // 给一个数据状态 它发生改变的适合 ，数据绑定的时候 自动更新
+    // model : count view VM: jsx 
+
+    // 1. 状态
+    // 定义对象的改变
+    var obj = {
+      // 监听这个状态的变化
+      value: 1,//怎么变成响应式的 
+      isLogin: false
+    }
+
+    Object.defineProperty(obj, "value",  {
+      value: 1,
+      get: function () {
+        console.log("监听到了getter被调用")
+        return value
+      },
+      set: function (newValue) {
+        value = newValue;
+        console.log("状态发生改变")
+
+        var container = document.getElementById('container');
+        // 显示类型转化
+        container.innerHTML = value;
+
+      }
+    })
+    Object.defineProperty(obj, 'isLogin',  {
+      isLogin: false,
+      get: function () {
+        console.log("正在读取isLogin")
+        return isLogin;
+      }
+      ,
+      set: function () {
+        isLogin = !isLogin;
+        document.getElementById('loginBtn').innerHTML = isLogin ? '登出' : '登录';
+      }
+    })
+
+    document.getElementById('button').addEventListener('click', function () {
+      obj.value++;
+    })
+    document.getElementById('loginBtn').addEventListener('click', function () {
+      isLogin = !isLogin;
+    })
+
+
+
+  </script>
+</body>
+
+</html>
