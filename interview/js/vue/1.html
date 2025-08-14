@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>响应式原理 Demo</title>
+</head>
+
+<body>
+  <div id="container">1</div>
+  <button id="button" type="button">点击 +1</button>
+  <div>
+    登录状态：<span id="login-status">未登录</span>
+  </div>
+  <button id="loginBtn" type="button">登录</button>
+
+  <script>
+    // 模拟 Vue 的响应式
+    function defineReactive(obj, key, value, onChange) {
+      Object.defineProperty(obj, key, {
+        get() {
+          console.log(`读取 ${key} ->`, value);
+          return value;
+        },
+        set(newVal) {
+          if (newVal !== value) {
+            value = newVal;
+            console.log(`更新 ${key} ->`, value);
+            onChange(newVal); // 数据变化时触发 DOM 更新
+          }
+        }
+      });
+    }
+
+    // 数据对象
+    var obj = {};
+
+    // 定义响应式属性
+    defineReactive(obj, 'value', 1, function (val) {
+      document.getElementById('container').innerHTML = val;
+    });
+
+    defineReactive(obj, 'isLogin', false, function (val) {
+      document.getElementById('login-status').innerHTML = val ? '已登录' : '未登录';
+    });
+
+    // 初始渲染
+    document.getElementById('container').innerHTML = obj.value;
+    document.getElementById('login-status').innerHTML = obj.isLogin ? '已登录' : '未登录';
+
+    // 点击 +1
+    document.getElementById('button').addEventListener('click', function () {
+      obj.value++;
+    });
+
+    // 登录
+    document.getElementById('loginBtn').addEventListener('click', function () {
+      obj.isLogin = true;
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>响应式原理（Vue2简化版）</title>
+</head>
+
+<body>
+  <div id="container">1</div>
+  <button id="button" type="button">点击 +1</button>
+  <div>
+    登录状态：<span id="login-status">未登录</span>
+  </div>
+  <button id="loginBtn" type="button">登录</button>
+
+  <script>
+    // 把对象变成响应式
+    function observe(obj, callbackMap = {}) {
+      if (typeof obj !== 'object' || obj === null) return;
+
+      Object.keys(obj).forEach(key => {
+        let value = obj[key];
+
+        // 如果值本身是对象，递归处理
+        observe(value, callbackMap);
+
+        Object.defineProperty(obj, key, {
+          get() {
+            console.log(`读取 ${key} ->`, value);
+            return value;
+          },
+          set(newVal) {
+            if (newVal !== value) {
+              value = newVal;
+              console.log(`更新 ${key} ->`, value);
+              // 如果新值是对象，也要递归
+              observe(value, callbackMap);
+              // 如果这个 key 有绑定的回调，执行它
+              if (callbackMap[key]) {
+                callbackMap[key](newVal);
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // 数据对象
+    var state = {
+      value: 1,
+      isLogin: false,
+      user: {
+        name: '游客'
+      }
+    };
+
+    // 定义属性与 UI 更新的绑定关系
+    var domBindings = {
+      value: val => document.getElementById('container').innerHTML = val,
+      isLogin: val => document.getElementById('login-status').innerHTML = val ? '已登录' : '未登录'
+    };
+
+    // 让整个对象响应式
+    observe(state, domBindings);
+
+    // 初始化 DOM
+    domBindings.value(state.value);
+    domBindings.isLogin(state.isLogin);
+
+    // 点击 +1
+    document.getElementById('button').addEventListener('click', () => {
+      state.value++;
+    });
+
+    // 登录
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      state.isLogin = true;
+      state.user.name = '小明'; // 虽然没绑定 UI，但依然能被监听
+    });
+  </script>
+</body>
+
+</html>
