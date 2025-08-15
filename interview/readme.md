@@ -10,6 +10,13 @@
 开发中如何使用 git
 先设置全局设置
 
+- 公司的项目是私有的
+- 安装开发环境
+
+  - node 环境
+  - git 环境
+  - 公司会发放一个 git 账号 因为公司项目是私有的
+
 - git config --global user.name "XXX"
 - git config --global user.email "XXX"
 - 入职有那些 git 操作
@@ -26,4 +33,3 @@
   - git status
   - git log --oneline 查看提交记录
   - git add . 添加所有文件 到暂存区
-  
