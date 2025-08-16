@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  div {
+    position: static;
+  }
+
+  .child {
+    position: static;
+    right: 0;
+    top: 0;
+    background-color: blue;
+    width: 100px;
+    height: 100px;
+  }
+</style>
+
+<body>
+  <div style="background-color: aqua; width: 200px; height: 87px;"></div>
+  <div style="background-color: aqua; width: 200px; height: 87px;"></div>
+  <div style="background-color: aqua; width: 200px; height: 87px;">
+    <div class="child"></div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+- 听清是什么居中
+  - 水平垂直
+- 方式不是关键，我们要学习各种 css 方法的区别
+
+- 水平居中
+  - 水平居中 text-align ： center
+    - 单行文本居中
+    - 固定宽高块级盒子水平居中
+  - 固定宽高块级盒子宽高
+  - transform 相对自身大小的百分比
+  - absolute + transform 相对父级
+- 固定宽高盒子的盒子水平垂直居中 absolute + l0,r0,b0,t0 margin auto
+  - absoulte + margin auto
+  - absoulute + calc (100% - 宽 px)/2 计算函数 缺点: 宽高不能动态变化 ，而且要频繁计算 calc 引发重绘重排
+  - line-height
+- 不固定宽高块级盒子水平垂直居中
+  - absolute + transform
+  - line-height + vertical-align
+  - writing-mode
+    - write-mode:vertical-rl; 设置文字书写方法
+    - text-align:center;
