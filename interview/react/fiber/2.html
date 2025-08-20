@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Fiber</title>
+  <style>
+    #status {
+      margin: 20px 0;
+    }
+
+    #progress {
+      width: 100%;
+      height: 20px;
+      border: 1px solid #ccc;
+    }
+
+    #bar {
+      height: 100%;
+      width: 0%;
+      background-color: #4caf50;
+      transition: width 0.1s;
+    }
+
+    button {
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    /*
+      动画方块：用来观察 requestAnimationFrame 驱动的动画
+      与后台空闲任务（requestIdleCallback）并行时的流畅度
+    */
+    #animation {
+      width: 30px;
+      height: 30px;
+      background-color: #2196f3;
+      margin-top: 20px;
+      will-change: transform;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>requestIdleCallback</h1>
+  <p>
+    requestIdleCallback 是浏览器提供的用于在主线程空闲时
+    执行低优先级任务的API，有助于优化性能和响应性。
+  </p>
+  <div id="controls">
+    <button id="startBtn">开始处理10000个数据项</button>
+    <button id="animateBtn">开始动画</button>
+  </div>
+  <div id="status">准备就绪</div>
+  <div id="progress">
+    <div id="bar"></div>
+  </div>
+  <div id="animation"></div>
+  <script>
+    // 示例目的：
+    // - 展示如何使用 requestIdleCallback 在主线程空闲时分批处理大量任务
+    // - 演示与 requestAnimationFrame 动画并行时，如何避免长任务卡顿
+    // - 提供一个简单 polyfill，以便在不支持 requestIdleCallback 的环境中也能运行
+    const statusEl = document.getElementById("status");
+    const progressBar = document.getElementById('bar');
+    const startBtn = document.getElementById('startBtn');
+    const animateBtn = document.getElementById('animateBtn');
+    const animation = document.getElementById('animation');
+    // 构造待处理的大型数据集合
+    // 注意：这里的数据构造是同步的，数目过大（例如 1000 万）会在页面加载时带来明显阻塞，
+    // 仅用于演示“空闲时间分批处理”环节的效果。实际项目可改为懒加载/分页/生成器等。
+    let dataItem = [];
+    for (let i = 0; i < 10000000; i++) {
+      dataItem.push({
+        id: i,
+        name: `Item ${i}`,
+        value: Math.random()
+      })
+    }
+    // 分批执行
+    // idle 一下
+    // 分批执行 每次执行最小单元（unit of work）
+    // 兼容处理：
+    // - 如果浏览器支持 requestIdleCallback，则直接使用
+    // - 否则用 setTimeout 模拟，提供 timeRemaining() 与 didTimeout 的最小实现
+    const ric = window.requestIdleCallback
+      ? window.requestIdleCallback.bind(window)
+      : function (cb, opts) { return setTimeout(() => cb({ timeRemaining: () => 50, didTimeout: !!(opts && opts.timeout) }), 1); };
+    const cic = window.cancelIdleCallback ? window.cancelIdleCallback.bind(window) : clearTimeout;
+
+    // 处理状态与游标：
+    // - isProcessing：是否正在处理（防止重复启动）
+    // - workIndex：当前处理到的数据下标
+    // - idleHandle：记录上一次空闲回调句柄，便于取消
+    let isProcessing = false;
+    let workIndex = 0;
+    let idleHandle = null;提供对ggggggggggggggggggg
+
+    // 核心工作循环：在浏览器空闲时间片内“尽量多”地处理任务
+    // deadline 对象：
+    // - timeRemaining()：本帧剩余可用时间（毫秒），>0 则可以继续做一些工作
+    // - didTimeout：若设置了 timeout，且已超时，会为 true（可用于兜底执行）
+    function workLoop(deadline) {
+      if (!isProcessing) return;
+      while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && workIndex < dataItem.length) {
+        const item = dataItem[workIndex];
+        // 模拟计算开销：在真实业务中替换为实际的处理逻辑
+        let tmp = 0;
+        for (let j = 0; j < 30; j++) tmp += Math.sqrt(item.value + j);
+        workIndex++;
+        if (workIndex % 100 === 0) {
+          const percent = Math.floor((workIndex / dataItem.length) * 100);
+          progressBar.style.width = percent + '%';
+          statusEl.textContent = `已处理 ${workIndex}/${dataItem.length}`;
+        }
+      }
+      if (workIndex >= dataItem.length) {
+        progressBar.style.width = '100%';
+        statusEl.textContent = '完成';
+        isProcessing = false;
+        idleHandle = null;
+        return;
+      }
+      // 将剩余工作安排到下一个空闲片段，设置 timeout 以避免长时间没有空闲时饿死
+      idleHandle = ric(workLoop, { timeout: 1000 });
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (isProcessing) return;
+      // 重置进度与状态，并在下一段空闲时间启动工作循环
+      workIndex = 0;
+      progressBar.style.width = '0%';
+      statusEl.textContent = '开始处理...';
+      isProcessing = true;
+      if (idleHandle) cic(idleHandle);
+      idleHandle = ric(workLoop, { timeout: 1000 });
+    });
+
+    // 动画演示（requestAnimationFrame）：
+    // 与后台空闲任务并行，用于观察长任务是否被切片以保持动画流畅
+    let rafId = null;
+    let angle = 0;
+    function tick() {
+      angle += 0.06;
+      // 正弦位移，往返运动（0~240px 区间）
+      const x = Math.sin(angle) * 120 + 120;
+      animation.style.transform = `translateX(${x}px)`;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    animateBtn.addEventListener('click', () => {
+      // 点击切换：启动/停止动画
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+        animateBtn.textContent = '开始动画';
+        return;
+      }
+      animateBtn.textContent = '停止动画';
+      rafId = requestAnimationFrame(tick);
+    });
+  </script>
+</body>
+
+</html>

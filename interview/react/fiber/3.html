@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Fiber</title>
+  <style>
+    #status {
+      margin: 20px 0;
+    }
+
+    #progress {
+      height: 20px;
+      width: 100%;
+      border: 1px solid #ccc;
+    }
+
+    #bar {
+      height: 100%;
+      width: 0%;
+      background-color: red;
+      transition: width 0.1s;
+    }
+
+    button {
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    /* 动画方块：用来观察动画与后台空闲任务并行时的流畅度 */
+    #animation {
+      width: 30px;
+      height: 30px;
+      background-color: #2196f3;
+      margin-top: 20px;
+      will-change: transform;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>requestIdleCallback</h1>
+  <p>
+    requestIdleCallback 是浏览器提供的用于在主线程空闲时执行低优先级任务的API，有助于优化性能和响应性。
+  </p>
+  <div id="controls">
+    <button id="startBtn">开始处理10000个数据项</button>
+    <button id="animateBtn">开始动画</button>
+  </div>
+  <div id="status">准备就绪</div>
+  <div id="progress">
+    <div id="bar"></div>
+  </div>
+  <div id="animation"></div>
+  <script>
+    const statusEl = document.getElementById('status')
+    const progressBar = document.getElementById('bar')
+    const startBtn = document.getElementById('startBtn')
+    const animateBtn = document.getElementById('animateBtn')
+    const animation = document.getElementById('animation')
+
+    let dataItems = []
+    for (let i = 0; i < 1000000; i++) {
+      dataItems.push({
+        id: 1,
+        value: Math.random() * 100
+      })
+    }
+    // 分批执行 unit 单位时间， 单位任务
+    // idle 一下
+    let processedItems = 0
+    let isProgressing = false
+    let startTime
+
+    startBtn.addEventListener('click', () => {
+      if (!isProgressing) {
+        isProgressing = true // 开关变量
+        // = arr.length 执行完了，停下来
+        processedItems = 0 // 初始化已经处理好多少条目
+        // 性能优化api 表现 统计时长
+        // 用于页面性能衡量的标准
+        startTime = performance.now()
+        statusEl.textContent = '处理中...'
+        // 如果没有其他任务，开局即空闲
+        // 低姿态 可以被中断
+        requestIdleCallback(processDataChunk, {
+          timeout: 5000
+        })
+      }
+    })
+
+    function processItem(item) {
+      let result = 0;
+      for (let i = 0; i < 5000; i++) {
+        result += Math.sqrt(item.value) * Math.sin(i);
+      }
+      return result;
+    }
+
+    function processDataChunk(deadline) {
+      // console.log(dealine)
+      // 剩余可执行时间
+      while (
+        (typeof deadline.timeRemaining === 'function' ? deadline.timeRemaining() > 0 : deadline.timeRemaining > 0)
+        && processedItems < dataItems.length
+        && isProgressing
+      ) {
+        processItem(dataItems[processedItems])
+        // 标记 下一次任务的开始执行的地方
+        // 既可以中断
+        // 之后又可以继续
+        processedItems++
+        const progress = Math.floor(processedItems / dataItems.length * 100);
+        progressBar.style.width = `${progress}%`;
+        statusEl.textContent = `处理中... ${progress}%`;
+
+      }
+      console.log('////');
+      if (processedItems < dataItems.length && isProgressing) {
+        requestIdleCallback(processDataChunk, {
+          timeout: 5000
+        })
+      } else if (isProgressing) {
+        const endTime = performance.now();
+        const totalTime = (endTime - startTime).toFixed(2);
+
+        statusEl.textContent = `处理完成，耗时${totalTime}ms,完成了${processedItems}个任务`;
+      }
+
+
+    }
+
+    // 动画演示（requestAnimationFrame）：与后台空闲任务并行
+    let rafId = null
+    let angle = 0
+    function tick() {
+      angle += 0.06
+      const x = Math.sin(angle) * 120 + 120
+      animation.style.transform = `translateX(${x}px)`
+      rafId = requestAnimationFrame(tick)
+    }
+
+    animateBtn.addEventListener('click', () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId)
+        rafId = null
+        animateBtn.textContent = '开始动画'
+        return
+      }
+      animateBtn.textContent = '停止动画'
+      rafId = requestAnimationFrame(tick)
+    })
+  </script>
+</body>
+
+</html>
