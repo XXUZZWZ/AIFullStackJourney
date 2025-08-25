@@ -249,3 +249,94 @@ el.style.transform = `translateY(${el.offsetTop}px)`;
     - defer 延迟加载，html 解析完，再加载，在 DOMContentLoaded 事件前执行,一般适合需要依赖资源的脚本执行
     - async 并发 加载完立即执行，可能中断 html 解析，执行顺序不固定，适合无其他依赖的资源，独立脚本，广告，分析
     - module // 功能
+    - webp 格式图片
+      - 图片优化，减少体积，并质量不受影响
+      - 图标字体库减少 http 请求库
+
+## JS 执行优化
+
+- 防抖节流
+- webWorkers 处理复杂计算
+- requestAnimationFrame 优化动画
+- requestIdleCallback 优化动画
+  - schedule 机制
+
+## 框架层优化
+
+- memo useMemo useCallback 避免不必要的渲染
+- shadcn-ui 按需加载
+- 合理使用 key 优化列表渲染
+
+## 网络层的缓存
+
+### 强缓存和协商缓存
+
+- 强缓存
+  Expire/Cache-Control 不发请求
+- 协商缓存
+  其中有两组请求头和响应头：
+  - Last-Modified/If-Modified-Since 时间戳
+  - ETag/If-None-Match
+- localStorage/SessionStorage 缓存/Cookie
+
+- pwa
+
+  - 离线缓存
+
+- 网路优化
+
+  - CDN 加速
+    - 存储静态资源，分流 一些数据要走数据库，一些是静态的图片，js,css
+    - 多路复用 多域名服务器 img1.baidu.com img.baidu.com
+    - gzip 压缩静态资源
+    - http /2 多路复用
+    - DNS 预解析
+
+- 首屏优化
+  - SSR
+  - 组件渲染，在服务器已经完成编译成 html 了，执行，浏览器端直接显示就好
+  - 骨架屏
+  - http2.0 serverPush 首屏数据推送，请求了 index.html 直接把相关的 css js 也推送过来
+
+### perfermance
+
+这张图里展示的是 **Web Vitals 核心指标**，主要用来衡量网页的用户体验性能：
+
+### 1. **LCP (Largest Contentful Paint)**
+
+- 含义：最大内容绘制时间。指页面中 **最大可见内容元素**（比如大图片、大文字块）出现在屏幕上的时间。
+- 目标：**≤ 2.5 秒**（优秀）。
+- 你的数值是 **3.77s**，说明页面的首屏渲染偏慢，用户可能感觉页面加载“卡”。
+- 优化方向：减少图片体积、开启懒加载、使用 CDN、优化关键渲染路径（如减少阻塞 JS/CSS）。
+
+---
+
+### 2. **INP (Interaction to Next Paint)**
+
+- 含义：交互到下一次渲染的延迟。衡量用户点击、输入等交互后，浏览器多久给出 **视觉反馈**。
+- 目标：**≤ 200ms**（优秀）。
+- 你的数值显示为 **“-”**，说明测试数据不足（可能没有捕获到交互）。
+
+---
+
+### 3. **CLS (Cumulative Layout Shift)**
+
+- 含义：累积布局偏移。衡量页面在加载过程中元素 **意外跳动** 的情况。
+- 目标：**≤ 0.1**（优秀）。
+- 你的数值是 **0.46**，远高于标准，说明页面加载时有明显“抖动/闪动”（比如广告、图片没设定宽高、字体加载迟）。
+- 优化方向：给图片/视频预留尺寸、避免动态插入 DOM、使用稳定字体加载策略。
+
+---
+
+👉 总结：
+
+- **LCP=3.77s** → 页面加载速度慢，需要优化资源与渲染路径。
+- **INP=-** → 数据不足，但仍需关注交互延迟。
+- **CLS=0.46** → 页面抖动严重，需要修复布局稳定性。
+
+要不要我帮你画一张 **直观示意图**（LCP/INP/CLS 在页面加载中的位置和表现），方便你在面试时一目了然？
+
+## 性能测试
+
+- chrome 的 performance 面板 可以看到各项性能指标，针对性的优化，给出优化建议
+- 减少首屏 js/css 体积 (code spiting)
