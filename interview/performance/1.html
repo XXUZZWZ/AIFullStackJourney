@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance API 性能测试示例</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    #mylist {
+      margin: 20px 0;
+      padding: 0;
+      list-style: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    #mylist li {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.3s;
+    }
+    
+    #mylist li:hover {
+      background-color: #f0f0f0;
+    }
+    
+    #mylist li:last-child {
+      border-bottom: none;
+    }
+    
+    .metrics {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Performance API 性能测试示例</h1>
+    <p>这个示例展示了如何使用 Performance API 测量页面渲染和交互性能。</p>
+    
+    <ul id="mylist">
+      <li>Item1 - 静态内容渲染测试</li>
+      <li>Item2 - DOM 查询性能测试</li>
+      <li>Item3 - 事件处理性能测试</li>
+    </ul>
+    
+    <button onclick="addNewItem()">添加新项</button>
+    <button onclick="clearMetrics()">清除性能数据</button>
+    <button onclick="showDetailedMetrics()">显示详细性能指标</button>
+    
+    <div class="metrics" id="metricsDisplay">
+      等待性能数据...
+    </div>
+  </div>
+
+  <script>
+    // 性能测试工具类
+    class PerformanceTest {
+      constructor() {
+        this.metrics = [];
+        this.init();
+      }
+
+      init() {
+        // 标记页面加载开始时间
+        performance.mark('pageLoadStart');
+        
+        // 监听页面加载完成
+        window.addEventListener('load', () => {
+          performance.mark('pageLoadEnd');
+          performance.measure('页面加载时间', 'pageLoadStart', 'pageLoadEnd');
+          this.displayMetrics();
+        });
+
+        // 监听 DOM 加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+          this.testDOMQueryPerformance();
+        });
+      }
+
+      // 测试 DOM 查询性能
+      testDOMQueryPerformance() {
+        performance.mark('domQueryStart');
+        
+        // 测试 querySelector 性能
+        const startTime = performance.now();
+        const firstLi = document.querySelector('#mylist li');
+        const queryTime = performance.now() - startTime;
+        
+        performance.mark('domQueryEnd');
+        performance.measure('DOM查询时间', 'domQueryStart', 'domQueryEnd');
+        
+        if (firstLi) {
+          console.log(`✅ 第一个 li 元素查询耗时: ${queryTime.toFixed(3)}ms`);
+        }
+        
+        this.displayMetrics();
+      }
+
+      // 添加新项并测量性能
+      addItem(text) {
+        performance.mark('addItemStart');
+        
+        const ul = document.getElementById('mylist');
+        const li = document.createElement('li');
+        li.textContent = text;
+        
+        // 测量 DOM 操作性能
+        const startTime = performance.now();
+        ul.appendChild(li);
+        const domTime = performance.now() - startTime;
+        
+        performance.mark('addItemEnd');
+        performance.measure('添加新项时间', 'addItemStart', 'addItemEnd');
+        
+        console.log(`➕ 添加新项 "${text}" 耗时: ${domTime.toFixed(3)}ms`);
+        this.displayMetrics();
+      }
+
+      // 获取所有性能指标
+      getAllMetrics() {
+        const measures = performance.getEntriesByType('measure');
+        const marks = performance.getEntriesByType('mark');
+        
+        return {
+          measures: measures.map(m => ({
+            name: m.name,
+            duration: m.duration.toFixed(3),
+            startTime: m.startTime.toFixed(3)
+          })),
+          marks: marks.map(m => ({
+            name: m.name,
+            startTime: m.startTime.toFixed(3)
+          }))
+        };
+      }
+
+      // 显示性能指标
+      displayMetrics() {
+        const metrics = this.getAllMetrics();
+        const display = document.getElementById('metricsDisplay');
+        
+        let output = '=== 性能测试结果 ===\n\n';
+        
+        if (metrics.measures.length > 0) {
+          output += '📊 测量指标:\n';
+          metrics.measures.forEach(m => {
+            output += `  ${m.name}: ${m.duration}ms\n`;
+          });
+        }
+        
+        if (metrics.marks.length > 0) {
+          output += '\n📍 标记点:\n';
+          metrics.marks.forEach(m => {
+            output += `  ${m.name}: ${m.startTime}ms\n`;
+          });
+        }
+        
+        output += '\n🚀 性能建议:\n';
+        output += '  - 页面加载时间 < 3s: 优秀\n';
+        output += '  - DOM查询时间 < 1ms: 优秀\n';
+        output += '  - 添加新项时间 < 0.1ms: 优秀\n';
+        
+        display.textContent = output;
+      }
+
+      // 清除性能数据
+      clear() {
+        performance.clearMarks();
+        performance.clearMeasures();
+        this.displayMetrics();
+      }
+    }
+
+    // 初始化性能测试
+    const perfTest = new PerformanceTest();
+
+    // 全局函数
+    function addNewItem() {
+      const itemCount = document.querySelectorAll('#mylist li').length + 1;
+      perfTest.addItem(`动态添加项 ${itemCount}`);
+    }
+
+    function clearMetrics() {
+      perfTest.clear();
+    }
+
+    function showDetailedMetrics() {
+      perfTest.displayMetrics();
+      
+      // 显示更多浏览器性能信息
+      console.log('=== 浏览器性能信息 ===');
+      console.log('📱 设备内存:', navigator.deviceMemory || '未知');
+      console.log('💻 硬件并发数:', navigator.hardwareConcurrency || '未知');
+      console.log('🌐 连接类型:', navigator.connection ? navigator.connection.effectiveType : '未知');
+      console.log('🚀 导航类型:', performance.navigation.type);
+      console.log('📊 内存使用情况:', performance.memory ? {
+        used: (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2) + ' MB',
+        total: (performance.memory.totalJSHeapSize / 1024 / 1024).toFixed(2) + ' MB',
+        limit: (performance.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2) + ' MB'
+      } : '不可用');
+    }
+
+    // 监听用户交互性能
+    document.addEventListener('click', (e) => {
+      performance.mark('clickStart');
+      
+      setTimeout(() => {
+        performance.mark('clickEnd');
+        performance.measure('点击处理时间', 'clickStart', 'clickEnd');
+      }, 0);
+    });
+
+    // 性能观察器 - 监控所有性能条目
+    if ('PerformanceObserver' in window) {
+      const observer = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach(entry => {
+          console.log('📊 性能观察:', entry.name, entry.duration ? entry.duration + 'ms' : entry.startTime + 'ms');
+        });
+      });
+      
+      observer.observe({ entryTypes: ['measure', 'mark', 'navigation', 'paint'] });
+    }
+  </script>
+</body>
+
+</html>
