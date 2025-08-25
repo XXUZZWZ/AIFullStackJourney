@@ -1,0 +1,16 @@
+{
+  "name": "mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "- 可以让 LLM 突破自身知识和能力局限，通过调用外部工具来或 api 来获取实时·学习，执行计算或操作，从而获取最新数据或精确计算和外部系统交互的复杂任务",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3"
+  }
+}
