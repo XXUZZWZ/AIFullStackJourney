@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何让红绿灯停下来</title>
+</head>
+
+<body>
+
+  <button id="start">开始</button>
+  <button id="pause">暂停</button>
+  <div id="status"></div>
+
+  <script>
+    // ==================== DOM 元素获取 ====================
+    const startBtn = document.getElementById("start");
+    const pauseBtn = document.getElementById("pause");
+    const statusBox = document.getElementById("status");
+
+    // ==================== 核心工具函数 ====================
+    /**
+     * 可中断的延时函数
+     * @param {number} ms - 延时毫秒数
+     * @param {AbortSignal} signal - 中断信号
+     * @returns {Promise} 返回一个可被中断的Promise
+     */
+    const sleep = (ms, signal) => new Promise((resolve, reject) => {
+      // 设置定时器
+      const timer = setTimeout(resolve, ms);
+
+      // 监听中断信号 - 使用事件发布订阅模式
+      signal.addEventListener("abort", () => {
+        clearTimeout(timer); // 清除定时器
+        reject(new DOMException("Aborted", "AbortError")); // 抛出中断错误
+      }, { once: true }); // once: true 确保事件监听器只执行一次
+    });
+
+    // ==================== 全局状态管理 ====================
+    let controller = null; // 控制器的全局引用
+
+    // ==================== 红绿灯核心逻辑 ====================
+    /**
+     * 红绿灯运行函数
+     * @param {AbortSignal} signal - 中断信号，用于控制红绿灯的停止
+     */
+    async function trafficLight(signal) {
+      // 参数验证
+      if (!signal || !(signal instanceof AbortSignal)) {
+        throw new Error('必须提供有效的AbortSignal参数');
+      }
+
+      // 定义红绿灯序列：颜色和对应的显示时间
+      const seq = [
+        { color: "🔴卢的高傲", ms: 1000 },  // 红灯显示1秒
+        { color: "🟡卢的才华", ms: 3000 },  // 黄灯显示3秒
+        { color: "🟢你不知道", ms: 3000 },  // 绿灯显示3秒
+      ];
+
+      // 主循环：只要信号未被中断就继续运行
+      while (!signal.aborted) {
+        // 遍历红绿灯序列
+        for (const { color, ms } of seq) {
+          // 每次循环开始时检查是否被中断
+          if (signal.aborted) return;
+
+          try {
+            // 显示当前颜色状态
+            statusBox.textContent = color;
+
+            // 等待指定时间，期间可能被中断
+            await sleep(ms, signal);
+          } catch (error) {
+            // 如果是中断错误，直接返回
+            if (error.name === 'AbortError') {
+              console.log('红绿灯已被中断');
+              return;
+            }
+            // 其他错误则抛出
+            console.error('红绿灯运行出错:', error);
+            throw error;
+          }
+        }
+      }
+    }
+
+    // ==================== 事件监听器 ====================
+
+    /**
+     * 开始按钮点击事件
+     * 启动红绿灯并更新UI状态
+     */
+    startBtn.addEventListener('click', () => {
+      // 如果已有运行中的控制器，先停止它
+      if (controller && !controller.signal.aborted) {
+        controller.abort();
+      }
+
+      // 创建新的控制器
+      controller = new AbortController();
+
+      // 启动红绿灯
+      trafficLight(controller.signal);
+
+      // 更新UI状态
+      statusBox.textContent = '运行中';
+      startBtn.disabled = true; // 禁用开始按钮
+    });
+
+    /**
+     * 暂停按钮点击事件
+     * 停止红绿灯并更新UI状态
+     */
+    pauseBtn.addEventListener('click', () => {
+      if (controller) {
+        // 发送中断信号
+        controller.abort();
+
+        // 清除控制器引用
+        controller = null;
+
+        // 更新UI状态
+        statusBox.textContent = '已暂停';
+        startBtn.disabled = false; // 启用开始按钮
+      }
+    });
+
+    // ==================== 初始化 ====================
+    // 页面加载时显示初始状态
+    statusBox.textContent = '等待开始';
+  </script>
+</body>
+
+</html>
