@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "C:\\c\\Users\\HP\\Desktop\\AIFullStackJourney\\interview"
+    ],
+    "allow": [
+      "Read(/c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\visual\\echart-demo\\src\\components/**)"
+    ]
+  }
+}

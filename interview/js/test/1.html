@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    .script {
+      display: block;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <script class="script">
+    var a = 0
+    console.log(a, window.a) //我的估计 0 0  实际 0 0
+
+    if (true) {
+      a = 2
+      console.log(a, window.a)//  我的估计 2 2  实际 2 0
+      function a() { }
+      console.log(a, window.a) // 我的估计 function a() { } function a() { }  实际 2 2
+      a = 3
+      console.log(a, window.a) // 我的估计  实际 3 2
+
+      console.log('里面', a) // 我的估计 里面 3 实际  里面 3 
+    }
+
+    console.log('外面', a) // 我的估计外面 3  实际 外面 2
+  </script>
+</body>
+
+</html>
