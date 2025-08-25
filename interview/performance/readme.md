@@ -340,3 +340,23 @@ el.style.transform = `translateY(${el.offsetTop}px)`;
 
 - chrome 的 performance 面板 可以看到各项性能指标，针对性的优化，给出优化建议
 - 减少首屏 js/css 体积 (code spiting)
+- 使用 tranform 代替位置调整 预加载相关资源
+- juejin js = vue + vue-router + app.vue + home.vue + components
+- vue 和 vue-router 要单独拆分出来，为啥？
+  - 基本不会变可以缓存在客户端
+- App.vue + Home.vue + Components 业务代码 需要单独切分文件
+
+- lighthouse
+  - 测试页面性能
+  - 是 chrome 的一款性能打分，会在性能 无障碍 最佳实践 SEO 打分 并给出问题和优化建议 细致到每一个方面
+  - 图片格式大小优化
+  - 字体库优化
+  - 渲染屏蔽请求
+
+## 性能的关键指标
+
+- FCP
+  - First Content Paint, 首次内容绘制,表示浏览器首次渲染出页面内容如文本图片等的时间。
+- LCP
+  - largest contentful paint,表示浏览器首次渲染出页面中最大的内容，如图片，视频等。
+- 
