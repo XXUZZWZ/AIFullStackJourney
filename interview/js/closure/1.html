@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闭包缺陷</title>
+</head>
+
+<body>
+  <div id="btn">点击</div>
+  <script>
+    // 移除监听后，闭包引用断开后 ，bigData 会被GC 回收
+    // function registerHandler() {
+    //   const bigData = new Array(100000).fill('*')
+    //   function handler() {
+    //     console.log(bigData.length)
+    //   }
+    //   const btn = document.getElementById('btn');
+    //   btn.addEventListener('click', handler);
+    //   setTimeout(() => {
+    //     btn.removeEventListener('click', handler);
+    //   }, 5000)
+    // }
+    registerHandler();
+    function registerHandler() {
+      let bigData = new Array(100000).fill('*')
+      document.getElementById('btn').addEventListener('click', function () {
+        console.log(bigData.length);
+        bigData = null; // 手动释放
+      })
+    }
+  </script>
+</body>
+
+</html>
