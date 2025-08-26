@@ -2,7 +2,7 @@
 
 ## 一、按“是否修改原数组”分类（副作用视角）
 
-- 会修改原数组（非纯函数）：
+- 会修改原数组（非纯函数）要谨慎使用：
 
   - push / pop（尾部入栈/出栈）
   - shift / unshift（头部出队/入队，移动元素，O(n)）
@@ -10,12 +10,44 @@
   - sort / reverse（重排）
   - fill / copyWithin（写入/覆盖）
 
-- 不修改原数组（纯函数，返回新数组）：
+- 不修改原数组（纯函数，返回新数组）： 推荐多用在 React 这些框架中要返回一些数据，因为数据不变，不会触发视图更新。
+  - forEach 没有返回
+  - map 返回新数组
+  - 查找类
+    - es5 就提供了 indexOf /LastIndexOf 判重等
+    - es6 提供了 find 查找满足条件的元素，第一个元素
+    - js 是基于 ECMAScript 脚本标准开发的
+      - ES5 兼容性
+      - ES6 新特性
+      - ES6 + 新特性
+    - findIndex 查找满足条件元素，第一个元素下标
+    - includes 判断是否包含某元素
+    - find/findIndex/findLast/findLastIndex
+    - 过滤和判定
+      - filter
+      - every
+      - some
+      - any
   - slice（截取/浅拷贝）
+  - slice(start, end)
+  - concat
+  - flat
+  - flat( depth )
+  - 迭代器 iterable - keys() values entries() - 与 for...in 的区别
+    for...in 遍历可枚举属性名，包含继承属性，顺序不保证，适合对象。
+    for...of/keys/values/entries 走迭代协议，顺序有保证，适合数组元素遍历。
+  - join/toString
+  - 归约
+    reduce ,reduceRight 相加
+  - 静态方法
+    - Array.isArray
+    - Array.from
+    - Array.of
   - concat（拼接，浅拷贝）
   - map / filter / reduce / reduceRight
   - flat / flatMap
   - toSorted / toReversed（不可变重排，ES2023）
+  - toSorted/toReversed/toFlatSorted/toFlatReversed（不可变重排，ES2023）
 
 > 实战规则：在需要“不可变更新”（如 React/Redux）时优先使用不改原数组的方法；仅在明确接受副作用时使用会改原数组的方法。
 
