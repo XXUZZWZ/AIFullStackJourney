@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const p1 = Promise.resolve("p1");
+
+    const p2 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("p2延时一秒");
+      }, 1000);
+    });
+
+    const p3 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("p3延时一秒");
+      }, 1000);
+    });
+
+    // 并行
+    //
+    // console.time("all");
+    // Promise.all([p1, p2, p3])
+    //   .then((res) => {
+    //     console.log(res, "all p1 p2 p3 then");
+    //     console.timeLog("all", "打印阶段完成");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err, "all p1 p2 p3 catch");
+    //   })
+    //   .finally(() => {
+    //     console.timeEnd("all");
+    //   });
+
+    const p4 = new Promise((resolve, reject) => {
+      reject("p4 立即 reject");
+    });
+
+    const p5 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject("p5 reject延时一秒");
+      }, 1000);
+    });
+    Promise.race([p1, p2, p3, p4, p5])
+      .then((res) => {
+        console.log(res, "rece p1 p2 p3 p4 p5 then");
+      })
+      .catch((err) => {
+        console.log(err, "rece p1 p2 p3 p4 p5 catch");
+      });
+
+    Promise.race([p5, p2, p3])
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+    Promise.any([p5, p2, p3])
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+    Promise.allSettled([p5, p2, p3])
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+  </script>
+</body>
+
+</html>
