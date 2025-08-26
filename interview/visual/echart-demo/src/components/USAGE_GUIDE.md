@@ -190,6 +190,3 @@ console.timeEnd('chart-render');
 - [React Hooks 指南](https://react.dev/reference/react)
 - [TypeScript 手册](https://www.typescriptlang.org/docs/)
 
-## 🤝 贡献指南
-
-欢迎提交 Issue 和 Pull Request 来改进这个组件！
