@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init -y)",
+      "Bash(npm install)",
+      "Bash(yarn add:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npx babel:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

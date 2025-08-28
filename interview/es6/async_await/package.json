@@ -1,0 +1,1 @@
+{"name":"async_await","version":"1.0.0","description":"","main":"1.js","scripts":{"build":"babel 1.js --out-file 1-compiled.js","test":"echo \"Error: no test specified\" && exit 1"},"keywords":[],"author":"","license":"ISC","devDependencies":{"@babel/cli":"^7.28.3","@babel/core":"^7.28.3","@babel/preset-env":"^7.28.3"}}

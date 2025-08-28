@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\es6\\genco/**)",
+      "Read(c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\es6\\genco/**)",
+      "Read(c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\es6\\async_await/**)",
+      "Read(c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\es6\\async_await/**)",
+      "Read(c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\es6\\async_await/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
