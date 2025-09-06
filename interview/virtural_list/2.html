@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script>
+    let now = Date.now();
+    const total = 10000;
+    const once = 20;
+    let ul = document.createElement('ul');
+    let page = total / once;
+    let index = 0;
+    function loop(curTotal, curIndex) {
+      if (curTotal <= 0) {
+        return false;
+      }
+      let pageCount = Math.min(curTotal, once);
+
+      // 宏任务 异步任务
+      setTimeout(() => {
+        for (let i = 0; i < pageCount; i++) {
+          let li = document.createElement('li');
+          li.innerText = `item ${i}  curIndex ${curIndex}`;
+          ul.appendChild(li);
+        }
+        loop(curTotal - pageCount, curIndex + pageCount);
+
+      }, 0)
+
+      // loop(curTotal - pageCount, curIndex + pageCount);
+      // document.getElementById('container').appendChild(ul);
+    }
+    loop(total, index);
+    console.log(Date.now() - now, '同步代码1')
+    document.getElementById('container').appendChild(ul);
+    console.log(Date.now() - now, '同步代码2')
+    setTimeout(() => {
+      console.log(Date.now() - now, '宏任务队列')
+    }, 0)
+    Promise.resolve().then(() => {
+      console.log(Date.now() - now, '微任务队列')
+    })
+  </script>
+</body>
+
+</html>
