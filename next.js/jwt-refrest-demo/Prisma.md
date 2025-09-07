@@ -21,7 +21,7 @@ npx prisma init
 ```cmd
 // 生成并运行数据库迁移
 npx prisma migrate dev --name init
-
+// 生成迁移并生成记录,有对应的sql 语句
 // 仅生成迁移文件（不运行）
 npx prisma migrate dev --create-only
 

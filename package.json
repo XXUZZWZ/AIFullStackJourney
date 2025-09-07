@@ -1,7 +1,10 @@
 {
   "dependencies": {
+    "next": "^15.5.2",
     "nodemon": "^3.1.10",
     "openai": "^5.12.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-router-dom": "^7.6.3",
     "ws": "^8.18.3"
   },
