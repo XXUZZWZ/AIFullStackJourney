@@ -8,6 +8,18 @@ User 表 --> User 类
 一行 --> new User () 实例 映射到数据库 做了一次抽象
 底层数据库被映射成 高级语言
 
+## 后端性能和安全
+
+- 复杂操作要做容错处理 try {} catch finally
+- finally 释放 数据库对象
+- prisma client curd 方法
+  - prisma.user.create()
+  - prisma.user.findUnique()
+  - prisma.user.update({
+    where:{}
+    data:{}
+    })
+
 ## 数据库表结构
 
 - users
@@ -43,7 +55,7 @@ User 表 --> User 类
   200 ok
   201 created
   400 Bad Request
-  401  401 未授权错误
+  401 401 未授权错误
   409 Conflict
   500 Inernal Server Error
 
@@ -62,3 +74,9 @@ User 表 --> User 类
   - response.next()
   - response.redirect() 跳转
 
+### cookie
+
+- httpOnly
+  - 防止 xss
+- SameSite
+  - 防止 csrf
