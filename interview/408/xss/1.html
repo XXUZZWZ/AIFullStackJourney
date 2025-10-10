@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>xss</title>
+</head>
+
+<body>
+  <form>
+    <input type="text" name="" id="comment">
+    <button type="submit">提交</button>
+  </form>
+  <div class="comment-box">
+    <!-- <script>
+      // alert('xss 你被攻击了')
+    </script> -->
+  </div>
+  <div class="comment-box-2"> </div>
+  <script>
+    const commentBox2 = document.querySelector('.comment-box-2');
+    const comment = document.querySelector('#comment');
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      commentBox2.appendChild(form);
+    });
+  </script>
+</body>
+
+</html>
