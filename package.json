@@ -5,7 +5,9 @@
     "openai": "^5.12.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-flow": "^1.0.3",
     "react-router-dom": "^7.6.3",
+    "reactflow": "^11.11.4",
     "ws": "^8.18.3"
   },
   "devDependencies": {
