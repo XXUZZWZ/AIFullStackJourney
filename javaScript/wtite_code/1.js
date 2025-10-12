@@ -22,7 +22,7 @@
 function objectFactory(Constructor, ...args) {
   // var Constructor = Array.prototype.shift.call(arguments); // 构造函数
   let obj = new Object();
-  Constructor.apply(obj, args);
+
   obj.__proto__ = Constructor.prototype;
   var ret = Constructor.apply(obj, args);
   return typeof ret === "object" ? ret || obj : obj;

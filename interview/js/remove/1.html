@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>remove ListItem</title>
+</head>
+
+
+<body>
+  <ul id="list">
+    <li>
+      A
+      <button class="del">删除</button>
+    </li>
+    <li>
+      B
+      <button class="del">删除</button>
+    </li>
+  </ul>
+  <script>
+    // document.querySelectorAll('.del').forEach(btn => {
+    //   btn.addEventListener('click', () => {
+    //     btn.parentElement.remove();
+    //     const li = e.target.parentNode;
+    //     li.remove(); //直接删除 兼容问题
+    //   })
+    // })
+
+    // 没做事件委托 
+    // 给每个li 都委托了任务,浪费
+    // document.querySelectorAll('.del').forEach(btn => {
+    //   btn.addEventListener('click', () => {
+    //     btn.parentElement.remove();
+    //     const li = e.target.parentNode;
+    //     li.parentNode.removeChild(li);
+    //   })
+    // })
+    //委托到 ul 上
+    document.getElementById('list').addEventListener('click', e => {
+      if (e.target.classList.contains('del')) {
+        const li = e.target.closest('li');
+        if (li) {
+          li.remove();
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>
