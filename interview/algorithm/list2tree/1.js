@@ -43,7 +43,28 @@ const sourceList = [
   },
 ];
 
-
-function list2tree(list) {
-  
+function listToTree(list) {
+  const map = new Map();
+  const root = [];
+  for (const item of list) {
+    if (item.parentId === null) {
+      root.push(item);
+    } else {
+      const parent = map.get(item.parentId);
+      if (parent) {
+        parent.children = parent.children || [];
+        parent.children.push(item);
+      }
+      map.set(item.id, item);
+    }
+  }
+  for (const item of list) {
+    const parent = map.get(item.id);
+    if (parent) {
+      parent.children = parent.children || [];
+      parent.children.push(item);
+      map.set(item.id, item);
+    }
+  }
+  return root;
 }
