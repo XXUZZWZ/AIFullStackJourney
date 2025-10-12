@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Cross Origin Demo</title>
+</head>
+
+<body>
+  <h1>WebSocket Client</h1>
+  <div id="status"></div>
+  <script>
+    const ws = new WebSocket("ws://localhost:8080/ws");
+    ws.onopen = () => {
+      console.log('Connected to server')
+      document.getElementById('status').textContent = 'Connected to server'
+      ws.send('Hello from client')
+    }
+    ws.onmessage = (event) => {
+      console.log('Received message from server:', event.data)
+      document.getElementById('status').textContent = 'Received message from server:' + event.data
+    }
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+      document.getElementById('status').textContent = 'WebSocket error:' + error
+    }
+    ws.onclose = () => {
+      console.log('WebSocket closed')
+      document.getElementById('status').textContent = 'WebSocket closed'
+    }
+  </script>
+</body>
+
+</html>

@@ -9,12 +9,14 @@
     "start": "next start"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.3.22",
+    "@ai-sdk/openai": "^1.3.24",
     "@ai-sdk/react": "1.2.12",
     "@langchain/community": "0.3.45",
     "@langchain/core": "^0.3.57",
+    "@radix-ui/react-slot": "^1.2.3",
     "@supabase/supabase-js": "^2.50.0",
-    "ai": "^4.3.16",
+    "ai": "^4.3.19",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "langchain": "^0.3.27",
