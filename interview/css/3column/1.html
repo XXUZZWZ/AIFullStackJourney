@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三栏式布局</title>
+</head>
+<style>
+  .layout {
+    display: flex;
+  }
+
+  .content {
+    flex: 1;
+  }
+
+  .sidebar {
+    flex: 1 1 200px;
+  }
+</style>
+
+
+<body>
+  <div class="layout">
+    <aside class="left sidebar left"> 左侧边栏 </aside>
+    <main class="content"> 中间内容 </main>
+    <aside id="right" class="sidebar right"> 右侧边栏 </aside>
+  </div>
+</body>
+
+</html>

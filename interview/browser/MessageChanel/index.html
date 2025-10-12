@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>window.postMessage</title>
+</head>
+<style>
+  .inp {
+    width: 200px;
+    height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+
+  .btn {
+    width: 80px;
+    height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+
+  .contents {
+    width: 200px;
+    height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+
+  .message {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .message li {
+    margin-bottom: 10px;
+  }
+
+  .child-iframe {
+    width: 800px;
+    height: 800px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+  }
+</style>
+
+<body>
+  <input type="text" class="inp">
+  <button class="btn">发送</button>
+  <div class="contents">
+    <p>接受的消息</p>
+    <ul class="message"></ul>
+  </div>
+  <iframe src="child.html" frameborder="3" class="child-iframe" height="800" width="800">
+  </iframe>
+ 
+  <script>
+    const win = document.querySelector('.child-iframe').contentWindow;
+    document.querySelector('.btn').addEventListener('click', () => {
+      win.postMessage(document.querySelector('.inp').value, '*');
+      document.querySelector('.inp').value = '';
+    });
+
+  </script>
+</body>
+
+</html>

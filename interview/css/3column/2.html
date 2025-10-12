@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>grid 三栏式布局</title>
+</head>
+
+<style>
+  .left {
+    grid-area: left;
+    background-color: #bb7575;
+  }
+
+  .main {
+    grid-area: main;
+    background-color: #fff;
+  }
+
+  .right {
+    grid-area: right;
+    background-color: #000;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 300px;
+    grid-template-areas: "left main right"
+  }
+
+
+  @media (max-width:768px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+      grid-template-areas: "main" "left" "right"
+    }
+  }
+</style>
+
+<body>
+  <div class="grid-layout">
+    <aside class="left">左侧边栏</aside>
+    <main class="main">中间内容</main>
+    <aside class="right">右侧边栏</aside>
+  </div>
+</body>
+
+</html>

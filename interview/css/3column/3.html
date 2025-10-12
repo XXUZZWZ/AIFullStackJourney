@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>结合经典三栏/圣杯布局语境</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .container {
+    padding: 0 200px;
+    min-height: 100vh;
+
+  }
+
+  .content {
+    float: left;
+    width: 100%;
+    background: #000;
+    padding: 20px;
+  }
+
+  .left {
+    float: left;
+    position: relative;
+    left: -200px;
+    width: 200px;
+    background: #258aa3;
+    padding: 20px;
+    margin-left: -100%;
+    top: 0;
+  }
+
+  .right {
+    float: right;
+    width: 200px;
+    position: relative;
+    right: -200px;
+    background: #258aa3;
+    padding: 20px;
+    margin-left: -100%;
+    top: 0;
+  }
+</style>
+<!-- 
+   ### 原因（结合经典三栏/圣杯布局语境）
+
+- **浮动的放置规则**：浮动元素会被浏览器放到“能放的最靠上且最靠左”的位置。
+- **负外边距的效果**：`margin-left: -100%` 把该列的盒子向左拉一个“包含块宽度”，相当于把它的左边界拉回到容器最左侧，与第一列同一水平起点。
+- **综合结果**：因为它现在“能放进第一行”了，浮动会把它放到最靠上的位置，于是视觉上像被“拉到了顶部”。这是“水平位移 + 浮动尽量贴顶”的联合作用，不是直接修改垂直坐标。
+
+### 非浮动时的理解
+- 对普通块级元素，负的 `margin-left` 只是水平覆盖，之所以像“上去了”，常见是与前一个块产生重叠造成的视觉错觉；其常规流中的垂直起点并未被 margin-left 改变。
+
+### 小结
+- **关键点**：负外边距改变的是水平可放置空间，触发浮动“尽量贴顶”规则，从而“到顶”。  
+- 若想避免这种错觉或重叠，优先用 Grid/Flex 实现列布局；用浮动+负外边距属于传统技巧，需谨慎控制重叠与可访问性。
+  -->
+
+<body>
+  <div class="container">
+    <main class="content">
+      <h1>主要内容</h1>
+      <p>这是主要内容的段落</p>
+    </main>
+    <aside class="left">
+      <h3>左侧菜单</h3>
+      <ul>
+        <li>菜单项1</li>
+        <li>菜单项2</li>
+        <li>菜单项3</li>
+      </ul>
+    </aside>
+    <aside class="right">
+      <h3>右侧广告</h3>
+      <p>这是右侧广告的段落</p>
+    </aside>
+
+  </div>
+</body>
+
+</html>
