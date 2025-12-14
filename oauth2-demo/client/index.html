@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth2客户端演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover {
+            background: #0056b3;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .info-card h3 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #6c757d;
+        }
+
+        .info-value {
+            color: #212529;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .flow-diagram {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 6px;
+        }
+
+        .flow-diagram h3 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .step-number {
+            background: #6c757d;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .step-number.active {
+            background: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 OAuth2 客户端演示</h1>
+        <p class="subtitle">演示OAuth2授权码模式的完整流程</p>
+
+        <button class="login-btn" onclick="startOAuth()">
+            使用OAuth2登录
+        </button>
+
+        <div id="status" class="status"></div>
+
+        <div class="info-card">
+            <h3>客户端信息</h3>
+            <div class="info-item">
+                <span class="info-label">Client ID:</span>
+                <span class="info-value">demo-client</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">回调URL:</span>
+                <span class="info-value">http://localhost:3000/callback</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">授权服务器:</span>
+                <span class="info-value">http://localhost:3001</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">当前状态:</span>
+                <span class="info-value" id="auth-status">未登录</span>
+            </div>
+        </div>
+
+        <div class="flow-diagram">
+            <h3>OAuth2 授权码流程</h3>
+            <div class="flow-step">
+                <span class="step-number">1</span>
+                <span>重定向到授权服务器</span>
+            </div>
+            <div class="flow-step">
+                <span class="step-number">2</span>
+                <span>用户登录并授权</span>
+            </div>
+            <div class="flow-step">
+                <span class="step-number">3</span>
+                <span>授权码通过回调URL返回</span>
+            </div>
+            <div class="flow-step">
+                <span class="step-number">4</span>
+                <span>使用授权码换取访问令牌</span>
+            </div>
+            <div class="flow-step">
+                <span class="step-number">5</span>
+                <span>使用访问令牌访问受保护资源</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="client.js"></script>
+</body>
+</html>
