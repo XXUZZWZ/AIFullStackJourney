@@ -4,7 +4,8 @@
       "Read(/c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\visual\\echart-demo\\src\\components/**)",
       "Read(/c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\performance/**)",
       "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(node \"c:\\Users\\HP\\Desktop\\AIFullStackJourney\\interview\\algorithm\\leetcode\\xor_sub_str\\test.js\")"
     ],
     "additionalDirectories": [
       "C:\\c\\Users\\HP\\Desktop\\AIFullStackJourney\\interview"
