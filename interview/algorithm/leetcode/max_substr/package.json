@@ -1,0 +1,17 @@
+{
+  "name": "max_substr",
+  "version": "1.0.0",
+  "main": "1.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+  
+
+}
