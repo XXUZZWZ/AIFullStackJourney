@@ -4,7 +4,7 @@ import * as z from "zod";
 
 // --- 健身子 Agent 的专用工具 ---
 
-const queryExerciseDatabase = tool(
+export const queryExerciseDatabase = tool(
   (input) => {
     // 模拟查询动作库
     // 实际场景：可以查 RAG 或数据库
