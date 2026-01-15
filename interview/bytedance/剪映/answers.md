@@ -1180,3 +1180,1382 @@ console.log(twoSum([3, 3], 6));         // [0, 1]
 - Core Web Vitals：LCP、FID、CLS
 - FCP、TTI、TBT
 - 使用 Lighthouse 评估
+
+---
+
+### JS基础
+
+#### 11. 原型链是怎么指向的？有哪些重要应用场景？
+
+**原型链指向规则：**
+```
+对象 → 对象的__proto__ → 构造函数的prototype → 构造函数的__proto__ → ... → Object.prototype → null
+```
+
+**图解：**
+```javascript
+function Person(name) {
+  this.name = name;
+}
+Person.prototype.sayHello = function() {
+  console.log('Hello, I am ' + this.name);
+};
+
+const person = new Person('Alice');
+
+// 原型链
+person.__proto__ === Person.prototype           // true
+person.__proto__.__proto__ === Object.prototype // true
+person.__proto__.__proto__.__proto__ === null   // true
+
+// 属性查找过程
+person.sayHello()
+// 1. 在person对象上查找 → 没找到
+// 2. 在person.__proto__(Person.prototype)上查找 → 找到了！
+```
+
+**重要应用场景：**
+
+1. **继承实现**
+```javascript
+function Animal(name) {
+  this.name = name;
+}
+Animal.prototype.eat = function() {
+  console.log(this.name + ' is eating');
+};
+
+function Dog(name, breed) {
+  Animal.call(this, name);  // 借用构造函数
+  this.breed = breed;
+}
+
+// 原型继承
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+Dog.prototype.bark = function() {
+  console.log('Woof!');
+};
+```
+
+2. **方法扩展（如给Array添加方法）**
+```javascript
+// 不推荐直接修改原型，但可以理解原理
+Array.prototype.myMap = function(fn) {
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    result.push(fn(this[i], i));
+  }
+  return result;
+};
+```
+
+3. **判断对象类型**
+```javascript
+// instanceof 原理就是沿原型链查找
+person instanceof Person  // true
+person instanceof Object  // true
+
+// 自己实现 instanceof
+function myInstanceof(left, right) {
+  let proto = Object.getPrototypeOf(left);
+  const prototype = right.prototype;
+
+  while (proto) {
+    if (proto === prototype) return true;
+    proto = Object.getPrototypeOf(proto);
+  }
+  return false;
+}
+```
+
+---
+
+#### 12. JS的继承是怎么实现的？
+
+**ES6之前（多种继承方式）：**
+
+**1. 原型链继承**
+```javascript
+function Parent() {
+  this.name = 'Parent';
+}
+Parent.prototype.sayName = function() {
+  console.log(this.name);
+};
+
+function Child() {}
+Child.prototype = new Parent();  // 关键
+
+// 问题：引用类型属性会被所有实例共享
+```
+
+**2. 构造函数继承（借用构造函数）**
+```javascript
+function Child() {
+  Parent.call(this);  // 关键
+}
+
+// 问题：无法继承原型上的方法
+```
+
+**3. 组合继承（原型链 + 构造函数）**
+```javascript
+function Child(name) {
+  Parent.call(this, name);  // 继承实例属性
+}
+Child.prototype = new Parent();  // 继承原型方法
+Child.prototype.constructor = Child;
+
+// 问题：Parent构造函数被调用两次
+```
+
+**4. 寄生组合继承（最佳实践）**
+```javascript
+function inheritPrototype(Child, Parent) {
+  const prototype = Object.create(Parent.prototype);
+  prototype.constructor = Child;
+  Child.prototype = prototype;
+}
+
+function Child(name) {
+  Parent.call(this, name);
+}
+inheritPrototype(Child, Child);
+```
+
+**ES6 class继承：**
+```javascript
+class Parent {
+  constructor(name) {
+    this.name = name;
+  }
+  sayName() {
+    console.log(this.name);
+  }
+}
+
+class Child extends Parent {
+  constructor(name, age) {
+    super(name);  // 必须调用super
+    this.age = age;
+  }
+  sayAge() {
+    console.log(this.age);
+  }
+}
+```
+
+**extends本质：**
+```javascript
+// ES6 extends 的编译结果（简化版）
+function Child(name, age) {
+  Parent.call(this, name);
+  this.age = age;
+}
+
+// Object.create 创建中间对象，避免父类构造函数执行
+Child.prototype = Object.create(Parent.prototype);
+Child.prototype.constructor = Child;
+```
+
+---
+
+#### 13. 事件循环是怎样的流程？
+
+**完整流程图：**
+```
+┌─────────────────────┐
+│   执行同步代码       │
+│   (调用栈)          │
+└──────────┬──────────┘
+           │
+           ▼
+    ┌─────────────┐
+    │ 栈空了吗？   │ ──否──→ 继续执行
+    └──────┬──────┘
+           │ 是
+           ▼
+    ┌─────────────┐
+    │ 执行所有微任务 │ ──→ 清空微任务队列
+    └──────┬──────┘
+           │
+           ▼
+    ┌─────────────┐
+    │ 渲染页面     │ ───→ (浏览器环境，必要时)
+    └──────┬──────┘
+           │
+           ▼
+    ┌─────────────┐
+    │ 取下一个宏任务│
+    └─────────────┘
+           │
+           └──────────────┐
+                          ▼
+              （循环回到第一步）
+```
+
+**宏任务（Macrotask / Task）：**
+- `setTimeout` / `setInterval`
+- `setImmediate`（Node.js）
+- I/O 操作
+- UI 渲染
+- `requestAnimationFrame`（有些浏览器实现）
+
+**微任务（Microtask / Job）：**
+- `Promise.then` / `Promise.catch` / `Promise.finally`
+- `process.nextTick`（Node.js，优先级高于其他微任务）
+- `MutationObserver`
+- `queueMicrotask()`
+
+**执行顺序示例：**
+```javascript
+console.log('start');
+
+setTimeout(() => console.log('timeout1'), 0);
+
+Promise.resolve().then(() => console.log('promise1'));
+Promise.resolve().then(() => {
+  console.log('promise2');
+  Promise.resolve().then(() => console.log('promise3'));
+});
+
+setTimeout(() => console.log('timeout2'), 0);
+
+console.log('end');
+
+// 输出：start → end → promise1 → promise2 → promise3 → timeout1 → timeout2
+```
+
+---
+
+#### 14. 事件循环输出顺序代码题
+
+**经典题目：**
+```javascript
+async function async1() {
+  console.log('async1 start');
+  await async2();
+  console.log('async1 end');
+}
+async function async2() {
+  console.log('async2');
+}
+console.log('script start');
+setTimeout(() => {
+  console.log('setTimeout');
+}, 0);
+async1();
+new Promise(resolve => {
+  console.log('promise1');
+  resolve();
+}).then(() => {
+  console.log('promise2');
+});
+console.log('script end');
+```
+
+**输出顺序：**
+```
+script start
+async1 start
+async2
+promise1
+script end
+async1 end
+promise2
+setTimeout
+```
+
+**分析：**
+1. 同步执行：`script start` → `setTimeout`(入宏队列) → `async1 start` → `async2` → `promise1` → `script end`
+2. 微任务队列：`async1 end`（await后）、`promise2`
+3. 执行微任务：`async1 end` → `promise2`
+4. 执行宏任务：`setTimeout`
+
+**await 本质：**
+```javascript
+// await 后面的代码相当于 Promise.then 的回调
+await async2();
+console.log('async1 end');
+
+// 等价于
+Promise.resolve(async2()).then(() => {
+  console.log('async1 end');
+});
+```
+
+---
+
+#### 15. ES6相对ES5有哪些重要新特性？
+
+**1. let / const**
+- 块级作用域
+- 暂时性死区（TDZ）
+- const 声明常量
+
+**2. 箭头函数**
+```javascript
+const fn = (a, b) => a + b;
+// 没有 this、arguments、super
+// 不能用作构造函数
+```
+
+**3. 模板字符串**
+```javascript
+const name = 'World';
+const str = `Hello ${name}!`;
+```
+
+**4. 解构赋值**
+```javascript
+const { a, b } = obj;
+const [x, y] = arr;
+```
+
+**5. 默认参数**
+```javascript
+function fn(a = 1, b = 2) {}
+```
+
+**6. 剩余参数 / 扩展运算符**
+```javascript
+function fn(...args) {}
+const newArr = [...arr1, ...arr2];
+```
+
+**7. Promise**
+```javascript
+new Promise((resolve, reject) => {})
+  .then(res => {})
+  .catch(err => {});
+```
+
+**8. Class**
+```javascript
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+  say() {}
+}
+```
+
+**9. 模块化**
+```javascript
+export default {};
+import { name } from './module';
+```
+
+**10. Symbol / BigInt**
+```javascript
+const sym = Symbol('description');
+const bigInt = 9007199254740991n;
+```
+
+**11. 新增API**
+- `Map` / `Set` / `WeakMap` / `WeakSet`
+- `Proxy` / `Reflect`
+- `Array.prototype.includes` / `Array.from` / `Array.of`
+- `Object.assign` / `Object.keys` / `Object.values` / `Object.entries`
+- `String.prototype.startsWith` / `endsWith` / `includes` / `repeat`
+
+---
+
+#### 16. Promise有哪几种状态？
+
+**三种状态：**
+
+| 状态 | 说明 | 特点 |
+|------|------|------|
+| **pending** | 等待中 | 初始状态 |
+| **fulfilled** | 已成功 | 操作成功完成 |
+| **rejected** | 已失败 | 操作失败 |
+
+**状态转换规则：**
+```
+pending → fulfilled（不可逆）
+pending → rejected（不可逆）
+```
+
+**状态特性：**
+1. **不可逆**：一旦从 pending 变为其他状态，就不能再改变
+2. **不可取消**：Promise 一旦创建，必须执行完成
+3. **值传递**：成功/失败的值会传递给 then/catch
+
+**示例：**
+```javascript
+// pending
+const pending = new Promise((resolve, reject) => {
+  // 还没有调用 resolve 或 reject
+});
+
+// fulfilled
+const fulfilled = Promise.resolve('success');
+fulfilled.then(v => console.log(v)); // success
+
+// rejected
+const rejected = Promise.reject('error');
+rejected.catch(e => console.log(e)); // error
+
+// 状态不可逆
+const p = new Promise((resolve, reject) => {
+  resolve('success');
+  reject('error');  // 无效，状态已改变
+});
+p.then(v => console.log(v)); // success
+```
+
+---
+
+#### 17. Promise有哪些常用方法及使用场景？
+
+**1. Promise.all**
+```javascript
+// 所有 Promise 成功才成功，有一个失败就失败
+Promise.all([p1, p2, p3])
+  .then(values => {
+    // values 是按顺序的数组
+    console.log(values);
+  })
+  .catch(err => {
+    // 第一个失败的错误
+  });
+
+// 场景：多个并行请求，需要全部完成
+Promise.all([
+  fetch('/user'),
+  fetch('/posts'),
+  fetch('/comments')
+]).then(([user, posts, comments]) => {
+  render({ user, posts, comments });
+});
+```
+
+**2. Promise.race**
+```javascript
+// 谁先完成就返回谁（成功/失败都算）
+Promise.race([p1, p2, p3])
+  .then(value => console.log(value))
+  .catch(err => console.log(err));
+
+// 场景：请求超时控制
+function fetchWithTimeout(url, timeout = 5000) {
+  return Promise.race([
+    fetch(url),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Timeout')), timeout)
+    )
+  ]);
+}
+```
+
+**3. Promise.allSettled**
+```javascript
+// 等待所有 Promise 完成，不管成功失败
+Promise.allSettled([p1, p2, p3])
+  .then(results => {
+    results.forEach(result => {
+      if (result.status === 'fulfilled') {
+        console.log(result.value);
+      } else {
+        console.log(result.reason);
+      }
+    });
+  });
+
+// 场景：批量操作，需要全部结果
+Promise.allSettled([
+  upload(file1),
+  upload(file2),
+  upload(file3)
+]).then(results => {
+  const success = results.filter(r => r.status === 'fulfilled').length;
+  const failed = results.filter(r => r.status === 'rejected').length;
+  console.log(`上传完成：${success}成功，${failed}失败`);
+});
+```
+
+**4. Promise.any**
+```javascript
+// 第一个成功的 Promise，全部失败才 reject
+Promise.any([p1, p2, p3])
+  .then(value => console.log(value))
+  .catch(err => {
+    // err 是 AggregateError
+    console.log('All failed');
+  });
+
+// 场景：多源备份，只要有一个成功即可
+Promise.any([
+  fetch('https://api1.com'),
+  fetch('https://api2.com'),
+  fetch('https://api3.com')
+]).then(res => res.json());
+```
+
+**5. Promise.resolve / Promise.reject**
+```javascript
+// 快速创建已完成的 Promise
+Promise.resolve(value).then(v => console.log(v));
+Promise.reject(error).catch(e => console.log(e));
+
+// 场景：统一返回格式
+function getData() {
+  const cache = getFromCache();
+  if (cache) {
+    return Promise.resolve(cache);  // 包装成 Promise
+  }
+  return fetch('/data');
+}
+```
+
+---
+
+#### 18. 手写Promise.all
+
+```javascript
+/**
+ * 手写 Promise.all
+ * @param {Iterable<Promise>} promises
+ * @returns {Promise}
+ */
+function promiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    // 参数校验
+    if (!Array.isArray(promises)) {
+      return reject(new TypeError('Argument must be an array'));
+    }
+
+    // 空数组直接返回
+    if (promises.length === 0) {
+      return resolve([]);
+    }
+
+    const results = [];
+    let completedCount = 0;
+    const length = promises.length;
+
+    promises.forEach((promise, index) => {
+      // 用 Promise.resolve 包装，确保处理非 Promise 值
+      Promise.resolve(promise).then(
+        value => {
+          results[index] = value;
+          completedCount++;
+
+          // 全部完成
+          if (completedCount === length) {
+            resolve(results);
+          }
+        },
+        error => {
+          // 任何一个失败，立即 reject
+          reject(error);
+        }
+      );
+    });
+  });
+}
+
+// 测试
+const p1 = Promise.resolve(1);
+const p2 = Promise.resolve(2);
+const p3 = Promise.resolve(3);
+
+promiseAll([p1, p2, p3]).then(console.log); // [1, 2, 3]
+
+// 测试非 Promise 值
+promiseAll([1, 2, 3]).then(console.log); // [1, 2, 3]
+
+// 测试失败
+promiseAll([
+  Promise.resolve(1),
+  Promise.reject('error'),
+  Promise.resolve(3)
+]).catch(err => console.log(err)); // error
+```
+
+---
+
+### CSS相关
+
+#### 19. 手写单个div实现滑动开关组件
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* 开关容器 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+/* 隐藏原始 checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* 滑块轨道 */
+.switch::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background-color: #ccc;
+  border-radius: 30px;
+  transition: background-color 0.3s;
+}
+
+/* 滑块按钮 */
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 选中状态 */
+.switch input:checked::before {
+  background-color: #4CAF50;
+}
+
+.switch input:checked::after {
+  transform: translateX(30px);
+}
+
+/* 禁用状态 */
+.switch input:disabled::before {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.switch input:disabled::after {
+  background-color: #bdbdbd;
+}
+</style>
+</head>
+<body>
+
+<label class="switch">
+  <input type="checkbox">
+</label>
+
+<!-- 禁用状态 -->
+<label class="switch">
+  <input type="checkbox" disabled>
+</label>
+
+<!-- 默认选中 -->
+<label class="switch">
+  <input type="checkbox" checked>
+</label>
+
+</body>
+</html>
+```
+
+**React版本：**
+```jsx
+import React from 'react';
+import './Switch.css';
+
+function Switch({ checked, onChange, disabled }) {
+  return (
+    <label className={`switch ${disabled ? 'disabled' : ''}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        disabled={disabled}
+      />
+    </label>
+  );
+}
+```
+
+---
+
+### 算法
+
+#### 20. 找两个链表的交叉节点
+
+```javascript
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+
+/**
+ * 方法一：双指针法（最优）
+ * 时间复杂度：O(m + n)
+ * 空间复杂度：O(1)
+ */
+function getIntersectionNode(headA, headB) {
+  if (!headA || !headB) return null;
+
+  let pA = headA;
+  let pB = headB;
+
+  // 两指针遍历，当pA到末尾时转向headB，pB同理
+  // 如果有交叉，两指针会在交叉节点相遇
+  // 如果无交叉，两指针会同时到达null
+  while (pA !== pB) {
+    pA = pA ? pA.next : headB;
+    pB = pB ? pB.next : headA;
+  }
+
+  return pA; // 相交节点或null
+}
+
+/**
+ * 方法二：哈希表法
+ * 时间复杂度：O(m + n)
+ * 空间复杂度：O(m) 或 O(n)
+ */
+function getIntersectionNodeHash(headA, headB) {
+  const visited = new Set();
+
+  let p = headA;
+  while (p) {
+    visited.add(p);
+    p = p.next;
+  }
+
+  p = headB;
+  while (p) {
+    if (visited.has(p)) {
+      return p;
+    }
+    p = p.next;
+  }
+
+  return null;
+}
+
+/**
+ * 方法三：差值法
+ * 先计算两链表长度差，让长链表先走差值步
+ */
+function getIntersectionNodeDiff(headA, headB) {
+  // 获取链表长度
+  function getLength(head) {
+    let len = 0;
+    while (head) {
+      len++;
+      head = head.next;
+    }
+    return len;
+  }
+
+  const lenA = getLength(headA);
+  const lenB = getLength(headB);
+  let diff = Math.abs(lenA - lenB);
+
+  let pA = headA;
+  let pB = headB;
+
+  // 长链表先走 diff 步
+  if (lenA > lenB) {
+    while (diff--) pA = pA.next;
+  } else {
+    while (diff--) pB = pB.next;
+  }
+
+  // 同时前进，找到交叉点
+  while (pA && pB) {
+    if (pA === pB) return pA;
+    pA = pA.next;
+    pB = pB.next;
+  }
+
+  return null;
+}
+
+// 测试用例
+function ListNode(val) {
+  this.val = val;
+  this.next = null;
+}
+
+// 构建相交链表
+// 1→2→3
+//       ↘
+//         4→5→null
+//       ↗
+//     6→7
+const common1 = new ListNode(4);
+const common2 = new ListNode(5);
+common1.next = common2;
+
+const headA = new ListNode(1);
+headA.next = new ListNode(2);
+headA.next.next = new ListNode(3);
+headA.next.next.next = common1;
+
+const headB = new ListNode(6);
+headB.next = new ListNode(7);
+headB.next.next = common1;
+
+console.log(getIntersectionNode(headA, headB)); // ListNode { val: 4 }
+```
+
+---
+
+## 三面答案
+
+### 基础/学习类
+
+#### 1-3. 个人经历类问题（根据实际情况回答）
+
+**回答框架：**
+
+**为什么选择前端：**
+- 可能是学校项目/实习接触
+- 对可视化、交互效果产生兴趣
+- 前端反馈即时，成就感强
+
+**学习路径：**
+- 打基础：HTML/CSS/JavaScript
+- 选方向：React/Vue
+- 做项目：把知识转化为实践
+- 补原理：深入理解底层机制
+
+**学习资源：**
+- 官方文档
+- 技术书籍（红宝书、犀牛书）
+- 在线课程
+- 技术博客/掘金/MDN
+
+---
+
+### 项目类
+
+#### 4-6. 项目相关问题（根据实际项目回答）
+
+**实习期间做的事情：**
+- 负责具体模块开发
+- 解决的性能问题
+- 做的提效工具
+
+**代表性项目展示：**
+- 项目背景/目标
+- 技术栈选择
+- 遇到的难点及解决方案
+- 最终成果/收益
+
+**类ChatGPT项目要点：**
+- 前端：流式输出处理、打字机效果
+- 状态管理：对话历史管理
+- 优化：Markdown渲染、代码高亮
+- 体验：自动滚动、加载状态
+
+---
+
+### React原理类
+
+#### 7. 讲一下你对Fiber概念的理解
+
+**Fiber是什么？**
+Fiber是React 16引入的新的协调算法（Reconciliation）实现，本质上是一个链表树结构。
+
+**为什么需要Fiber？**
+React 15的递归渲染存在问题：
+- 一旦开始就无法中断，必须一次执行完
+- 长任务会阻塞主线程，导致页面卡顿
+- 无法利用浏览器的空闲时间
+
+**Fiber的改进：**
+```javascript
+// Fiber节点结构
+const fiberNode = {
+  type: 'div',           // 节点类型
+  key: null,             // key
+  props: {},             // 属性
+  stateNode: domNode,    // 对应的DOM节点
+  return: parentFiber,   // 父节点
+  child: firstChild,     // 第一个子节点
+  sibling: nextSibling,  // 下一个兄弟节点
+  alternate: oldFiber,   // 对应的旧Fiber（双缓存）
+  effectTag: 'UPDATE',   // 副作用标记
+};
+```
+
+**链表结构 vs 树结构：**
+```
+React 15（树，递归遍历）：
+    A
+   / \
+  B   C
+递归：A → B → 回A → C（无法中断）
+
+React 16 Fiber（链表，循环遍历）：
+A ↔ B ↔ C
+↖______↙（每个节点有sibling指针，可以暂停）
+```
+
+---
+
+#### 8. Fiber内部是怎么实现时间切片的？
+
+**核心机制：利用 `requestIdleCallback` 或 `MessageChannel` 模拟**
+
+**工作流程：**
+```
+1. 每个工作循环（work loop）处理一个Fiber节点
+2. 处理完一个节点后检查是否用完时间片（约5ms）
+3. 如果时间用完，交还控制权给浏览器
+4. 等待浏览器空闲后继续处理
+5. 重复直到Fiber树构建完成
+```
+
+**伪代码：**
+```javascript
+function workLoop(deadline) {
+  // 有工作要做 且 还有时间
+  while (nextUnitOfWork && deadline.timeRemaining() > 1) {
+    nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+  }
+
+  // 工作完成，提交更新
+  if (!nextUnitOfWork) {
+    commitRoot();
+  } else {
+    // 还有工作，等待下一个空闲时间片
+    requestIdleCallback(workLoop);
+  }
+}
+
+function performUnitOfWork(fiber) {
+  // 1. 处理当前Fiber
+  if (!fiber.dom) {
+    fiber.dom = createDom(fiber);
+  }
+
+  // 2. 处理子节点
+  const elements = fiber.props.children;
+  reconcileChildren(fiber, elements);
+
+  // 3. 返回下一个工作单元
+  if (fiber.child) {
+    return fiber.child;
+  }
+  while (fiber) {
+    if (fiber.sibling) {
+      return fiber.sibling;
+    }
+    fiber = fiber.return;
+  }
+}
+```
+
+**优先级调度：**
+- 同步优先级：用户交互（点击、输入）
+- 高优先级：网络请求回调
+- 普通优先级：定时器
+- 低优先级：数据分析、隐藏页面渲染
+
+---
+
+#### 9. React Diff算法复杂度是什么样的？
+
+**传统树Diff算法复杂度：O(n³)**
+- 树对比：O(n²）
+- 每个节点对比：O(n）
+- 总计：O(n³）
+
+**React Diff算法复杂度：O(n)**
+
+**React优化的三个假设：**
+1. 不同类型元素产生不同树
+2. 开发者可以通过key指定哪些元素是稳定的
+3. 只对同层级节点比较
+
+**Diff策略：**
+
+**1. 类型不同 → 直接替换**
+```jsx
+// 旧
+<div>...</div>
+
+// 新
+<span>...</span>
+
+// React会销毁div及其子节点，创建新的span
+```
+
+**2. 类型相同 → 复用节点，更新属性**
+```jsx
+// 旧
+<div className="old">...</div>
+
+// 新
+<div className="new">...</div>
+
+// React复用div，只更新className
+```
+
+**3. 子节点Diff（关键）**
+```jsx
+// 旧列表
+[1, 2, 3]
+
+// 新列表
+[1, 3, 2]
+
+// 没有key时的处理（按索引）：
+// 索引0: 1 → 1（复用）
+// 索引1: 2 → 3（更新）
+// 索引2: 3 → 2（更新）
+// 结果：两次DOM操作
+
+// 有key时的处理：
+// 1 → 1（复用）
+// 3 → 3（移动）
+// 2 → 2（移动）
+// 结果：两次移动操作
+```
+
+---
+
+#### 10. 复杂度是确定的还是会动态变化？
+
+**基础复杂度：O(n)**
+
+**但有动态因素：**
+
+**1. 有key时**
+```jsx
+// key稳定 → O(n)
+<ul>
+  {items.map(item => <li key={item.id}>{item.name}</li>)}
+</ul>
+
+// key用index → 可能退化到O(n²)的效果
+// 因为无法识别节点移动，导致不必要的更新
+```
+
+**2. 无key时**
+- 同层级比较：O(n)
+- 但可能导致误判，产生额外的DOM操作
+
+**3. 实际复杂度影响因素：**
+```jsx
+// 场景1：简单列表替换（O(n)）
+// [A, B, C] → [A, B, D]
+
+// 场景2：列表反转（O(n)遍历，但可能有O(n)的DOM操作）
+// [A, B, C] → [C, B, A]
+
+// 场景3：大量节点（性能问题主要在DOM操作，不在Diff）
+// 10000个节点的列表，Diff是O(n)，但渲染很慢
+```
+
+**总结：**
+- **Diff算法本身复杂度始终是O(n)**
+- 但**实际性能**取决于key的使用、节点类型变化、DOM操作数量
+- 长列表场景建议用虚拟滚动，而不是依赖Diff优化
+
+---
+
+#### 11. key是用来做什么的？
+
+**key的作用：**
+key是React用来识别哪些元素改变了、添加了、移除的辅助标识。
+
+**工作原理：**
+```jsx
+// 旧列表
+[
+  { id: 1, name: 'A' },
+  { id: 2, name: 'B' },
+]
+
+// 新列表（反转）
+[
+  { id: 2, name: 'B' },
+  { id: 1, name: 'A' },
+]
+
+// 有key时的Diff过程：
+1. key=1: 找到旧节点A → 移动到位置1
+2. key=2: 找到旧节点B → 保持在位置0
+结果：移动操作
+
+// 无key时（用index）：
+1. index=0: A → B（更新name）
+2. index=1: B → A（更新name）
+结果：两次更新操作
+```
+
+**key使用原则：**
+```jsx
+// ✅ 正确：使用稳定的唯一标识
+{items.map(item => <li key={item.id}>{item.name}</li>)}
+
+// ❌ 错误：使用index（列表会重排时）
+{items.map((item, index) => <li key={index}>{item.name}</li>)}
+
+// ❌ 错误：使用随机数（每次都变）
+{items.map(item => <li key={Math.random()}>{item.name}</li>)}
+
+// ❌ 错误：key重复
+{items.map(item => <li key={item.type}>{item.name}</li>)}
+```
+
+**什么时候可以用index做key？**
+- 列表**静态**，不会重新排序
+- 列表**没有**插入/删除操作
+- 列表只是整体替换
+
+---
+
+#### 12. 如果没有设置key，算法复杂度是多少？
+
+**答案：**
+
+**Diff算法复杂度仍然是O(n)**，但会产生额外性能问题。
+
+**无key时的处理：**
+```jsx
+// React会用index作为默认key
+{items.map(item => <div>{item.name}</div>)}
+// 等价于
+{items.map((item, index) => <div key={index}>{item.name}</div>)}
+```
+
+**问题场景：**
+
+**1. 列表反转/重排**
+```jsx
+// 旧
+[<div key="0">A</div>, <div key="1">B</div>, <div key="2">C</div>]
+
+// 新（反转）
+[<div key="0">C</div>, <div key="1">B</div>, <div key="2">A</div>]
+
+// React的对比：
+// key=0: A → C（更新内容）
+// key=1: B → B（复用）
+// key=2: C → A（更新内容）
+// 结果：2次更新，而不是移动节点
+```
+
+**2. 插入到开头**
+```jsx
+// 旧
+[A, B, C]
+
+// 新
+[D, A, B, C]
+
+// React的对比：
+// key=0: A → D（更新）
+// key=1: B → A（更新）
+// key=2: C → B（更新）
+// 新增: D（新增）
+// 结果：3次更新 + 1次新增
+// 有正确key时：只需1次插入
+```
+
+**总结：**
+- **算法复杂度**：始终O(n)
+- **实际DOM操作**：无key可能产生更多不必要的更新
+- **建议**：动态列表始终使用稳定唯一的key
+
+---
+
+### AI工具类
+
+#### 13-15. AI相关问题（开放性问题）
+
+**常用AI工具：**
+- **编程助手**：GitHub Copilot、Cursor、Claude Code
+- **问答工具**：ChatGPT、Claude
+- **图像处理**：Midjourney、DALL-E
+- **文档阅读**：ChatPDF、Kimi
+
+**如何使用：**
+- 解释代码逻辑
+- 生成样板代码
+- 调试错误信息
+- 学习新技术概念
+- 代码重构建议
+
+**提升AI在code方面的效果：**
+1. **更好的上下文**：提供完整的代码文件、项目结构
+2. **清晰的描述**：具体说明需求，而非模糊的描述
+3. **迭代交互**：多轮对话，逐步细化需求
+4. **反馈纠错**：指出AI的错误，帮助学习
+5. **RAG技术**：让AI了解特定项目的代码规范
+
+**AI适合做什么：**
+- ✅ 重复性工作（生成样板代码、写测试）
+- ✅ 知识问答（API查询、概念解释）
+- ✅ 代码建议（重构、优化方向）
+- ✅ 语言翻译（代码注释、文档）
+
+**AI不适合做什么：**
+- ❌ 复杂架构设计（需要全局理解）
+- ❌ 性能关键代码（可能不够优化）
+- ❌ 安全敏感代码（可能有漏洞）
+- ❌ 需要创造性解决方案（经验依赖）
+
+---
+
+### 手写代码类
+
+#### 16. 算法题1：对象id去重
+
+```javascript
+/**
+ * 对象数组根据id去重
+ * @param {Array} arr - 对象数组
+ * @param {string} key - 去重的键名，默认'id'
+ * @returns {Array}
+ */
+function uniqueById(arr, key = 'id') {
+  const map = new Map();
+
+  return arr.filter(item => {
+    const id = item[key];
+    if (map.has(id)) {
+      return false;  // 已存在，过滤掉
+    }
+    map.set(id, true);
+    return true;  // 首次出现，保留
+  });
+}
+
+// 测试
+const data = [
+  { id: 1, name: 'Alice' },
+  { id: 2, name: 'Bob' },
+  { id: 1, name: 'Alice-Dup' },  // id重复
+  { id: 3, name: 'Charlie' },
+  { id: 2, name: 'Bob-Dup' },    // id重复
+];
+
+console.log(uniqueById(data));
+// [
+//   { id: 1, name: 'Alice' },
+//   { id: 2, name: 'Bob' },
+//   { id: 3, name: 'Charlie' }
+// ]
+
+// 保留最后一次出现的值
+function uniqueByIdLast(arr, key = 'id') {
+  const map = new Map();
+
+  arr.forEach(item => {
+    map.set(item[key], item);
+  });
+
+  return Array.from(map.values());
+}
+
+console.log(uniqueByIdLast(data));
+// [
+//   { id: 1, name: 'Alice-Dup' },
+//   { id: 2, name: 'Bob-Dup' },
+//   { id: 3, name: 'Charlie' }
+// ]
+```
+
+---
+
+#### 17. 算法题2：判断一棵树是否是另一棵树的子树
+
+```javascript
+/**
+ * Definition for a binary tree node.
+ */
+function TreeNode(val, left, right) {
+  this.val = val;
+  this.left = left || null;
+  this.right = right || null;
+}
+
+/**
+ * 判断 subRoot 是否是 root 的子树
+ * @param {TreeNode} root
+ * @param {TreeNode} subRoot
+ * @return {boolean}
+ */
+function isSubtree(root, subRoot) {
+  if (!subRoot) return true;   // 空树是任何树的子树
+  if (!root) return false;     // root为空但subRoot不为空
+
+  // 检查当前节点是否匹配
+  if (isSameTree(root, subRoot)) {
+    return true;
+  }
+
+  // 递归检查左右子树
+  return isSubtree(root.left, subRoot) ||
+         isSubtree(root.right, subRoot);
+}
+
+/**
+ * 判断两棵树是否相同
+ */
+function isSameTree(p, q) {
+  if (!p && !q) return true;   // 都为空
+  if (!p || !q) return false;  // 只有一个为空
+  if (p.val !== q.val) return false; // 值不同
+
+  return isSameTree(p.left, q.left) &&
+         isSameTree(p.right, q.right);
+}
+
+// 测试用例
+// 构建树
+//       3
+//      / \
+//     4   5
+//    / \
+//   1   2
+const root = new TreeNode(3);
+root.left = new TreeNode(4);
+root.right = new TreeNode(5);
+root.left.left = new TreeNode(1);
+root.left.right = new TreeNode(2);
+
+// 子树
+//     4
+//    / \
+//   1   2
+const subRoot = new TreeNode(4);
+subRoot.left = new TreeNode(1);
+subRoot.right = new TreeNode(2);
+
+console.log(isSubtree(root, subRoot)); // true
+
+// 非子树
+const notSub = new TreeNode(4);
+notSub.left = new TreeNode(1);
+notSub.right = new TreeNode(3); // 值不同
+
+console.log(isSubtree(root, notSub)); // false
+```
+
+**复杂度分析：**
+- 时间复杂度：O(m*n)，m是root节点数，n是subRoot节点数
+- 空间复杂度：O(max(m, n))，递归栈深度
