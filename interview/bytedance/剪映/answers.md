@@ -238,3 +238,945 @@ const person: PersonSerializable = {
 - 跨域资源共享（CORS）
 - 服务器代理
 - postMessage通信
+
+---
+
+#### 12. 如何实现跨域请求？
+
+**方案一：CORS（跨域资源共享）- 标准方案**
+
+服务端设置响应头：
+```javascript
+// 允许所有来源
+res.setHeader('Access-Control-Allow-Origin', '*')
+// 允许指定来源
+res.setHeader('Access-Control-Allow-Origin', 'https://example.com')
+// 允许携带凭证
+res.setHeader('Access-Control-Allow-Credentials', 'true')
+// 允许的请求方法
+res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
+// 允许的请求头
+res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+```
+
+**方案二：JSONP（只支持GET）**
+
+```javascript
+// 前端
+function jsonp(url, callbackName) {
+  const script = document.createElement('script');
+  script.src = `${url}?callback=${callbackName}`;
+  document.body.appendChild(script);
+}
+// 后端返回：callbackName({data: ...})
+```
+
+**方案三：代理服务器（开发环境常用）**
+
+```javascript
+// vite.config.js / webpack.config.js
+export default {
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://backend.com',
+        changeOrigin: true
+      }
+    }
+  }
+}
+```
+
+**方案四：Nginx反向代理（生产环境）**
+
+```nginx
+location /api/ {
+    proxy_pass http://backend_server/;
+}
+```
+
+---
+
+#### 13. 为什么代理可以绕过同源限制？
+
+**核心原理：同源策略只存在于浏览器，服务器之间没有跨域限制。**
+
+**流程说明：**
+```
+浏览器 ──同源──> 代理服务器 ──无限制──> 目标服务器
+    ↑                                    │
+    └────────────返回数据─────────────────┘
+```
+
+1. 浏览器请求代理服务器（同源，不触发跨域）
+2. 代理服务器转发请求到目标服务器（服务器间通信，无同源策略）
+3. 目标服务器返回数据给代理
+4. 代理将数据返回给浏览器
+
+**关键点：**
+- 请求发起者是服务器（Node.js/Nginx），不受浏览器同源策略约束
+- 浏览器只看到自己与代理的通信，认为是同源的
+
+---
+
+#### 14. Cookie和Session的定义和差异？
+
+| 特性 | Cookie | Session |
+|------|--------|---------|
+| **存储位置** | 浏览器端 | 服务器端 |
+| **大小限制** | 4KB左右 | 无限制（服务器存储） |
+| **安全性** | 较低，可被篡改 | 较高，数据在服务器 |
+| **生命周期** | 可设置过期时间 | 会话结束（默认） |
+| **跨域** | 受同源策略限制 | 通过Cookie中的SessionID关联 |
+
+**工作原理：**
+```
+1. 用户登录成功
+2. 服务器生成Session，存储在服务器内存/数据库
+3. 服务器返回Set-Cookie header，包含SessionID
+4. 浏览器存储Cookie
+5. 后续请求自动携带Cookie中的SessionID
+6. 服务器根据SessionID查找对应的Session数据
+```
+
+**Session常见问题：**
+- 分布式环境下Session共享问题（解决方案：Redis存储）
+- CSRF攻击（通过Cookie携带用户凭证）
+
+---
+
+#### 15. Cookie是怎么种下的？
+
+**服务端设置：**
+```javascript
+// Node.js Express示例
+res.setHeader('Set-Cookie', [
+  'sessionId=abc123; HttpOnly; Secure; SameSite=Strict',
+  'user=john; Max-Age=3600; Path=/'
+]);
+
+// 或使用cookie-parser中间件
+res.cookie('name', 'value', {
+  httpOnly: true,    // 只能HTTP访问，防止XSS
+  secure: true,      // 仅HTTPS传输
+  sameSite: 'strict', // 防止CSRF
+  maxAge: 3600000,   // 过期时间（毫秒）
+  domain: '.example.com', // 域名范围
+  path: '/'          // 路径范围
+});
+```
+
+**前端设置（document.cookie）：**
+```javascript
+document.cookie = 'name=value; max-age=3600; path=/';
+```
+
+**Cookie属性说明：**
+| 属性 | 说明 |
+|------|------|
+| **HttpOnly** | 禁止JS访问，防止XSS窃取 |
+| **Secure** | 仅HTTPS传输 |
+| **SameSite** | Strict/Lax/None，控制跨站请求携带 |
+| **Domain** | 指定Cookie所属域 |
+| **Path** | 指定Cookie生效路径 |
+| **Max-Age/Expires** | 过期时间 |
+
+---
+
+#### 16. LocalStorage和SessionStorage的区别？
+
+| 特性 | LocalStorage | SessionStorage |
+|------|--------------|----------------|
+| **生命周期** | 永久（除非手动删除） | 会话期间（关闭标签页/窗口即清除） |
+| **作用域** | 同源下所有标签页共享 | 仅当前标签页/窗口可见 |
+| **存储大小** | 5-10MB | 5-10MB |
+| **API** | 相同 | 相同 |
+
+**基本使用：**
+```javascript
+// 存储数据
+localStorage.setItem('key', 'value');
+sessionStorage.setItem('key', 'value');
+
+// 读取数据
+const value = localStorage.getItem('key');
+const value = sessionStorage.getItem('key');
+
+// 删除数据
+localStorage.removeItem('key');
+sessionStorage.removeItem('key');
+
+// 清空所有
+localStorage.clear();
+sessionStorage.clear();
+
+// 存储对象（需要JSON序列化）
+localStorage.setItem('user', JSON.stringify({name: 'Alice'}));
+const user = JSON.parse(localStorage.getItem('user'));
+```
+
+**注意事项：**
+- 只能存储字符串，存储对象需要JSON序列化
+- 同步操作，大量数据可能阻塞
+- 隐身模式下LocalStorage可能被清除
+
+---
+
+#### 17. HTTP强缓存和协商缓存的区别？
+
+**强缓存（Strong Cache）：**
+不向服务器发送请求，直接从缓存读取。
+
+| Header | 说明 |
+|--------|------|
+| **Expires** | HTTP/1.0，绝对时间（服务器时间，可能有时钟偏差） |
+| **Cache-Control** | HTTP/1.1，相对时间（优先级更高） |
+
+```http
+Cache-Control: max-age=3600      # 缓存3600秒
+Cache-Control: no-cache          # 每次都要验证
+Cache-Control: no-store          # 不缓存
+Cache-Control: private           # 仅浏览器可缓存
+Cache-Control: public            # 浏览器和CDN都可缓存
+```
+
+**协商缓存（Conditional Cache）：**
+向服务器发送请求，服务器判断资源是否修改，未修改返回304。
+
+| Header对 | 请求头 | 响应头 |
+|----------|--------|--------|
+| **ETag** | If-None-Match | Etag（资源唯一标识） |
+| **Last-Modified** | If-Modified-Since | Last-Modified（最后修改时间） |
+
+```http
+# 首次请求
+Response: Last-Modified: Wed, 21 Oct 2025 07:28:00 GMT
+Response: Etag: "33a64af557e2d53"
+
+# 再次请求
+Request: If-Modified-Since: Wed, 21 Oct 2025 07:28:00 GMT
+Request: If-None-Match: "33a64af557e2d53"
+
+# 未修改返回304，已修改返回200和新资源
+```
+
+**缓存策略判断流程：**
+```
+1. 检查 Cache-Control / Expires
+   → 存在且未过期 → 使用强缓存（200 from cache）
+
+2. 检查 ETag / Last-Modified
+   → 资源未修改 → 使用协商缓存（304 Not Modified）
+   → 资源已修改 → 返回新资源（200）
+```
+
+---
+
+#### 18. 301和302状态码的区别？
+
+| 状态码 | 名称 | 含义 | SEO影响 | 后续请求 |
+|--------|------|------|---------|----------|
+| **301** | Moved Permanently | 永久重定向 | 权重转移给新URL | 浏览器会缓存重定向 |
+| **302** | Found | 临时重定向 | 不转移权重 | 每次都先请求原URL |
+
+**使用场景：**
+```http
+# 301 - 永久重定向
+# 域名变更、URL结构重组
+HTTP/1.1 301 Moved Permanently
+Location: https://new-domain.com/path
+
+# 302 - 临时重定向
+# 系统维护、A/B测试、用户登录跳转
+HTTP/1.1 302 Found
+Location: https://temp-page.com
+```
+
+**其他3xx状态码：**
+- **303** - See Other，重定向到GET请求
+- **307** - Temporary Redirect，保持请求方法（POST还是POST）
+- **308** - Permanent Redirect，永久重定向并保持请求方法
+
+---
+
+### CSS类
+
+#### 19. 设备像素和逻辑像素的区别？
+
+**基本概念：**
+
+| 类型 | 说明 | 缩写 |
+|------|------|------|
+| **设备像素（物理像素）** | 屏幕实际拥有的像素点 | DP |
+| **逻辑像素（CSS像素）** | CSS中使用的像素单位 | DIP/DP |
+| **设备独立像素** | 与设备无关的抽象像素 | - |
+
+**关键公式：**
+```
+DPR（设备像素比）= 设备像素 / 逻辑像素
+```
+
+**常见设备DPR：**
+| 设备 | DPR |
+|------|-----|
+| 标准PC显示器 | 1 |
+| iPhone 6/7/8 | 2 |
+| iPhone X/11/12 Pro | 3 |
+| 部分Android手机 | 3-4 |
+
+**实际应用：**
+```css
+/* 1px边框在高清屏变粗问题 */
+/* 方案一：transform缩放 */
+.border-1px {
+  position: relative;
+}
+.border-1px::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #000;
+  transform: scaleY(0.5); /* 根据DPR调整 */
+  transform-origin: 0 0;
+}
+
+/* 方案二：媒体查询 */
+@media (-webkit-min-device-pixel-ratio: 2) {
+  .border { border-width: 0.5px; }
+}
+```
+
+---
+
+#### 20. CSS两种盒模型的差异？
+
+**盒模型类型：**
+
+| 特性 | 标准盒模型（content-box） | 怪异盒模型（border-box） |
+|------|--------------------------|--------------------------|
+| **width包含** | 仅content | content + padding + border |
+| **设置方式** | box-sizing: content-box | box-sizing: border-box |
+| **计算宽高** | 需手动加上p/b | width就是总宽度 |
+
+**图示：**
+```
+content-box:
+┌──────────────────────────────────┐
+│           margin                 │
+│  ┌────────────────────────────┐  │
+│  │        border              │  │
+│  │  ┌──────────────────────┐  │  │
+│  │  │      padding         │  │  │
+│  │  │  ┌────────────────┐  │  │  │
+│  │  │  │   content      │  │  │  │
+│  │  │  │   (width设定)  │  │  │  │
+│  │  │  └────────────────┘  │  │  │
+│  │  └──────────────────────┘  │  │
+│  └────────────────────────────┘  │
+└──────────────────────────────────┘
+
+border-box:
+┌──────────────────────────────────┐
+│           margin                 │
+│  ┌────────────────────────────┐  │
+│  │        border              │  │
+│  │  ┌──────────────────────┐  │  │
+│  │  │  (width设定包含此区域)│  │  │
+│  │  │  ┌────────────────┐  │  │  │
+│  │  │  │   content      │  │  │  │
+│  │  │  └────────────────┘  │  │  │
+│  │  └──────────────────────┘  │  │
+│  └────────────────────────────┘  │
+└──────────────────────────────────┘
+```
+
+**推荐使用：**
+```css
+/* 全局设置，便于布局计算 */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 示例：实际占用宽度100px */
+.box {
+  width: 100px;
+  padding: 10px;  /* content宽度自动变成80px */
+  border: 5px solid black;
+}
+```
+
+---
+
+### 代码输出/手写类
+
+#### 21. 事件循环代码输出顺序题
+
+**经典例题：**
+```javascript
+console.log('1');
+
+setTimeout(() => {
+  console.log('2');
+  Promise.resolve().then(() => {
+    console.log('3');
+  });
+}, 0);
+
+new Promise((resolve) => {
+  console.log('4');
+  resolve();
+}).then(() => {
+  console.log('5');
+}).then(() => {
+  console.log('6');
+});
+
+setTimeout(() => {
+  console.log('7');
+  Promise.resolve().then(() => {
+    console.log('8');
+  });
+}, 0);
+
+console.log('9');
+```
+
+**输出顺序：** `1 → 4 → 9 → 5 → 6 → 2 → 3 → 7 → 8`
+
+**分析过程：**
+```
+1. 执行同步代码：
+   - console.log('1') → 输出 1
+   - setTimeout1 → 宏任务队列 [setTimeout1]
+   - Promise构造函数同步执行 → 输出 4
+   - Promise.then1 → 微任务队列 [then1]
+   - Promise.then2 → 微任务队列 [then1, then2]
+   - setTimeout2 → 宏任务队列 [setTimeout1, setTimeout2]
+   - console.log('9') → 输出 9
+
+2. 执行微任务队列：
+   - then1 → 输出 5
+   - then2 → 输出 6
+   - 微任务清空
+
+3. 执行第一个宏任务（setTimeout1）：
+   - console.log('2') → 输出 2
+   - Promise.then → 微任务队列 [then3]
+
+4. 执行微任务队列：
+   - then3 → 输出 3
+
+5. 执行第二个宏任务（setTimeout2）：
+   - console.log('7') → 输出 7
+   - Promise.then → 微任务队列 [then4]
+
+6. 执行微任务队列：
+   - then4 → 输出 8
+```
+
+**记忆要点：**
+- 同步代码最先执行
+- 微任务优先于宏任务
+- 微任务队列清空后才执行下一个宏任务
+- 宏任务：setTimeout、setInterval、setImmediate(Node)、I/O
+- 微任务：Promise.then、queueMicrotask、MutationObserver
+
+---
+
+#### 22. React useState闭包陷阱题（点3次count是多少）
+
+**问题代码：**
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log(count); // 点击3次按钮后，输出什么？
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []); // 依赖数组为空
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+```
+
+**答案：** 每次输出 `0`
+
+**原因分析：**
+1. `useEffect` 的依赖数组为空，只在组件挂载时执行一次
+2. `setInterval` 的回调函数捕获了初始的 `count` 值（闭包）
+3. 后续 `count` 更新，但回调函数中的 `count` 仍然是 `0`
+
+---
+
+#### 23. 如何改造代码让延迟1秒能拿到最新count？
+
+**方案一：添加依赖（不推荐）**
+```jsx
+useEffect(() => {
+  const timer = setInterval(() => {
+    console.log(count);
+  }, 1000);
+  return () => clearInterval(timer);
+}, [count]); // count变化时重新创建定时器
+```
+
+**方案二：使用函数式更新（推荐）**
+```jsx
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCount(prev => {
+      console.log(prev); // 可以获取最新值
+      return prev; // 不更新state
+    });
+  }, 1000);
+  return () => clearInterval(timer);
+}, []);
+```
+
+**方案三：使用 useRef 保存最新值**
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+  const countRef = useRef(count);
+
+  // 同步更新ref
+  useEffect(() => {
+    countRef.current = count;
+  }, [count]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log(countRef.current); // 始终是最新值
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+```
+
+---
+
+#### 24. 手写冒泡排序
+
+```javascript
+/**
+ * 冒泡排序
+ * 时间复杂度：O(n²)
+ * 空间复杂度：O(1)
+ * 稳定性：稳定
+ */
+function bubbleSort(arr) {
+  const len = arr.length;
+
+  for (let i = 0; i < len - 1; i++) {
+    // 优化：记录本轮是否发生交换
+    let swapped = false;
+
+    // 每轮将最大的元素"冒泡"到末尾
+    for (let j = 0; j < len - 1 - i; j++) {
+      if (arr[j] > arr[j + 1]) {
+        // 交换
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        swapped = true;
+      }
+    }
+
+    // 如果没有发生交换，说明已排序完成
+    if (!swapped) break;
+  }
+
+  return arr;
+}
+
+// 测试
+console.log(bubbleSort([5, 3, 8, 4, 2])); // [2, 3, 4, 5, 8]
+console.log(bubbleSort([1, 2, 3, 4, 5])); // [1, 2, 3, 4, 5]（只需一轮比较）
+```
+
+---
+
+#### 25. 手写函数防抖
+
+```javascript
+/**
+ * 函数防抖 - 在事件被触发n秒后再执行回调
+ * @param {Function} fn - 需要防抖的函数
+ * @param {number} delay - 延迟时间（毫秒）
+ * @param {boolean} immediate - 是否立即执行
+ * @returns {Function} 防抖后的函数
+ */
+function debounce(fn, delay, immediate = false) {
+  let timer = null;
+
+  return function (...args) {
+    // 清除之前的定时器
+    if (timer) clearTimeout(timer);
+
+    if (immediate) {
+      // 立即执行模式
+      const callNow = !timer;
+      timer = setTimeout(() => {
+        timer = null;
+      }, delay);
+      if (callNow) fn.apply(this, args);
+    } else {
+      // 延迟执行模式
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+      }, delay);
+    }
+  };
+}
+
+// 使用示例
+const handleInput = debounce((e) => {
+  console.log('搜索:', e.target.value);
+}, 500);
+
+// input.addEventListener('input', handleInput);
+
+// React Hook版本
+function useDebounce(fn, delay) {
+  const fnRef = useRef(fn);
+  fnRef.current = fn;
+
+  return useCallback(
+    debounce((...args) => {
+      fnRef.current(...args);
+    }, delay),
+    [delay]
+  );
+}
+```
+
+---
+
+### 框架/工程化类
+
+#### 26. CommonJS和ESM的区别？
+
+| 特性 | CommonJS (CJS) | ES Modules (ESM) |
+|------|----------------|------------------|
+| **语法** | `require` / `module.exports` | `import` / `export` |
+| **加载方式** | 运行时同步加载 | 编译时静态加载 |
+| **输出** | 值拷贝 | 值引用（动态绑定） |
+| **顶层this** | 指向模块本身 | undefined |
+| **支持环境** | Node.js | 浏览器 + Node.js |
+| **可 Tree Shaking** | 不支持 | 支持 |
+
+**CommonJS：**
+```javascript
+// 导出
+module.exports = {
+  name: 'Alice',
+  sayHello() {}
+};
+// 或
+exports.name = 'Alice';
+
+// 导入
+const user = require('./user');
+```
+
+**ESM：**
+```javascript
+// 导出
+export const name = 'Alice';
+export function sayHello() {}
+export default { name, sayHello };
+
+// 导入
+import user, { name } from './user';
+```
+
+**值的拷贝 vs 引用：**
+```javascript
+// CommonJS - 值拷贝
+// counter.js
+let count = 0;
+module.exports = { count };
+module.exports.add = () => count++;
+
+// main.js
+const counter = require('./counter');
+counter.add();
+console.log(counter.count); // 0（count是导出时的拷贝）
+
+// ESM - 值引用
+// counter.mjs
+export let count = 0;
+export function add() { count++; }
+
+// main.mjs
+import { count, add } from './counter.mjs';
+add();
+console.log(count); // 1（count是动态绑定的引用）
+```
+
+---
+
+#### 27. 前端路由两种模式及特点？
+
+**Hash模式：**
+
+```javascript
+// URL示例：http://example.com/#/home
+// Hash变化不会触发页面刷新
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.slice(1);
+  // 根据 hash 渲染不同组件
+});
+
+// 跳转
+location.hash = '/about';
+```
+
+| 特点 | 说明 |
+|------|------|
+| **URL格式** | `domain.com/#/path` |
+| **兼容性** | 兼容性好，支持老浏览器 |
+| **刷新** | 刷新不404 |
+| **SEO** | 较差（爬虫可能忽略hash内容） |
+| **原理** | 监听 `hashchange` 事件 |
+
+**History模式：**
+
+```javascript
+// URL示例：http://example.com/home
+// 需要服务端配置，否则刷新会404
+
+// 跳转（不刷新页面）
+history.pushState({}, '', '/about');
+history.replaceState({}, '', '/about');
+
+// 监听
+window.addEventListener('popstate', () => {
+  // 处理路由变化
+});
+```
+
+| 特点 | 说明 |
+|------|------|
+| **URL格式** | `domain.com/path`（自然URL） |
+| **兼容性** | 需要HTML5支持 |
+| **刷新** | 需要服务端配置，刷新可能404 |
+| **SEO** | 好（URL正常） |
+| **原理** | 利用 History API |
+
+**服务端配置（Nginx）：**
+```nginx
+location / {
+    try_files $uri $uri/ /index.html;
+}
+```
+
+---
+
+#### 28. Git平常用哪些操作？
+
+**日常操作：**
+```bash
+# 查看状态
+git status
+
+# 添加修改
+git add .                    # 添加所有
+git add file.js              # 添加指定文件
+
+# 提交
+git commit -m "feat: xxx"
+git commit --amend           # 修改上一次提交
+
+# 拉取/推送
+git pull origin main         # 拉取并合并
+git pull --rebase origin main  # 拉取并变基
+git push origin main
+git push -f origin feature   # 强制推送（慎用）
+
+# 分支操作
+git branch                   # 查看本地分支
+git branch -r                # 查看远程分支
+git branch -a                # 查看所有分支
+git checkout -b feature      # 创建并切换分支
+git switch feature           # 切换分支（新语法）
+git branch -d feature        # 删除本地分支
+git push origin --delete feature  # 删除远程分支
+
+# 查看历史
+git log --oneline            # 简洁日志
+git log --graph              # 图形化日志
+git reflog                   # 查看所有操作记录（可恢复）
+
+# 暂存
+git stash                    # 暂存当前修改
+git stash pop                # 恢复并删除暂存
+git stash list               # 查看暂存列表
+
+# 合并
+git merge feature            # 合并分支
+git rebase main              # 变基到main
+```
+
+**解决冲突：**
+```bash
+git merge feature
+# 出现冲突后，编辑文件解决冲突
+git add .
+git commit
+```
+
+---
+
+### 项目类
+
+#### 29. 项目中最有挑战性的部分是什么？
+
+**回答框架（STAR法则）：**
+
+**S - Situation（背景）：**
+描述项目背景和面临的问题
+
+**T - Task（任务）：**
+明确需要解决的具体问题
+
+**A - Action（行动）：**
+详细描述解决过程：
+- 分析问题的思路
+- 技术方案的选择
+- 实施过程中的困难
+- 如何优化和改进
+
+**R - Result（结果）：**
+量化成果：
+- 性能提升（加载时间降低X%）
+- 用户体验改善
+- 开发效率提升
+- 团队认可
+
+**示例回答要点：**
+- 组织树二级节点卡顿优化（虚拟滚动）
+- i18n工具的自动化提效
+- SSE监控SDK的稳定性保障
+
+---
+
+### 算法类
+
+#### 30. 两数之和
+
+```javascript
+/**
+ * 两数之和
+ * 给定一个整数数组 nums 和一个目标值 target
+ * 返回数组中两个数的索引，使它们相加等于 target
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+function twoSum(nums, target) {
+  // 使用Map存储值和索引的对应关系
+  const map = new Map();
+
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+
+    // 检查补数是否已存在
+    if (map.has(complement)) {
+      return [map.get(complement), i];
+    }
+
+    // 存储当前值和索引
+    map.set(nums[i], i);
+  }
+
+  return []; // 无解
+}
+
+// 测试
+console.log(twoSum([2, 7, 11, 15], 9)); // [0, 1]
+console.log(twoSum([3, 2, 4], 6));      // [1, 2]
+console.log(twoSum([3, 3], 6));         // [0, 1]
+
+/**
+ * 复杂度分析：
+ * 时间复杂度：O(n)，只需遍历一次
+ * 空间复杂度：O(n)，Map最多存储n个元素
+ */
+```
+
+---
+
+## 二面答案
+
+### 项目相关
+
+#### 1-9. 项目相关问题（根据实际项目回答）
+
+**组织树卡顿问题回答要点：**
+- **业务场景**：组织架构树，二级节点下可能有成百上千个子节点
+- **卡顿原因**：一次性渲染大量DOM，导致主线程阻塞
+- **解决方案**：虚拟滚动 + 懒加载，只渲染可视区域节点
+- **效果**：DOM数量从几千降到几十，FPS显著提升
+
+**i18n提效工具回答要点：**
+- **key生成**：使用 `crypto.createHash('md5').update(content).digest('hex').slice(0, 8)`
+- **前8位原因**：128位MD5取前8位=32位十六进制，碰撞概率极低（2^32分之1）
+- **增量代码**：配置Git钩子/CI流程，仅对变更文件运行
+
+**SSE监控SDK回答要点：**
+- **为什么不用Sentry**：SSE场景特殊（长连接），需要特定事件类型（连接/断开/消息）
+- **上报策略**：批量上报 + 队列缓存，避免频繁请求
+- **限流**：本地采样率 + 服务端限流配置
+- **未发送数据**：LocalStorage持久化，下次启动补发
+- **管理端**：提供数据看板，支持按项目/时间/事件类型查询
+
+---
+
+#### 10. 前端做性能优化有哪些手段？
+
+**按加载阶段分类：**
+
+**1. 网络传输优化**
+- 启用 CDN（内容分发网络）
+- 开启 Gzip/Brotli 压缩
+- 使用 HTTP/2 或 HTTP/3
+- 预加载关键资源
+```html
+<link rel="preload" href="style.css" as="style">
+<link rel="prefetch" href="next-page.js">
+```
+
+**2. 资源优化**
+- 代码分割（Code Splitting）
+- Tree Shaking（删除死代码）
+- 图片优化：WebP格式、懒加载、响应式图片
+- 字体优化：使用字体子集、font-display: swap
+
+**3. 渲染优化**
+- 虚拟列表（大数据量）
+- 防抖/节流控制事件触发频率
+- requestAnimationFrame 代替 setTimeout
+- CSS will-change 提示浏览器优化
+- 避免强制同步布局（FSL）
+
+**4. 运行时优化**
+- 避免内存泄漏（解绑事件、清理定时器）
+- 长任务拆分（使用 requestIdleCallback）
+- Web Worker 处理复杂计算
+- 虚拟滚动
+
+**5. 缓存策略**
+- 强缓存 + 协商缓存
+- Service Worker 离线缓存
+- LocalStorage 缓存数据
+
+**6. 监控指标**
+- Core Web Vitals：LCP、FID、CLS
+- FCP、TTI、TBT
+- 使用 Lighthouse 评估

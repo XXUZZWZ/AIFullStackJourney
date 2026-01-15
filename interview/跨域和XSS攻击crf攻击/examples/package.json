@@ -1,0 +1,18 @@
+{
+  "name": "web-security-examples",
+  "version": "1.0.0",
+  "description": "Web 安全示例：跨域、XSS 攻击、CSRF 攻击演示与防御",
+  "scripts": {
+    "cors": "node cors-demo.js",
+    "csrf": "node csrf-demo.js",
+    "defense": "node xss-defense.js",
+    "httponly": "node httponly-demo.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "helmet": "^7.1.0"
+  }
+}
