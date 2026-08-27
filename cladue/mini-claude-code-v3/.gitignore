@@ -1,0 +1,9 @@
+# Runtime / personal state — must never be committed or published
+.deepseek-config.json
+.mini-claude-memory/
+.claude/
+node_modules/
+*.tgz
+package-lock.json
+npm-debug.log
+.DS_Store

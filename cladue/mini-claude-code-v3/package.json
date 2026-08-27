@@ -1,6 +1,6 @@
 {
   "name": "mini-claude-code",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Advanced AI-powered coding assistant with streaming responses, context memory, intelligent auto-completion, error handling, test generation, and task planning",
   "main": "index.js",
   "bin": {
